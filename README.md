@@ -45,7 +45,7 @@ Note: It would be best to build and add components like clippy and fmt into the 
 A simpler workaround is to use another toolchain for formatting:
 
 ```bash
-cargo +nigthly fmt
+cargo +nightly fmt
 ```
 
 Example configuration for auto-formatting in Visual Studio Code:
