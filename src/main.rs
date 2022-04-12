@@ -1,4 +1,5 @@
 #![feature(rustc_private)]
+#![feature(let_else)]
 
 extern crate rustc_driver;
 extern crate rustc_interface;
