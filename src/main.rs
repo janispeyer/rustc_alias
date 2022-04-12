@@ -26,6 +26,8 @@ impl<'tcx> MirPass<'tcx> for Alias {
         let path = tcx.def_path_str(def_id);
         print!("{}: ", path);
         println!("done");
+
+        // tcx.sess.err(&format!("Path: {}", path));
     }
 }
 
@@ -80,7 +82,7 @@ fn run_compiler(compiler_args: &[String]) -> i32 {
 
 /// Run an analysis by calling it like rustc.
 ///
-/// Give arguments to the analyzer by prefixing them with '--analysis'.
+/// Give arguments to the analyser by prefixing them with '--analysis'.
 /// All other arguments are directly forwarded to rustc.
 ///
 /// Source: https://github.com/viperproject/prusti-dev/blob/8678e8faf214768535677c72b4f50b22abc6b83b/analysis/src/bin/analysis-driver.rs

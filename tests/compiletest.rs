@@ -6,7 +6,7 @@ use std::{env, path::PathBuf};
 use utils::*;
 
 /// Taken from: https://github.com/viperproject/prusti-dev/blob/master/analysis/tests/test_analysis.rs
-fn run_tests(mode: &str, custom_args: Vec<String>) {
+fn run_tests(mode: &str, path: &str, custom_args: Vec<String>) {
     let mut config = compiletest::Config::default();
 
     let mut flags = Vec::new();
@@ -17,7 +17,7 @@ fn run_tests(mode: &str, custom_args: Vec<String>) {
 
     config.mode = mode.parse().expect("Invalid mode");
     config.rustc_path = find_compiled_executable("rustc_alias");
-    config.src_base = PathBuf::from("tests").join(mode);
+    config.src_base = PathBuf::from("tests").join(path);
     assert!(config.src_base.is_dir());
 
     // Filter the tests to run
@@ -30,21 +30,12 @@ fn run_tests(mode: &str, custom_args: Vec<String>) {
         config.compile_lib_path = PathBuf::from(lib_path);
     }
 
-    compiletest::run_tests(&config);
-}
-
-fn run_mode(mode: &'static str) {
-    let mut config = compiletest::Config::default();
-
-    config.mode = mode.parse().expect("Invalid mode");
-    config.src_base = PathBuf::from("tests").join(mode);
-    // config.link_deps(); // Populate config.target_rustcflags with dependencies on the path
-    // config.clean_rmeta(); // If your tests import the parent crate, this helps with E0464
+    config.bless = true;
 
     compiletest::run_tests(&config);
 }
 
 #[test]
 fn compile_test() {
-    run_tests("mir-opt", Vec::new());
+    run_tests("ui", "ui", Vec::new()); // mir-opt does not seem to work properly
 }
