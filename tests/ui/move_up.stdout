@@ -1,3 +1,468 @@
-main: done
-move_up: done
-main::{closure#0}: done
+# CFG for main
+Before
+[
+    BasicBlockData {
+        statements: [
+            StorageLive(_1),
+            _1 = const 42_i32,
+            StorageLive(_2),
+            StorageLive(_3),
+            StorageLive(_4),
+            _4 = &_1,
+            Retag(_4),
+            _3 = &(*_4),
+            Retag(_3),
+            StorageLive(_5),
+            Retag(_5),
+        ],
+        terminator: Some(
+            Terminator {
+                source_info: SourceInfo {
+                    span: $DIR/move_up.rs:12:5: 12:27 (#0),
+                    scope: scope[1],
+                },
+                kind: _2 = move_up::<[closure@$DIR/move_up.rs:12:17: 12:26]>(move _3, move _5) -> bb1,
+            },
+        ),
+        is_cleanup: false,
+    },
+    BasicBlockData {
+        statements: [
+            StorageDead(_5),
+            StorageDead(_3),
+            StorageDead(_4),
+            StorageDead(_2),
+            _0 = const (),
+            StorageDead(_1),
+        ],
+        terminator: Some(
+            Terminator {
+                source_info: SourceInfo {
+                    span: $DIR/move_up.rs:13:2: 13:2 (#0),
+                    scope: scope[0],
+                },
+                kind: return,
+            },
+        ),
+        is_cleanup: false,
+    },
+]
+After
+[
+    BasicBlockData {
+        statements: [
+            StorageLive(_1),
+            _1 = const 42_i32,
+            StorageLive(_2),
+            StorageLive(_3),
+            StorageLive(_4),
+            _4 = &_1,
+            Retag(_4),
+            _3 = &(*_4),
+            Retag(_3),
+            StorageLive(_5),
+            Retag(_5),
+        ],
+        terminator: Some(
+            Terminator {
+                source_info: SourceInfo {
+                    span: $DIR/move_up.rs:12:5: 12:27 (#0),
+                    scope: scope[1],
+                },
+                kind: _2 = move_up::<[closure@$DIR/move_up.rs:12:17: 12:26]>(move _3, move _5) -> bb1,
+            },
+        ),
+        is_cleanup: false,
+    },
+    BasicBlockData {
+        statements: [
+            StorageDead(_5),
+            StorageDead(_3),
+            StorageDead(_4),
+            StorageDead(_2),
+            _0 = const (),
+            StorageDead(_1),
+        ],
+        terminator: Some(
+            Terminator {
+                source_info: SourceInfo {
+                    span: $DIR/move_up.rs:13:2: 13:2 (#0),
+                    scope: scope[0],
+                },
+                kind: return,
+            },
+        ),
+        is_cleanup: false,
+    },
+]
+
+# CFG for move_up
+Before
+[
+    BasicBlockData {
+        statements: [
+            Retag([fn entry] _1),
+            Retag([fn entry] _2),
+            StorageLive(_4),
+            StorageLive(_5),
+            _5 = (*_1),
+            _6 = Eq(const 3_i32, const 0_i32),
+        ],
+        terminator: Some(
+            Terminator {
+                source_info: SourceInfo {
+                    span: $DIR/move_up.rs:5:15: 5:21 (#0),
+                    scope: scope[0],
+                },
+                kind: assert(!move _6, "attempt to divide `{}` by zero", _5) -> [success: bb1, unwind: bb7],
+            },
+        ),
+        is_cleanup: false,
+    },
+    BasicBlockData {
+        statements: [
+            _7 = Eq(const 3_i32, const -1_i32),
+            _8 = Eq(_5, const i32::MIN),
+            _9 = BitAnd(move _7, move _8),
+        ],
+        terminator: Some(
+            Terminator {
+                source_info: SourceInfo {
+                    span: $DIR/move_up.rs:5:15: 5:21 (#0),
+                    scope: scope[0],
+                },
+                kind: assert(!move _9, "attempt to compute `{} / {}`, which would overflow", _5, const 3_i32) -> [success: bb2, unwind: bb7],
+            },
+        ),
+        is_cleanup: false,
+    },
+    BasicBlockData {
+        statements: [
+            _4 = Div(move _5, const 3_i32),
+            StorageDead(_5),
+            StorageLive(_10),
+            StorageLive(_11),
+            _11 = &mut _2,
+            Retag(_11),
+            StorageLive(_12),
+            StorageLive(_13),
+            _13 = &(*_1),
+            Retag(_13),
+            StorageLive(_14),
+            _14 = _4,
+            (_12.0: &i32) = move _13,
+            (_12.1: i32) = move _14,
+        ],
+        terminator: Some(
+            Terminator {
+                source_info: SourceInfo {
+                    span: $DIR/move_up.rs:6:5: 6:14 (#0),
+                    scope: scope[1],
+                },
+                kind: _10 = <impl FnMut(&i32, i32) as std::ops::FnMut<(&i32, i32)>>::call_mut(move _11, move _12) -> [return: bb3, unwind: bb7],
+            },
+        ),
+        is_cleanup: false,
+    },
+    BasicBlockData {
+        statements: [
+            StorageDead(_14),
+            StorageDead(_13),
+            StorageDead(_12),
+            StorageDead(_11),
+            StorageDead(_10),
+            StorageLive(_15),
+            _15 = (*_1),
+            _16 = Eq(const 3_i32, const 0_i32),
+        ],
+        terminator: Some(
+            Terminator {
+                source_info: SourceInfo {
+                    span: $DIR/move_up.rs:7:12: 7:18 (#0),
+                    scope: scope[1],
+                },
+                kind: assert(!move _16, "attempt to divide `{}` by zero", _15) -> [success: bb4, unwind: bb7],
+            },
+        ),
+        is_cleanup: false,
+    },
+    BasicBlockData {
+        statements: [
+            _17 = Eq(const 3_i32, const -1_i32),
+            _18 = Eq(_15, const i32::MIN),
+            _19 = BitAnd(move _17, move _18),
+        ],
+        terminator: Some(
+            Terminator {
+                source_info: SourceInfo {
+                    span: $DIR/move_up.rs:7:12: 7:18 (#0),
+                    scope: scope[1],
+                },
+                kind: assert(!move _19, "attempt to compute `{} / {}`, which would overflow", _15, const 3_i32) -> [success: bb5, unwind: bb7],
+            },
+        ),
+        is_cleanup: false,
+    },
+    BasicBlockData {
+        statements: [
+            _0 = Div(move _15, const 3_i32),
+            StorageDead(_15),
+            StorageDead(_4),
+        ],
+        terminator: Some(
+            Terminator {
+                source_info: SourceInfo {
+                    span: $DIR/move_up.rs:8:1: 8:2 (#0),
+                    scope: scope[0],
+                },
+                kind: drop(_2) -> [return: bb6, unwind: bb8],
+            },
+        ),
+        is_cleanup: false,
+    },
+    BasicBlockData {
+        statements: [],
+        terminator: Some(
+            Terminator {
+                source_info: SourceInfo {
+                    span: $DIR/move_up.rs:8:2: 8:2 (#0),
+                    scope: scope[0],
+                },
+                kind: return,
+            },
+        ),
+        is_cleanup: false,
+    },
+    BasicBlockData {
+        statements: [],
+        terminator: Some(
+            Terminator {
+                source_info: SourceInfo {
+                    span: $DIR/move_up.rs:8:1: 8:2 (#0),
+                    scope: scope[0],
+                },
+                kind: drop(_2) -> bb8,
+            },
+        ),
+        is_cleanup: true,
+    },
+    BasicBlockData {
+        statements: [],
+        terminator: Some(
+            Terminator {
+                source_info: SourceInfo {
+                    span: $DIR/move_up.rs:4:1: 8:2 (#0),
+                    scope: scope[0],
+                },
+                kind: resume,
+            },
+        ),
+        is_cleanup: true,
+    },
+]
+After
+[
+    BasicBlockData {
+        statements: [
+            Retag([fn entry] _1),
+            Retag([fn entry] _2),
+            StorageLive(_4),
+            StorageLive(_5),
+            _5 = (*_1),
+            _6 = Eq(const 3_i32, const 0_i32),
+        ],
+        terminator: Some(
+            Terminator {
+                source_info: SourceInfo {
+                    span: $DIR/move_up.rs:5:15: 5:21 (#0),
+                    scope: scope[0],
+                },
+                kind: assert(!move _6, "attempt to divide `{}` by zero", _5) -> [success: bb1, unwind: bb7],
+            },
+        ),
+        is_cleanup: false,
+    },
+    BasicBlockData {
+        statements: [
+            _7 = Eq(const 3_i32, const -1_i32),
+            _8 = Eq(_5, const i32::MIN),
+            _9 = BitAnd(move _7, move _8),
+        ],
+        terminator: Some(
+            Terminator {
+                source_info: SourceInfo {
+                    span: $DIR/move_up.rs:5:15: 5:21 (#0),
+                    scope: scope[0],
+                },
+                kind: assert(!move _9, "attempt to compute `{} / {}`, which would overflow", _5, const 3_i32) -> [success: bb2, unwind: bb7],
+            },
+        ),
+        is_cleanup: false,
+    },
+    BasicBlockData {
+        statements: [
+            _4 = Div(move _5, const 3_i32),
+            StorageDead(_5),
+            StorageLive(_10),
+            StorageLive(_11),
+            _11 = &mut _2,
+            Retag(_11),
+            StorageLive(_12),
+            StorageLive(_13),
+            _13 = &(*_1),
+            Retag(_13),
+            StorageLive(_14),
+            _14 = _4,
+            (_12.0: &i32) = move _13,
+            (_12.1: i32) = move _14,
+        ],
+        terminator: Some(
+            Terminator {
+                source_info: SourceInfo {
+                    span: $DIR/move_up.rs:6:5: 6:14 (#0),
+                    scope: scope[1],
+                },
+                kind: _10 = <impl FnMut(&i32, i32) as std::ops::FnMut<(&i32, i32)>>::call_mut(move _11, move _12) -> [return: bb3, unwind: bb7],
+            },
+        ),
+        is_cleanup: false,
+    },
+    BasicBlockData {
+        statements: [
+            StorageDead(_14),
+            StorageDead(_13),
+            StorageDead(_12),
+            StorageDead(_11),
+            StorageDead(_10),
+            StorageLive(_15),
+            _15 = (*_1),
+            _16 = Eq(const 3_i32, const 0_i32),
+        ],
+        terminator: Some(
+            Terminator {
+                source_info: SourceInfo {
+                    span: $DIR/move_up.rs:7:12: 7:18 (#0),
+                    scope: scope[1],
+                },
+                kind: assert(!move _16, "attempt to divide `{}` by zero", _15) -> [success: bb4, unwind: bb7],
+            },
+        ),
+        is_cleanup: false,
+    },
+    BasicBlockData {
+        statements: [
+            _17 = Eq(const 3_i32, const -1_i32),
+            _18 = Eq(_15, const i32::MIN),
+            _19 = BitAnd(move _17, move _18),
+        ],
+        terminator: Some(
+            Terminator {
+                source_info: SourceInfo {
+                    span: $DIR/move_up.rs:7:12: 7:18 (#0),
+                    scope: scope[1],
+                },
+                kind: assert(!move _19, "attempt to compute `{} / {}`, which would overflow", _15, const 3_i32) -> [success: bb5, unwind: bb7],
+            },
+        ),
+        is_cleanup: false,
+    },
+    BasicBlockData {
+        statements: [
+            _0 = Div(move _15, const 3_i32),
+            StorageDead(_15),
+            StorageDead(_4),
+        ],
+        terminator: Some(
+            Terminator {
+                source_info: SourceInfo {
+                    span: $DIR/move_up.rs:8:1: 8:2 (#0),
+                    scope: scope[0],
+                },
+                kind: drop(_2) -> [return: bb6, unwind: bb8],
+            },
+        ),
+        is_cleanup: false,
+    },
+    BasicBlockData {
+        statements: [],
+        terminator: Some(
+            Terminator {
+                source_info: SourceInfo {
+                    span: $DIR/move_up.rs:8:2: 8:2 (#0),
+                    scope: scope[0],
+                },
+                kind: return,
+            },
+        ),
+        is_cleanup: false,
+    },
+    BasicBlockData {
+        statements: [],
+        terminator: Some(
+            Terminator {
+                source_info: SourceInfo {
+                    span: $DIR/move_up.rs:8:1: 8:2 (#0),
+                    scope: scope[0],
+                },
+                kind: drop(_2) -> bb8,
+            },
+        ),
+        is_cleanup: true,
+    },
+    BasicBlockData {
+        statements: [],
+        terminator: Some(
+            Terminator {
+                source_info: SourceInfo {
+                    span: $DIR/move_up.rs:4:1: 8:2 (#0),
+                    scope: scope[0],
+                },
+                kind: resume,
+            },
+        ),
+        is_cleanup: true,
+    },
+]
+
+# CFG for main::{closure#0}
+Before
+[
+    BasicBlockData {
+        statements: [
+            Retag([fn entry] _1),
+            Retag([fn entry] _2),
+            _0 = const (),
+        ],
+        terminator: Some(
+            Terminator {
+                source_info: SourceInfo {
+                    span: $DIR/move_up.rs:12:26: 12:26 (#0),
+                    scope: scope[0],
+                },
+                kind: return,
+            },
+        ),
+        is_cleanup: false,
+    },
+]
+After
+[
+    BasicBlockData {
+        statements: [
+            Retag([fn entry] _1),
+            Retag([fn entry] _2),
+            _0 = const (),
+        ],
+        terminator: Some(
+            Terminator {
+                source_info: SourceInfo {
+                    span: $DIR/move_up.rs:12:26: 12:26 (#0),
+                    scope: scope[0],
+                },
+                kind: return,
+            },
+        ),
+        is_cleanup: false,
+    },
+]
+

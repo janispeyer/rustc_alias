@@ -6,30 +6,13 @@ extern crate rustc_middle;
 extern crate rustc_mir_transform;
 extern crate rustc_session;
 
+mod alias;
+
+use alias::Alias;
 use rustc_driver::{catch_with_exit_code, Callbacks, RunCompiler};
-use rustc_middle::mir::{Body, MirPass};
-use rustc_middle::ty::TyCtxt;
 use rustc_mir_transform::MIR_PASS_INJECTION;
 
 use std::process::exit;
-
-pub struct Alias;
-
-impl<'tcx> MirPass<'tcx> for Alias {
-    fn is_enabled(&self, sess: &rustc_session::Session) -> bool {
-        // Require retag statements for this MirPass to run.
-        sess.opts.debugging_opts.mir_emit_retag
-    }
-
-    fn run_pass(&self, tcx: TyCtxt<'tcx>, body: &mut Body<'tcx>) {
-        let def_id = body.source.def_id();
-        let path = tcx.def_path_str(def_id);
-        print!("{}: ", path);
-        println!("done");
-
-        // tcx.sess.err(&format!("Path: {}", path));
-    }
-}
 
 struct AliasCallbacks;
 
