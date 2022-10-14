@@ -1,3 +1,9 @@
+[_1, _2] -> Left(Retag([fn entry] _1))
+[_1, _2] -> Left(Retag([fn entry] _2))
+[_1, _2] -> Left((*_1) = const 42_i32)
+[_1, _2] -> Left((*_2) = const 7_i32)
+[_1, _2] -> Left(_0 = (*_1))
+[_1, _2] -> Right(Terminator { source_info: SourceInfo { span: $DIR/move_up_mut.rs:8:2: 8:2 (#0), scope: scope[0] }, kind: return })
 # CFG for move_up_mut
 Before
 [

@@ -1,5 +1,5 @@
 use rustc_index::bit_set::BitSet;
-use rustc_middle::mir::visit::{MutatingUseContext, NonMutatingUseContext, PlaceContext, Visitor};
+use rustc_middle::mir::visit::Visitor;
 use rustc_middle::mir::*;
 use rustc_mir_dataflow::{Analysis, AnalysisDomain, CallReturnPlaces, GenKill, GenKillAnalysis};
 
