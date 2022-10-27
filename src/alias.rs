@@ -10,7 +10,7 @@ pub struct Alias;
 impl<'tcx> MirPass<'tcx> for Alias {
     fn is_enabled(&self, sess: &rustc_session::Session) -> bool {
         // Require retag statements for this MirPass to run.
-        sess.opts.debugging_opts.mir_emit_retag
+        sess.opts.unstable_opts.mir_emit_retag
     }
 
     fn run_pass(&self, tcx: TyCtxt<'tcx>, body: &mut Body<'tcx>) {
@@ -25,7 +25,7 @@ impl<'tcx> MirPass<'tcx> for Alias {
             .into_results_cursor(body);
 
         // Inspect the fixpoint state immediately before each `Drop` terminator.
-        for (bb_index, bb) in body.basic_blocks().iter_enumerated() {
+        for (bb_index, bb) in body.basic_blocks.iter_enumerated() {
             let statements_len = bb.statements.len();
             let mut location: Location = bb_index.start_location();
 
@@ -42,10 +42,10 @@ impl<'tcx> MirPass<'tcx> for Alias {
         let path = tcx.def_path_str(def_id);
         println!("# CFG for {}", path);
         println!("Before");
-        println!("{:#?}", body.basic_blocks());
+        println!("{:#?}", body.basic_blocks.as_mut());
 
         println!("After");
-        println!("{:#?}", body.basic_blocks());
+        println!("{:#?}", body.basic_blocks.as_mut());
         println!();
     }
 }
@@ -54,13 +54,13 @@ impl<'tcx> MirPass<'tcx> for Alias {
 ///
 /// TODO: Remove types with interior mutability.
 fn get_retags<'tcx>(body: &mut Body<'tcx>) -> Vec<Local> {
-    let Some(bb0_index) = body.basic_blocks().indices().nth(0) else {
+    let Some(bb0_index) = body.basic_blocks.indices().nth(0) else {
         return Vec::new(); // no basic blocks ==> no retags
     };
-    let bb0 = &body.basic_blocks()[bb0_index];
+    let bb0 = &body.basic_blocks[bb0_index];
 
     let mut retagged = Vec::new();
-    for (stmt_idx, stmt) in bb0.statements.iter().enumerate() {
+    for (_stmt_idx, stmt) in bb0.statements.iter().enumerate() {
         if let StatementKind::Retag(RetagKind::FnEntry, place) = &stmt.kind {
             retagged.push(place.local);
         }
@@ -158,23 +158,22 @@ where
             }
 
             Rvalue::Ref(_, _kind, borrowed_place) => {
-                if !borrowed_place.is_indirect() {
-                    self.trans.kill(borrowed_place.local);
-                }
+                self.trans.kill(borrowed_place.local);
             }
 
-            Rvalue::Cast(..)
-            | Rvalue::ShallowInitBox(..)
+            Rvalue::Cast(..)              // we probably have to cover casts: e.g. reference to pointer (TODO)
+            | Rvalue::ShallowInitBox(..)  // performs transmute --> we have to handle this (TODO)
             | Rvalue::Use(..)
             | Rvalue::ThreadLocalRef(..)
-            | Rvalue::Repeat(..)
-            | Rvalue::Len(..)
-            | Rvalue::BinaryOp(..)
-            | Rvalue::CheckedBinaryOp(..)
-            | Rvalue::NullaryOp(..)
-            | Rvalue::UnaryOp(..)
-            | Rvalue::Discriminant(..)
-            | Rvalue::Aggregate(..) => {}
+            | Rvalue::Repeat(..)          // array initialiser: [value; repetitions]
+            | Rvalue::Len(..)             // length of array or slice
+            | Rvalue::BinaryOp(..)        // e.g. +, -, ...
+            | Rvalue::CheckedBinaryOp(..) // e.g. +, -, ...
+            | Rvalue::NullaryOp(..)       // sizeof | alignof
+            | Rvalue::UnaryOp(..)         // not | neg
+            | Rvalue::Discriminant(..)    // e.g. read tag of variant
+            | Rvalue::Aggregate(..)
+            | Rvalue::CopyForDeref(..) => {}
         }
     }
 

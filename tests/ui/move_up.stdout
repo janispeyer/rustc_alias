@@ -18,30 +18,32 @@
 [_1] -> Left(StorageLive(_12))
 [_1] -> Left(StorageLive(_13))
 [_1] -> Left(_13 = &(*_1))
-[_1] -> Left(Retag(_13))
-[_1] -> Left(StorageLive(_14))
-[_1] -> Left(_14 = _4)
-[_1] -> Left((_12.0: &i32) = move _13)
-[_1] -> Left((_12.1: i32) = move _14)
-[_1] -> Right(Terminator { source_info: SourceInfo { span: $DIR/move_up.rs:6:5: 6:14 (#0), scope: scope[1] }, kind: _10 = <impl FnMut(&i32, i32) as std::ops::FnMut<(&i32, i32)>>::call_mut(move _11, move _12) -> [return: bb3, unwind: bb7] })
-[_1] -> Left(StorageDead(_14))
-[_1] -> Left(StorageDead(_13))
-[_1] -> Left(StorageDead(_12))
-[_1] -> Left(StorageDead(_11))
-[_1] -> Left(StorageDead(_10))
-[_1] -> Left(StorageLive(_15))
-[_1] -> Left(_15 = (*_1))
-[_1] -> Left(_16 = Eq(const 3_i32, const 0_i32))
-[_1] -> Right(Terminator { source_info: SourceInfo { span: $DIR/move_up.rs:7:12: 7:18 (#0), scope: scope[1] }, kind: assert(!move _16, "attempt to divide `{}` by zero", _15) -> [success: bb4, unwind: bb7] })
-[_1] -> Left(_17 = Eq(const 3_i32, const -1_i32))
-[_1] -> Left(_18 = Eq(_15, const i32::MIN))
-[_1] -> Left(_19 = BitAnd(move _17, move _18))
-[_1] -> Right(Terminator { source_info: SourceInfo { span: $DIR/move_up.rs:7:12: 7:18 (#0), scope: scope[1] }, kind: assert(!move _19, "attempt to compute `{} / {}`, which would overflow", _15, const 3_i32) -> [success: bb5, unwind: bb7] })
-[_1] -> Left(_0 = Div(move _15, const 3_i32))
-[_1] -> Left(StorageDead(_15))
-[_1] -> Left(StorageDead(_4))
-[_1] -> Right(Terminator { source_info: SourceInfo { span: $DIR/move_up.rs:8:1: 8:2 (#0), scope: scope[0] }, kind: drop(_2) -> [return: bb6, unwind: bb8] })
-[_1] -> Right(Terminator { source_info: SourceInfo { span: $DIR/move_up.rs:8:2: 8:2 (#0), scope: scope[0] }, kind: return })
+[] -> Left(Retag(_13))
+[] -> Left(StorageLive(_14))
+[] -> Left(_14 = _4)
+[] -> Left(Deinit(_12))
+[] -> Left((_12.0: &i32) = move _13)
+[] -> Left((_12.1: i32) = move _14)
+[] -> Left(Retag(_12))
+[] -> Right(Terminator { source_info: SourceInfo { span: $DIR/move_up.rs:6:5: 6:14 (#0), scope: scope[1] }, kind: _10 = <impl FnMut(&i32, i32) as std::ops::FnMut<(&i32, i32)>>::call_mut(move _11, move _12) -> [return: bb3, unwind: bb7] })
+[] -> Left(StorageDead(_14))
+[] -> Left(StorageDead(_13))
+[] -> Left(StorageDead(_12))
+[] -> Left(StorageDead(_11))
+[] -> Left(StorageDead(_10))
+[] -> Left(StorageLive(_15))
+[] -> Left(_15 = (*_1))
+[] -> Left(_16 = Eq(const 3_i32, const 0_i32))
+[] -> Right(Terminator { source_info: SourceInfo { span: $DIR/move_up.rs:7:12: 7:18 (#0), scope: scope[1] }, kind: assert(!move _16, "attempt to divide `{}` by zero", _15) -> [success: bb4, unwind: bb7] })
+[] -> Left(_17 = Eq(const 3_i32, const -1_i32))
+[] -> Left(_18 = Eq(_15, const i32::MIN))
+[] -> Left(_19 = BitAnd(move _17, move _18))
+[] -> Right(Terminator { source_info: SourceInfo { span: $DIR/move_up.rs:7:12: 7:18 (#0), scope: scope[1] }, kind: assert(!move _19, "attempt to compute `{} / {}`, which would overflow", _15, const 3_i32) -> [success: bb5, unwind: bb7] })
+[] -> Left(_0 = Div(move _15, const 3_i32))
+[] -> Left(StorageDead(_15))
+[] -> Left(StorageDead(_4))
+[] -> Right(Terminator { source_info: SourceInfo { span: $DIR/move_up.rs:8:1: 8:2 (#0), scope: scope[0] }, kind: drop(_2) -> [return: bb6, unwind: bb8] })
+[] -> Right(Terminator { source_info: SourceInfo { span: $DIR/move_up.rs:8:2: 8:2 (#0), scope: scope[0] }, kind: return })
 [_1, _2] -> Right(Terminator { source_info: SourceInfo { span: $DIR/move_up.rs:8:1: 8:2 (#0), scope: scope[0] }, kind: drop(_2) -> bb8 })
 [_1] -> Right(Terminator { source_info: SourceInfo { span: $DIR/move_up.rs:4:1: 8:2 (#0), scope: scope[0] }, kind: resume })
 # CFG for move_up
@@ -98,8 +100,10 @@ Before
             Retag(_13),
             StorageLive(_14),
             _14 = _4,
+            Deinit(_12),
             (_12.0: &i32) = move _13,
             (_12.1: i32) = move _14,
+            Retag(_12),
         ],
         terminator: Some(
             Terminator {
@@ -261,8 +265,10 @@ After
             Retag(_13),
             StorageLive(_14),
             _14 = _4,
+            Deinit(_12),
             (_12.0: &i32) = move _13,
             (_12.1: i32) = move _14,
+            Retag(_12),
         ],
         terminator: Some(
             Terminator {

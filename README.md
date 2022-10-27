@@ -4,6 +4,8 @@
 
 The optimisations developed here require the extension to the rust compiler introduced here: [https://github.com/janispeyer/rust](https://github.com/janispeyer/rust)
 
+Make sure to build it with the component `rustc_driver`. This component is used for the extension.
+
 ## Example Setup
 
 1. Clone both repositories
@@ -50,7 +52,7 @@ cargo +nightly fmt
 
 Example configuration for auto-formatting in Visual Studio Code:
 
-```bash
+```json
 "rust-analyzer.rustfmt.overrideCommand": [
     "rustup",
     "run",
@@ -65,3 +67,16 @@ Example configuration for auto-formatting in Visual Studio Code:
 ```
 
 This this not work for clippy as it will complain about the custom injection point not existing. (And rightly so, because on toolchains like stable or nightly the injection point does not exist.)
+
+### `rust-analyzer` Settings
+
+In the `Cargo.toml` file you'll find the lines:
+
+```toml
+[package.metadata.rust-analyzer]
+rustc_private = true
+```
+
+These are required by rust-anylzer, when `#![feature(rustc_private)]` is used.
+
+An additional requirement to make rust-analyzer work is to set the setting `rust-analyzer.rustc.source` to the correct path. More information can be found in the [rust-analyzer manual](https://rust-analyzer.github.io/manual.html).

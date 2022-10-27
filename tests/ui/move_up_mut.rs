@@ -1,6 +1,5 @@
 // compile-flags: -Zmir-emit-retag
 
-// EMIT_MIR move_up_mut.move_up_mut.Alias.diff
 fn move_up_mut(x: &mut i32, y: &mut i32) -> i32 {
     *x = 42;
     *y = 7;

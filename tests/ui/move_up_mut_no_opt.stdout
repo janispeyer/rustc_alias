@@ -1,0 +1,145 @@
+[_1, _2] -> Left(Retag([fn entry] _1))
+[_1, _2] -> Left(Retag([fn entry] _2))
+[_1, _2] -> Left((*_1) = const 42_i32)
+[_1, _2] -> Left((*_2) = const 7_i32)
+[_1, _2] -> Left(StorageLive(_4))
+[_1, _2] -> Left(StorageLive(_5))
+[_1, _2] -> Left(_5 = &mut (*_1))
+[_2] -> Left(Retag([2phase] _5))
+[_2] -> Right(Terminator { source_info: SourceInfo { span: $DIR/move_up_mut_no_opt.rs:10:5: 10:14 (#0), scope: scope[0] }, kind: _4 = access(move _5) -> bb1 })
+[_2] -> Left(StorageDead(_5))
+[_2] -> Left(StorageDead(_4))
+[_2] -> Left(_0 = (*_1))
+[_2] -> Right(Terminator { source_info: SourceInfo { span: $DIR/move_up_mut_no_opt.rs:12:2: 12:2 (#0), scope: scope[0] }, kind: return })
+# CFG for move_up_mut_no_opt
+Before
+[
+    BasicBlockData {
+        statements: [
+            Retag([fn entry] _1),
+            Retag([fn entry] _2),
+            (*_1) = const 42_i32,
+            (*_2) = const 7_i32,
+            StorageLive(_4),
+            StorageLive(_5),
+            _5 = &mut (*_1),
+            Retag([2phase] _5),
+        ],
+        terminator: Some(
+            Terminator {
+                source_info: SourceInfo {
+                    span: $DIR/move_up_mut_no_opt.rs:10:5: 10:14 (#0),
+                    scope: scope[0],
+                },
+                kind: _4 = access(move _5) -> bb1,
+            },
+        ),
+        is_cleanup: false,
+    },
+    BasicBlockData {
+        statements: [
+            StorageDead(_5),
+            StorageDead(_4),
+            _0 = (*_1),
+        ],
+        terminator: Some(
+            Terminator {
+                source_info: SourceInfo {
+                    span: $DIR/move_up_mut_no_opt.rs:12:2: 12:2 (#0),
+                    scope: scope[0],
+                },
+                kind: return,
+            },
+        ),
+        is_cleanup: false,
+    },
+]
+After
+[
+    BasicBlockData {
+        statements: [
+            Retag([fn entry] _1),
+            Retag([fn entry] _2),
+            (*_1) = const 42_i32,
+            (*_2) = const 7_i32,
+            StorageLive(_4),
+            StorageLive(_5),
+            _5 = &mut (*_1),
+            Retag([2phase] _5),
+        ],
+        terminator: Some(
+            Terminator {
+                source_info: SourceInfo {
+                    span: $DIR/move_up_mut_no_opt.rs:10:5: 10:14 (#0),
+                    scope: scope[0],
+                },
+                kind: _4 = access(move _5) -> bb1,
+            },
+        ),
+        is_cleanup: false,
+    },
+    BasicBlockData {
+        statements: [
+            StorageDead(_5),
+            StorageDead(_4),
+            _0 = (*_1),
+        ],
+        terminator: Some(
+            Terminator {
+                source_info: SourceInfo {
+                    span: $DIR/move_up_mut_no_opt.rs:12:2: 12:2 (#0),
+                    scope: scope[0],
+                },
+                kind: return,
+            },
+        ),
+        is_cleanup: false,
+    },
+]
+
+[_1] -> Left(Retag([fn entry] _1))
+[_1] -> Left((*_1) = const 5_i32)
+[_1] -> Left(_0 = const ())
+[_1] -> Right(Terminator { source_info: SourceInfo { span: $DIR/move_up_mut_no_opt.rs:5:2: 5:2 (#0), scope: scope[0] }, kind: return })
+# CFG for access
+Before
+[
+    BasicBlockData {
+        statements: [
+            Retag([fn entry] _1),
+            (*_1) = const 5_i32,
+            _0 = const (),
+        ],
+        terminator: Some(
+            Terminator {
+                source_info: SourceInfo {
+                    span: $DIR/move_up_mut_no_opt.rs:5:2: 5:2 (#0),
+                    scope: scope[0],
+                },
+                kind: return,
+            },
+        ),
+        is_cleanup: false,
+    },
+]
+After
+[
+    BasicBlockData {
+        statements: [
+            Retag([fn entry] _1),
+            (*_1) = const 5_i32,
+            _0 = const (),
+        ],
+        terminator: Some(
+            Terminator {
+                source_info: SourceInfo {
+                    span: $DIR/move_up_mut_no_opt.rs:5:2: 5:2 (#0),
+                    scope: scope[0],
+                },
+                kind: return,
+            },
+        ),
+        is_cleanup: false,
+    },
+]
+
