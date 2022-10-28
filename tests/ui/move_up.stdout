@@ -13,11 +13,11 @@
 [_1, _2] -> Left(StorageDead(_5))
 [_1, _2] -> Left(StorageLive(_10))
 [_1, _2] -> Left(StorageLive(_11))
-[_1, _2] -> Left(_11 = &mut _2)
+[_1] -> Left(_11 = &mut _2)
 [_1] -> Left(Retag(_11))
 [_1] -> Left(StorageLive(_12))
 [_1] -> Left(StorageLive(_13))
-[_1] -> Left(_13 = &(*_1))
+[] -> Left(_13 = &(*_1))
 [] -> Left(Retag(_13))
 [] -> Left(StorageLive(_14))
 [] -> Left(_14 = _4)
@@ -44,7 +44,7 @@
 [] -> Left(StorageDead(_4))
 [] -> Right(Terminator { source_info: SourceInfo { span: $DIR/move_up.rs:7:1: 7:2 (#0), scope: scope[0] }, kind: drop(_2) -> [return: bb6, unwind: bb8] })
 [] -> Right(Terminator { source_info: SourceInfo { span: $DIR/move_up.rs:7:2: 7:2 (#0), scope: scope[0] }, kind: return })
-[_1, _2] -> Right(Terminator { source_info: SourceInfo { span: $DIR/move_up.rs:7:1: 7:2 (#0), scope: scope[0] }, kind: drop(_2) -> bb8 })
+[_1] -> Right(Terminator { source_info: SourceInfo { span: $DIR/move_up.rs:7:1: 7:2 (#0), scope: scope[0] }, kind: drop(_2) -> bb8 })
 [_1] -> Right(Terminator { source_info: SourceInfo { span: $DIR/move_up.rs:3:1: 7:2 (#0), scope: scope[0] }, kind: resume })
 # CFG for move_up
 Before

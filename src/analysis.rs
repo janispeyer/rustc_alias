@@ -1,3 +1,5 @@
+use std::collections::{HashMap, HashSet};
+
 use rustc_index::bit_set::BitSet;
 
 use rustc_middle::mir::visit::Visitor;
@@ -5,27 +7,31 @@ use rustc_middle::mir::*;
 
 use rustc_middle::ty::TyCtxt;
 
-use rustc_mir_dataflow::{Analysis, AnalysisDomain, CallReturnPlaces, GenKill, GenKillAnalysis};
+use rustc_mir_dataflow::{
+    Analysis, AnalysisDomain, CallReturnPlaces, GenKill, GenKillAnalysis, ResultsVisitor,
+};
 
-pub fn compute_immutability_set<'tcx>(
-    tcx: TyCtxt<'tcx>,
-    body: &mut Body<'tcx>,
-    retagged: Vec<Local>,
-) {
-    let mut analysis_result = MaybeTopOfBorrowStack { retagged }
+pub fn compute_immutability_set<'tcx>(tcx: TyCtxt<'tcx>, body: &Body<'tcx>, retagged: Vec<Local>) {
+    let mut maybe_top_visitor = MaybeTopOfBorrowStackVisitor::new();
+    let analysis_result = MaybeTopOfBorrowStack { retagged }
         .into_engine(tcx, body)
         .iterate_to_fixpoint()
-        .into_results_cursor(body);
+        .visit_reachable_with(body, &mut maybe_top_visitor);
 
-    // Inspect the fixpoint state immediately before each `Drop` terminator.
     for (bb_index, bb) in body.basic_blocks.iter_enumerated() {
         let statements_len = bb.statements.len();
         let mut location: Location = bb_index.start_location();
 
         while location.statement_index <= statements_len {
-            analysis_result.seek_before_primary_effect(location);
             let stmt = body.stmt_at(location);
-            println!("{:?} -> {:?}", analysis_result.get(), stmt);
+            let mut top_locals: Vec<Local> = maybe_top_visitor
+                .locations
+                .iter()
+                .filter(|(_, set)| set.contains(&location))
+                .map(|(&local, _)| local)
+                .collect();
+            top_locals.sort();
+            println!("{:?} -> {:?}", top_locals, stmt);
 
             location = location.successor_within_block();
         }
@@ -178,5 +184,47 @@ where
             | TerminatorKind::Unreachable
             | TerminatorKind::Yield { .. } => {}
         }
+    }
+}
+
+type TopOfBorrowStackLocations = HashMap<Local, HashSet<Location>>;
+
+struct MaybeTopOfBorrowStackVisitor {
+    locations: TopOfBorrowStackLocations,
+}
+
+impl MaybeTopOfBorrowStackVisitor {
+    fn new() -> Self {
+        Self {
+            locations: HashMap::new(),
+        }
+    }
+
+    fn visit_location(&mut self, state: &<Self as ResultsVisitor>::FlowState, location: Location) {
+        for top in state.iter() {
+            self.locations.entry(top).or_default().insert(location);
+        }
+    }
+}
+
+impl<'mir, 'tcx> ResultsVisitor<'mir, 'tcx> for MaybeTopOfBorrowStackVisitor {
+    type FlowState = BitSet<Local>;
+
+    fn visit_statement_after_primary_effect(
+        &mut self,
+        state: &Self::FlowState,
+        _statement: &'mir rustc_middle::mir::Statement<'tcx>,
+        location: Location,
+    ) {
+        self.visit_location(state, location);
+    }
+
+    fn visit_terminator_after_primary_effect(
+        &mut self,
+        state: &Self::FlowState,
+        _terminator: &'mir rustc_middle::mir::Terminator<'tcx>,
+        location: Location,
+    ) {
+        self.visit_location(state, location);
     }
 }

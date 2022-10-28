@@ -4,7 +4,7 @@
 [_1, _2] -> Left((*_2) = const 7_i32)
 [_1, _2] -> Left(StorageLive(_4))
 [_1, _2] -> Left(StorageLive(_5))
-[_1, _2] -> Left(_5 = &mut (*_1))
+[_2] -> Left(_5 = &mut (*_1))
 [_2] -> Left(Retag([2phase] _5))
 [_2] -> Right(Terminator { source_info: SourceInfo { span: $DIR/move_up_mut_no_opt.rs:10:5: 10:14 (#0), scope: scope[0] }, kind: _4 = access(move _5) -> bb1 })
 [_2] -> Left(StorageDead(_5))
