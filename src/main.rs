@@ -9,6 +9,7 @@ extern crate rustc_mir_transform;
 extern crate rustc_session;
 
 mod alias;
+mod analysis;
 
 use alias::Alias;
 use rustc_driver::{catch_with_exit_code, Callbacks, RunCompiler};
