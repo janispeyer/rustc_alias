@@ -1,11 +1,24 @@
+# Analysing main
+# Analysing move_up_mut
+# MaybeTopOfBorrowStack Analysis
 [_1, _2] -> Left(Retag([fn entry] _1))
 [_1, _2] -> Left(Retag([fn entry] _2))
 [_1, _2] -> Left((*_1) = const 42_i32)
 [_1, _2] -> Left((*_2) = const 7_i32)
 [_1, _2] -> Left(_0 = (*_1))
 [_1, _2] -> Right(Terminator { source_info: SourceInfo { span: $DIR/move_up_mut.rs:7:2: 7:2 (#0), scope: scope[0] }, kind: return })
-# CFG for move_up_mut
-Before
+
+# FindImmutabilitySpans Analysis
+bb0
+[ 0] {} -> Retag([fn entry] _1)
+[ 1] {} -> Retag([fn entry] _2)
+[ 2] {_1: Span(bb0[2])} -> (*_1) = const 42_i32
+[ 3] {_2: Span(bb0[3]), _1: Span(bb0[2])} -> (*_2) = const 7_i32
+[ 4] {_2: Span(bb0[3]), _1: Span(bb0[2])} -> _0 = (*_1)
+[ 5] {_2: Span(bb0[3]), _1: Span(bb0[2])} -> return
+
+
+# CFG Before
 [
     BasicBlockData {
         statements: [
@@ -27,7 +40,7 @@ Before
         is_cleanup: false,
     },
 ]
-After
+# CFG After
 [
     BasicBlockData {
         statements: [

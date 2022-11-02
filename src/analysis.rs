@@ -8,12 +8,14 @@ use rustc_middle::mir::*;
 use rustc_middle::ty::TyCtxt;
 
 use rustc_mir_dataflow::{
-    Analysis, AnalysisDomain, CallReturnPlaces, GenKill, GenKillAnalysis, ResultsVisitor,
+    fmt::DebugWithContext, Analysis, AnalysisDomain, CallReturnPlaces, GenKill, GenKillAnalysis,
+    JoinSemiLattice, ResultsVisitor,
 };
 
-pub fn compute_immutability_set<'tcx>(tcx: TyCtxt<'tcx>, body: &Body<'tcx>, retagged: Vec<Local>) {
+pub fn compute_immutability_span<'tcx>(tcx: TyCtxt<'tcx>, body: &Body<'tcx>, retagged: Vec<Local>) {
+    println!("# MaybeTopOfBorrowStack Analysis");
     let mut maybe_top_visitor = MaybeTopOfBorrowStackVisitor::new();
-    let analysis_result = MaybeTopOfBorrowStack { retagged }
+    MaybeTopOfBorrowStack { retagged }
         .into_engine(tcx, body)
         .iterate_to_fixpoint()
         .visit_reachable_with(body, &mut maybe_top_visitor);
@@ -25,7 +27,7 @@ pub fn compute_immutability_set<'tcx>(tcx: TyCtxt<'tcx>, body: &Body<'tcx>, reta
         while location.statement_index <= statements_len {
             let stmt = body.stmt_at(location);
             let mut top_locals: Vec<Local> = maybe_top_visitor
-                .locations
+                .top_of_borrow_stack
                 .iter()
                 .filter(|(_, set)| set.contains(&location))
                 .map(|(&local, _)| local)
@@ -36,6 +38,14 @@ pub fn compute_immutability_set<'tcx>(tcx: TyCtxt<'tcx>, body: &Body<'tcx>, reta
             location = location.successor_within_block();
         }
     }
+    println!();
+
+    println!("# FindImmutabilitySpans Analysis");
+    FindImmutabilitySpans::new(maybe_top_visitor.top_of_borrow_stack)
+        .into_engine(tcx, body)
+        .iterate_to_fixpoint()
+        .visit_reachable_with(body, &mut PrintImmutabilitySpanVisitor);
+    println!();
 }
 
 /// A dataflow analysis that tracks whether a given local is on the top of the borrow stack,
@@ -190,19 +200,22 @@ where
 type TopOfBorrowStackLocations = HashMap<Local, HashSet<Location>>;
 
 struct MaybeTopOfBorrowStackVisitor {
-    locations: TopOfBorrowStackLocations,
+    top_of_borrow_stack: TopOfBorrowStackLocations,
 }
 
 impl MaybeTopOfBorrowStackVisitor {
     fn new() -> Self {
         Self {
-            locations: HashMap::new(),
+            top_of_borrow_stack: HashMap::new(),
         }
     }
 
     fn visit_location(&mut self, state: &<Self as ResultsVisitor>::FlowState, location: Location) {
         for top in state.iter() {
-            self.locations.entry(top).or_default().insert(location);
+            self.top_of_borrow_stack
+                .entry(top)
+                .or_default()
+                .insert(location);
         }
     }
 }
@@ -226,5 +239,190 @@ impl<'mir, 'tcx> ResultsVisitor<'mir, 'tcx> for MaybeTopOfBorrowStackVisitor {
         location: Location,
     ) {
         self.visit_location(state, location);
+    }
+}
+
+#[derive(Clone, PartialEq, Eq, Debug)]
+enum ImmutabilitySpan {
+    Top,
+    Span(Location),
+    // Bottom, // Bottom is represented by not being present in the HashMap in ImmutabilitySetLattice.
+}
+
+#[derive(Clone, PartialEq, Eq, Debug)]
+struct ImmutabilitySpanLattice(HashMap<Local, ImmutabilitySpan>);
+
+impl JoinSemiLattice for ImmutabilitySpanLattice {
+    fn join(&mut self, other: &Self) -> bool {
+        let mut modified_self = false;
+
+        for (local, other_set) in other.0.iter() {
+            let self_set = self.0.get(local);
+            match (self_set, other_set) {
+                // top join x = top
+                (Some(ImmutabilitySpan::Top), _) => {}
+                // bottom join x = x
+                (None, _) => {
+                    self.0.insert(*local, other_set.clone());
+                    modified_self = true;
+                }
+                // x join top = top
+                (_, ImmutabilitySpan::Top) => {
+                    self.0.insert(*local, ImmutabilitySpan::Top);
+                    modified_self = true;
+                }
+                // Span(x) join Span(x) = Span(x)
+                // Span(x) join Span(y) = top
+                (Some(ImmutabilitySpan::Span(x)), ImmutabilitySpan::Span(y)) => {
+                    if x != y {
+                        self.0.insert(*local, ImmutabilitySpan::Top);
+                        modified_self = true;
+                    }
+                }
+            }
+        }
+
+        // bottom join bottom = bottom
+        // Case requires no special handling.
+
+        modified_self
+    }
+}
+
+impl DebugWithContext<FindImmutabilitySpans> for ImmutabilitySpanLattice {}
+
+struct FindImmutabilitySpans {
+    top_of_borrow_stack: TopOfBorrowStackLocations,
+}
+
+impl FindImmutabilitySpans {
+    pub fn new(top_of_borrow_stack: TopOfBorrowStackLocations) -> Self {
+        Self {
+            top_of_borrow_stack,
+        }
+    }
+}
+
+impl<'tcx> AnalysisDomain<'tcx> for FindImmutabilitySpans {
+    type Domain = ImmutabilitySpanLattice;
+    type Direction = rustc_mir_dataflow::Forward;
+
+    const NAME: &'static str = "find_immutability_spans";
+
+    fn bottom_value(&self, _body: &rustc_middle::mir::Body<'tcx>) -> Self::Domain {
+        ImmutabilitySpanLattice(HashMap::new())
+    }
+
+    fn initialize_start_block(
+        &self,
+        _body: &rustc_middle::mir::Body<'tcx>,
+        _state: &mut Self::Domain,
+    ) {
+    }
+}
+
+impl<'tcx> Analysis<'tcx> for FindImmutabilitySpans {
+    fn apply_statement_effect(
+        &self,
+        state: &mut Self::Domain,
+        statement: &rustc_middle::mir::Statement<'tcx>,
+        location: Location,
+    ) {
+        let mut deletions = Vec::new();
+        for local in state.0.keys() {
+            let local_on_top = self
+                .top_of_borrow_stack
+                .get(&local)
+                .map_or(false, |locations| locations.contains(&location));
+            if !local_on_top {
+                deletions.push(*local);
+            }
+        }
+
+        for local in deletions {
+            state.0.insert(local, ImmutabilitySpan::Top);
+        }
+
+        let StatementKind::Assign(ref assignment) = statement.kind else {
+            return;
+        };
+
+        let local = assignment.0.local;
+        let [ProjectionElem::Deref] = assignment.0.projection.as_slice() else {
+            return;
+        };
+
+        let local_on_top = self
+            .top_of_borrow_stack
+            .get(&local)
+            .map_or(false, |locations| locations.contains(&location));
+
+        if local_on_top {
+            state.0.insert(local, ImmutabilitySpan::Span(location));
+        }
+    }
+
+    fn apply_terminator_effect(
+        &self,
+        state: &mut Self::Domain,
+        terminator: &rustc_middle::mir::Terminator<'tcx>,
+        location: Location,
+    ) {
+    }
+
+    fn apply_call_return_effect(
+        &self,
+        state: &mut Self::Domain,
+        block: BasicBlock,
+        return_places: CallReturnPlaces<'_, 'tcx>,
+    ) {
+    }
+}
+
+struct PrintImmutabilitySpanVisitor;
+
+impl<'mir, 'tcx> ResultsVisitor<'mir, 'tcx> for PrintImmutabilitySpanVisitor {
+    type FlowState = ImmutabilitySpanLattice;
+
+    fn visit_statement_after_primary_effect(
+        &mut self,
+        state: &Self::FlowState,
+        statement: &'mir rustc_middle::mir::Statement<'tcx>,
+        location: Location,
+    ) {
+        println!(
+            "[{:>2}] {:?} -> {:?}",
+            location.statement_index, state.0, statement
+        );
+    }
+
+    fn visit_terminator_after_primary_effect(
+        &mut self,
+        state: &Self::FlowState,
+        terminator: &'mir rustc_middle::mir::Terminator<'tcx>,
+        location: Location,
+    ) {
+        println!(
+            "[{:>2}] {:?} -> {:?}",
+            location.statement_index, state.0, terminator.kind
+        );
+    }
+
+    fn visit_block_start(
+        &mut self,
+        _state: &Self::FlowState,
+        _block_data: &'mir rustc_middle::mir::BasicBlockData<'tcx>,
+        block: BasicBlock,
+    ) {
+        println!("{:?}", block);
+    }
+
+    fn visit_block_end(
+        &mut self,
+        _state: &Self::FlowState,
+        _block_data: &'mir rustc_middle::mir::BasicBlockData<'tcx>,
+        _block: BasicBlock,
+    ) {
+        println!();
     }
 }

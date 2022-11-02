@@ -2,7 +2,7 @@ use rustc_middle::mir::*;
 
 use rustc_middle::ty::TyCtxt;
 
-use crate::analysis::compute_immutability_set;
+use crate::analysis::compute_immutability_span;
 
 pub struct Alias;
 
@@ -13,20 +13,21 @@ impl<'tcx> MirPass<'tcx> for Alias {
     }
 
     fn run_pass(&self, tcx: TyCtxt<'tcx>, body: &mut Body<'tcx>) {
+        let def_id = body.source.def_id();
+        let path = tcx.def_path_str(def_id);
+        println!("# Analysing {}", path);
+
         let retagged = get_retags(body);
         if retagged.is_empty() {
             return; // Abort pass early, if there is nothing to do.
         }
 
-        compute_immutability_set(tcx, body, retagged.clone());
+        compute_immutability_span(tcx, body, retagged.clone());
 
-        let def_id = body.source.def_id();
-        let path = tcx.def_path_str(def_id);
-        println!("# CFG for {}", path);
-        println!("Before");
+        println!("# CFG Before");
         println!("{:#?}", body.basic_blocks.as_mut());
 
-        println!("After");
+        println!("# CFG After");
         println!("{:#?}", body.basic_blocks.as_mut());
         println!();
     }
