@@ -20,25 +20,36 @@ pub fn compute_immutability_span<'tcx>(tcx: TyCtxt<'tcx>, body: &Body<'tcx>, ret
         .iterate_to_fixpoint()
         .visit_reachable_with(body, &mut maybe_top_visitor);
 
-    for (bb_index, bb) in body.basic_blocks.iter_enumerated() {
-        let statements_len = bb.statements.len();
-        let mut location: Location = bb_index.start_location();
+    for (block_index, block) in body.basic_blocks.iter_enumerated() {
+        println!("{:?}", block_index);
+        let mut location: Location = block_index.start_location();
 
-        while location.statement_index <= statements_len {
-            let stmt = body.stmt_at(location);
-            let mut top_locals: Vec<Local> = maybe_top_visitor
+        loop {
+            print!("[{:>2}] ", location.statement_index);
+            let statement = body.stmt_at(location);
+
+            let mut top_locals: Vec<_> = maybe_top_visitor
                 .top_of_borrow_stack
                 .iter()
-                .filter(|(_, set)| set.contains(&location))
-                .map(|(&local, _)| local)
+                .filter(|(_, l)| *l == location)
+                .map(|(local, _)| local)
                 .collect();
             top_locals.sort();
-            println!("{:?} -> {:?}", top_locals, stmt);
+            print!("{:?} -> ", top_locals);
+
+            statement.either(
+                |statement| println!("{:?}", statement),
+                |terminator| println!("{:?}", terminator.kind),
+            );
+
+            if statement.is_right() {
+                break;
+            }
 
             location = location.successor_within_block();
         }
+        println!()
     }
-    println!();
 
     println!("# FindImmutabilitySpans Analysis");
     FindImmutabilitySpans::new(maybe_top_visitor.top_of_borrow_stack)
@@ -197,7 +208,7 @@ where
     }
 }
 
-type TopOfBorrowStackLocations = HashMap<Local, HashSet<Location>>;
+type TopOfBorrowStackLocations = HashSet<(Local, Location)>;
 
 struct MaybeTopOfBorrowStackVisitor {
     top_of_borrow_stack: TopOfBorrowStackLocations,
@@ -206,16 +217,13 @@ struct MaybeTopOfBorrowStackVisitor {
 impl MaybeTopOfBorrowStackVisitor {
     fn new() -> Self {
         Self {
-            top_of_borrow_stack: HashMap::new(),
+            top_of_borrow_stack: HashSet::new(),
         }
     }
 
     fn visit_location(&mut self, state: &<Self as ResultsVisitor>::FlowState, location: Location) {
         for top in state.iter() {
-            self.top_of_borrow_stack
-                .entry(top)
-                .or_default()
-                .insert(location);
+            self.top_of_borrow_stack.insert((top, location));
         }
     }
 }
@@ -329,13 +337,10 @@ impl<'tcx> Analysis<'tcx> for FindImmutabilitySpans {
         location: Location,
     ) {
         let mut deletions = Vec::new();
-        for local in state.0.keys() {
-            let local_on_top = self
-                .top_of_borrow_stack
-                .get(&local)
-                .map_or(false, |locations| locations.contains(&location));
+        for &local in state.0.keys() {
+            let local_on_top = self.top_of_borrow_stack.contains(&(local, location));
             if !local_on_top {
-                deletions.push(*local);
+                deletions.push(local);
             }
         }
 
@@ -352,10 +357,7 @@ impl<'tcx> Analysis<'tcx> for FindImmutabilitySpans {
             return;
         };
 
-        let local_on_top = self
-            .top_of_borrow_stack
-            .get(&local)
-            .map_or(false, |locations| locations.contains(&location));
+        let local_on_top = self.top_of_borrow_stack.contains(&(local, location));
 
         if local_on_top {
             state.0.insert(local, ImmutabilitySpan::Span(location));
@@ -381,6 +383,27 @@ impl<'tcx> Analysis<'tcx> for FindImmutabilitySpans {
 
 struct PrintImmutabilitySpanVisitor;
 
+impl PrintImmutabilitySpanVisitor {
+    fn visit(state: &<Self as ResultsVisitor>::FlowState, location: Location) {
+        let mut state: Vec<_> = state.0.iter().collect();
+        state.sort_unstable_by(|(a, _), (b, _)| a.cmp(b));
+        print!("[{:>2}] ", location.statement_index);
+        Self::print_state(state);
+        print!(" -> ")
+    }
+
+    fn print_state(state: Vec<(&Local, &ImmutabilitySpan)>) {
+        print!(
+            "{{{}}}",
+            state
+                .iter()
+                .map(|(local, span)| format!("{:?}: {:?}", local, span))
+                .collect::<Vec<_>>()
+                .join(", ")
+        );
+    }
+}
+
 impl<'mir, 'tcx> ResultsVisitor<'mir, 'tcx> for PrintImmutabilitySpanVisitor {
     type FlowState = ImmutabilitySpanLattice;
 
@@ -390,10 +413,8 @@ impl<'mir, 'tcx> ResultsVisitor<'mir, 'tcx> for PrintImmutabilitySpanVisitor {
         statement: &'mir rustc_middle::mir::Statement<'tcx>,
         location: Location,
     ) {
-        println!(
-            "[{:>2}] {:?} -> {:?}",
-            location.statement_index, state.0, statement
-        );
+        Self::visit(state, location);
+        println!("{:?}", statement);
     }
 
     fn visit_terminator_after_primary_effect(
@@ -402,10 +423,8 @@ impl<'mir, 'tcx> ResultsVisitor<'mir, 'tcx> for PrintImmutabilitySpanVisitor {
         terminator: &'mir rustc_middle::mir::Terminator<'tcx>,
         location: Location,
     ) {
-        println!(
-            "[{:>2}] {:?} -> {:?}",
-            location.statement_index, state.0, terminator.kind
-        );
+        Self::visit(state, location);
+        println!("{:?}", terminator.kind);
     }
 
     fn visit_block_start(

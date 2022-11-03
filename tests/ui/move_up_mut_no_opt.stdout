@@ -1,37 +1,40 @@
 # Analysing main
 # Analysing move_up_mut_no_opt
 # MaybeTopOfBorrowStack Analysis
-[_1, _2] -> Left(Retag([fn entry] _1))
-[_1, _2] -> Left(Retag([fn entry] _2))
-[_1, _2] -> Left((*_1) = const 42_i32)
-[_1, _2] -> Left((*_2) = const 7_i32)
-[_1, _2] -> Left(StorageLive(_4))
-[_1, _2] -> Left(StorageLive(_5))
-[_2] -> Left(_5 = &mut (*_1))
-[_2] -> Left(Retag([2phase] _5))
-[_2] -> Right(Terminator { source_info: SourceInfo { span: $DIR/move_up_mut_no_opt.rs:10:5: 10:14 (#0), scope: scope[0] }, kind: _4 = access(move _5) -> bb1 })
-[_2] -> Left(StorageDead(_5))
-[_2] -> Left(StorageDead(_4))
-[_2] -> Left(_0 = (*_1))
-[_2] -> Right(Terminator { source_info: SourceInfo { span: $DIR/move_up_mut_no_opt.rs:12:2: 12:2 (#0), scope: scope[0] }, kind: return })
+bb0
+[ 0] [_1, _2] -> Retag([fn entry] _1)
+[ 1] [_1, _2] -> Retag([fn entry] _2)
+[ 2] [_1, _2] -> (*_1) = const 42_i32
+[ 3] [_1, _2] -> (*_2) = const 7_i32
+[ 4] [_1, _2] -> StorageLive(_4)
+[ 5] [_1, _2] -> StorageLive(_5)
+[ 6] [_2] -> _5 = &mut (*_1)
+[ 7] [_2] -> Retag([2phase] _5)
+[ 8] [_2] -> _4 = access(move _5) -> bb1
+
+bb1
+[ 0] [_2] -> StorageDead(_5)
+[ 1] [_2] -> StorageDead(_4)
+[ 2] [_2] -> _0 = (*_1)
+[ 3] [_2] -> return
 
 # FindImmutabilitySpans Analysis
 bb0
 [ 0] {} -> Retag([fn entry] _1)
 [ 1] {} -> Retag([fn entry] _2)
 [ 2] {_1: Span(bb0[2])} -> (*_1) = const 42_i32
-[ 3] {_2: Span(bb0[3]), _1: Span(bb0[2])} -> (*_2) = const 7_i32
-[ 4] {_2: Span(bb0[3]), _1: Span(bb0[2])} -> StorageLive(_4)
-[ 5] {_2: Span(bb0[3]), _1: Span(bb0[2])} -> StorageLive(_5)
-[ 6] {_2: Span(bb0[3]), _1: Top} -> _5 = &mut (*_1)
-[ 7] {_2: Span(bb0[3]), _1: Top} -> Retag([2phase] _5)
-[ 8] {_2: Span(bb0[3]), _1: Top} -> _4 = access(move _5) -> bb1
+[ 3] {_1: Span(bb0[2]), _2: Span(bb0[3])} -> (*_2) = const 7_i32
+[ 4] {_1: Span(bb0[2]), _2: Span(bb0[3])} -> StorageLive(_4)
+[ 5] {_1: Span(bb0[2]), _2: Span(bb0[3])} -> StorageLive(_5)
+[ 6] {_1: Top, _2: Span(bb0[3])} -> _5 = &mut (*_1)
+[ 7] {_1: Top, _2: Span(bb0[3])} -> Retag([2phase] _5)
+[ 8] {_1: Top, _2: Span(bb0[3])} -> _4 = access(move _5) -> bb1
 
 bb1
-[ 0] {_2: Span(bb0[3]), _1: Top} -> StorageDead(_5)
-[ 1] {_2: Span(bb0[3]), _1: Top} -> StorageDead(_4)
-[ 2] {_2: Span(bb0[3]), _1: Top} -> _0 = (*_1)
-[ 3] {_2: Span(bb0[3]), _1: Top} -> return
+[ 0] {_1: Top, _2: Span(bb0[3])} -> StorageDead(_5)
+[ 1] {_1: Top, _2: Span(bb0[3])} -> StorageDead(_4)
+[ 2] {_1: Top, _2: Span(bb0[3])} -> _0 = (*_1)
+[ 3] {_1: Top, _2: Span(bb0[3])} -> return
 
 
 # CFG Before
@@ -121,10 +124,11 @@ bb1
 
 # Analysing access
 # MaybeTopOfBorrowStack Analysis
-[_1] -> Left(Retag([fn entry] _1))
-[_1] -> Left((*_1) = const 5_i32)
-[_1] -> Left(_0 = const ())
-[_1] -> Right(Terminator { source_info: SourceInfo { span: $DIR/move_up_mut_no_opt.rs:5:2: 5:2 (#0), scope: scope[0] }, kind: return })
+bb0
+[ 0] [_1] -> Retag([fn entry] _1)
+[ 1] [_1] -> (*_1) = const 5_i32
+[ 2] [_1] -> _0 = const ()
+[ 3] [_1] -> return
 
 # FindImmutabilitySpans Analysis
 bb0
