@@ -12,7 +12,11 @@ use rustc_mir_dataflow::{
     JoinSemiLattice, ResultsVisitor,
 };
 
-pub fn compute_immutability_span<'tcx>(tcx: TyCtxt<'tcx>, body: &Body<'tcx>, retagged: Vec<Local>) {
+pub fn compute_immutability_span<'tcx>(
+    tcx: TyCtxt<'tcx>,
+    body: &Body<'tcx>,
+    retagged: Vec<Local>,
+) -> ImmutabilitySpans {
     println!("# MaybeTopOfBorrowStack Analysis");
     let mut maybe_top_visitor = MaybeTopOfBorrowStackVisitor::new();
     MaybeTopOfBorrowStack { retagged }
@@ -20,7 +24,7 @@ pub fn compute_immutability_span<'tcx>(tcx: TyCtxt<'tcx>, body: &Body<'tcx>, ret
         .iterate_to_fixpoint()
         .visit_reachable_with(body, &mut maybe_top_visitor);
 
-    for (block_index, block) in body.basic_blocks.iter_enumerated() {
+    for (block_index, _block) in body.basic_blocks.iter_enumerated() {
         println!("{:?}", block_index);
         let mut location: Location = block_index.start_location();
 
@@ -52,11 +56,14 @@ pub fn compute_immutability_span<'tcx>(tcx: TyCtxt<'tcx>, body: &Body<'tcx>, ret
     }
 
     println!("# FindImmutabilitySpans Analysis");
+    let mut immutability_span_visitor = ImmutabilitySpanVisitor::new(true);
     FindImmutabilitySpans::new(maybe_top_visitor.top_of_borrow_stack)
         .into_engine(tcx, body)
         .iterate_to_fixpoint()
-        .visit_reachable_with(body, &mut ImmutabilitySpanVisitor);
+        .visit_reachable_with(body, &mut immutability_span_visitor);
     println!();
+
+    return immutability_span_visitor.immutability_spans;
 }
 
 /// A dataflow analysis that tracks whether a given local is on the top of the borrow stack,
@@ -366,41 +373,62 @@ impl<'tcx> Analysis<'tcx> for FindImmutabilitySpans {
 
     fn apply_terminator_effect(
         &self,
-        state: &mut Self::Domain,
-        terminator: &rustc_middle::mir::Terminator<'tcx>,
-        location: Location,
+        _state: &mut Self::Domain,
+        _terminator: &rustc_middle::mir::Terminator<'tcx>,
+        _location: Location,
     ) {
     }
 
     fn apply_call_return_effect(
         &self,
-        state: &mut Self::Domain,
-        block: BasicBlock,
-        return_places: CallReturnPlaces<'_, 'tcx>,
+        _state: &mut Self::Domain,
+        _block: BasicBlock,
+        _return_places: CallReturnPlaces<'_, 'tcx>,
     ) {
     }
 }
 
-struct ImmutabilitySpanVisitor;
+#[derive(Debug)]
+pub struct ImmutabilitySpan(Local, Vec<Location>);
+
+pub type ImmutabilitySpans = HashMap<Location, ImmutabilitySpan>;
+
+struct ImmutabilitySpanVisitor {
+    verbose: bool,
+    immutability_spans: ImmutabilitySpans,
+}
 
 impl ImmutabilitySpanVisitor {
-    fn visit(state: &<Self as ResultsVisitor>::FlowState, location: Location) {
-        let mut state: Vec<_> = state.0.iter().collect();
-        state.sort_unstable_by(|(a, _), (b, _)| a.cmp(b));
-        print!("[{:>2}] ", location.statement_index);
-        Self::print_state(state);
-        print!(" -> ")
+    pub fn new(verbose: bool) -> Self {
+        Self {
+            verbose,
+            immutability_spans: HashMap::new(),
+        }
     }
 
-    fn print_state(state: Vec<(&Local, &ImmutabilitySpanState)>) {
-        print!(
-            "{{{}}}",
-            state
-                .iter()
-                .map(|(local, span)| format!("{:?}: {:?}", local, span))
-                .collect::<Vec<_>>()
-                .join(", ")
-        );
+    fn print_state(state: &<Self as ResultsVisitor>::FlowState, location: Location) {
+        let mut state: Vec<_> = state.0.iter().collect();
+        state.sort_unstable_by(|(a, _), (b, _)| a.cmp(b));
+        let state = state
+            .iter()
+            .map(|(local, span)| format!("{:?}: {:?}", local, span))
+            .collect::<Vec<_>>()
+            .join(", ");
+        print!("[{:>2}] {{{}}} -> ", location.statement_index, state);
+    }
+
+    fn visit(&mut self, state: &<Self as ResultsVisitor>::FlowState, location: Location) {
+        for (local, span) in &state.0 {
+            let ImmutabilitySpanState::Span(assignment) = span else {
+                continue;
+            };
+
+            self.immutability_spans
+                .entry(*assignment)
+                .or_insert(ImmutabilitySpan(*local, Vec::new()))
+                .1
+                .push(location);
+        }
     }
 }
 
@@ -413,8 +441,12 @@ impl<'mir, 'tcx> ResultsVisitor<'mir, 'tcx> for ImmutabilitySpanVisitor {
         statement: &'mir rustc_middle::mir::Statement<'tcx>,
         location: Location,
     ) {
-        Self::visit(state, location);
-        println!("{:?}", statement);
+        if self.verbose {
+            Self::print_state(state, location);
+            println!("{:?}", statement);
+        }
+
+        self.visit(state, location);
     }
 
     fn visit_terminator_after_primary_effect(
@@ -423,8 +455,12 @@ impl<'mir, 'tcx> ResultsVisitor<'mir, 'tcx> for ImmutabilitySpanVisitor {
         terminator: &'mir rustc_middle::mir::Terminator<'tcx>,
         location: Location,
     ) {
-        Self::visit(state, location);
-        println!("{:?}", terminator.kind);
+        if self.verbose {
+            Self::print_state(state, location);
+            println!("{:?}", terminator.kind);
+        }
+
+        self.visit(state, location);
     }
 
     fn visit_block_start(
@@ -433,7 +469,9 @@ impl<'mir, 'tcx> ResultsVisitor<'mir, 'tcx> for ImmutabilitySpanVisitor {
         _block_data: &'mir rustc_middle::mir::BasicBlockData<'tcx>,
         block: BasicBlock,
     ) {
-        println!("{:?}", block);
+        if self.verbose {
+            println!("{:?}", block);
+        }
     }
 
     fn visit_block_end(
@@ -442,6 +480,8 @@ impl<'mir, 'tcx> ResultsVisitor<'mir, 'tcx> for ImmutabilitySpanVisitor {
         _block_data: &'mir rustc_middle::mir::BasicBlockData<'tcx>,
         _block: BasicBlock,
     ) {
-        println!();
+        if self.verbose {
+            println!();
+        }
     }
 }
