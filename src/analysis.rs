@@ -55,7 +55,7 @@ pub fn compute_immutability_span<'tcx>(tcx: TyCtxt<'tcx>, body: &Body<'tcx>, ret
     FindImmutabilitySpans::new(maybe_top_visitor.top_of_borrow_stack)
         .into_engine(tcx, body)
         .iterate_to_fixpoint()
-        .visit_reachable_with(body, &mut PrintImmutabilitySpanVisitor);
+        .visit_reachable_with(body, &mut ImmutabilitySpanVisitor);
     println!();
 }
 
@@ -251,39 +251,39 @@ impl<'mir, 'tcx> ResultsVisitor<'mir, 'tcx> for MaybeTopOfBorrowStackVisitor {
 }
 
 #[derive(Clone, PartialEq, Eq, Debug)]
-enum ImmutabilitySpan {
+enum ImmutabilitySpanState {
     Top,
     Span(Location),
-    // Bottom, // Bottom is represented by not being present in the HashMap in ImmutabilitySetLattice.
+    // Bottom, // Bottom is represented by not being present in the HashMap in ImmutabilitySpanLattice.
 }
 
 #[derive(Clone, PartialEq, Eq, Debug)]
-struct ImmutabilitySpanLattice(HashMap<Local, ImmutabilitySpan>);
+struct ImmutabilitySpanLattice(HashMap<Local, ImmutabilitySpanState>);
 
 impl JoinSemiLattice for ImmutabilitySpanLattice {
     fn join(&mut self, other: &Self) -> bool {
         let mut modified_self = false;
 
-        for (local, other_set) in other.0.iter() {
-            let self_set = self.0.get(local);
-            match (self_set, other_set) {
+        for (local, other_span) in other.0.iter() {
+            let self_span = self.0.get(local);
+            match (self_span, other_span) {
                 // top join x = top
-                (Some(ImmutabilitySpan::Top), _) => {}
+                (Some(ImmutabilitySpanState::Top), _) => {}
                 // bottom join x = x
                 (None, _) => {
-                    self.0.insert(*local, other_set.clone());
+                    self.0.insert(*local, other_span.clone());
                     modified_self = true;
                 }
                 // x join top = top
-                (_, ImmutabilitySpan::Top) => {
-                    self.0.insert(*local, ImmutabilitySpan::Top);
+                (_, ImmutabilitySpanState::Top) => {
+                    self.0.insert(*local, ImmutabilitySpanState::Top);
                     modified_self = true;
                 }
                 // Span(x) join Span(x) = Span(x)
                 // Span(x) join Span(y) = top
-                (Some(ImmutabilitySpan::Span(x)), ImmutabilitySpan::Span(y)) => {
+                (Some(ImmutabilitySpanState::Span(x)), ImmutabilitySpanState::Span(y)) => {
                     if x != y {
-                        self.0.insert(*local, ImmutabilitySpan::Top);
+                        self.0.insert(*local, ImmutabilitySpanState::Top);
                         modified_self = true;
                     }
                 }
@@ -345,7 +345,7 @@ impl<'tcx> Analysis<'tcx> for FindImmutabilitySpans {
         }
 
         for local in deletions {
-            state.0.insert(local, ImmutabilitySpan::Top);
+            state.0.insert(local, ImmutabilitySpanState::Top);
         }
 
         let StatementKind::Assign(ref assignment) = statement.kind else {
@@ -360,7 +360,7 @@ impl<'tcx> Analysis<'tcx> for FindImmutabilitySpans {
         let local_on_top = self.top_of_borrow_stack.contains(&(local, location));
 
         if local_on_top {
-            state.0.insert(local, ImmutabilitySpan::Span(location));
+            state.0.insert(local, ImmutabilitySpanState::Span(location));
         }
     }
 
@@ -381,9 +381,9 @@ impl<'tcx> Analysis<'tcx> for FindImmutabilitySpans {
     }
 }
 
-struct PrintImmutabilitySpanVisitor;
+struct ImmutabilitySpanVisitor;
 
-impl PrintImmutabilitySpanVisitor {
+impl ImmutabilitySpanVisitor {
     fn visit(state: &<Self as ResultsVisitor>::FlowState, location: Location) {
         let mut state: Vec<_> = state.0.iter().collect();
         state.sort_unstable_by(|(a, _), (b, _)| a.cmp(b));
@@ -392,7 +392,7 @@ impl PrintImmutabilitySpanVisitor {
         print!(" -> ")
     }
 
-    fn print_state(state: Vec<(&Local, &ImmutabilitySpan)>) {
+    fn print_state(state: Vec<(&Local, &ImmutabilitySpanState)>) {
         print!(
             "{{{}}}",
             state
@@ -404,7 +404,7 @@ impl PrintImmutabilitySpanVisitor {
     }
 }
 
-impl<'mir, 'tcx> ResultsVisitor<'mir, 'tcx> for PrintImmutabilitySpanVisitor {
+impl<'mir, 'tcx> ResultsVisitor<'mir, 'tcx> for ImmutabilitySpanVisitor {
     type FlowState = ImmutabilitySpanLattice;
 
     fn visit_statement_after_primary_effect(
