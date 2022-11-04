@@ -713,7 +713,8 @@ bb18
         statements: [
             Retag([fn entry] _1),
             Retag([fn entry] _2),
-            (*_1) = const 42_i32,
+            _38 = const 42_i32,
+            (*_1) = _38,
             StorageLive(_5),
             StorageLive(_6),
             _6 = _3,
@@ -808,7 +809,7 @@ bb18
     BasicBlockData {
         statements: [
             StorageLive(_19),
-            _19 = (*_1),
+            _19 = _38,
             _7 = move _19,
             StorageDead(_19),
             _13 = const (),
@@ -850,7 +851,8 @@ bb18
             StorageDead(_11),
             StorageDead(_9),
             StorageDead(_8),
-            (*_1) = const 5_i32,
+            _40 = const 5_i32,
+            (*_1) = _40,
             StorageLive(_20),
             StorageLive(_21),
             _21 = (*_2),
@@ -870,7 +872,8 @@ bb18
     },
     BasicBlockData {
         statements: [
-            (*_2) = const 1_i32,
+            _37 = const 1_i32,
+            (*_2) = _37,
             _5 = const (),
         ],
         terminator: Some(
@@ -917,7 +920,8 @@ bb18
     },
     BasicBlockData {
         statements: [
-            (*_2) = const 7_i32,
+            _35 = const 7_i32,
+            (*_2) = _35,
             StorageLive(_22),
             StorageLive(_23),
             _23 = &mut (*_1),
@@ -1013,7 +1017,8 @@ bb18
     },
     BasicBlockData {
         statements: [
-            (*_2) = const 11_i32,
+            _39 = const 11_i32,
+            (*_2) = _39,
             (*_1) = const 17_i32,
             _28 = const (),
             StorageDead(_31),
@@ -1074,7 +1079,8 @@ bb18
         statements: [
             StorageDead(_6),
             StorageDead(_5),
-            (*_2) = const 12_i32,
+            _36 = const 12_i32,
+            (*_2) = _36,
             _0 = (*_1),
         ],
         terminator: Some(
@@ -1131,7 +1137,8 @@ bb0
     BasicBlockData {
         statements: [
             Retag([fn entry] _1),
-            (*_1) = const 5_i32,
+            _2 = const 5_i32,
+            (*_1) = _2,
             _0 = const (),
         ],
         terminator: Some(

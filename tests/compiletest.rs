@@ -30,7 +30,7 @@ fn run_tests(mode: &str, path: &str, custom_args: Vec<String>) {
         config.compile_lib_path = PathBuf::from(lib_path);
     }
 
-    // config.bless = true;
+    config.bless = true;
 
     compiletest::run_tests(&config);
 }

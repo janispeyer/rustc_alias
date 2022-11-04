@@ -3,6 +3,7 @@ use rustc_middle::mir::*;
 use rustc_middle::ty::TyCtxt;
 
 use crate::analysis::compute_immutability_span;
+use crate::optimisation;
 
 pub struct Alias;
 
@@ -22,10 +23,12 @@ impl<'tcx> MirPass<'tcx> for Alias {
             return; // Abort pass early, if there is nothing to do.
         }
 
-        let _immutability_spans = compute_immutability_span(tcx, body, retagged.clone());
+        let immutability_spans = compute_immutability_span(tcx, body, retagged.clone());
 
         println!("# CFG Before");
         println!("{:#?}", body.basic_blocks.as_mut());
+
+        optimisation::move_up(tcx, body, immutability_spans);
 
         println!("# CFG After");
         println!("{:#?}", body.basic_blocks.as_mut());

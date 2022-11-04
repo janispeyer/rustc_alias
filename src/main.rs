@@ -10,6 +10,7 @@ extern crate rustc_session;
 
 mod alias;
 mod analysis;
+mod optimisation;
 
 use alias::Alias;
 use rustc_driver::{catch_with_exit_code, Callbacks, RunCompiler};

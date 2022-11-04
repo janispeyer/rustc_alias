@@ -47,9 +47,11 @@ bb0
         statements: [
             Retag([fn entry] _1),
             Retag([fn entry] _2),
-            (*_1) = const 42_i32,
-            (*_2) = const 7_i32,
-            _0 = (*_1),
+            _5 = const 42_i32,
+            (*_1) = _5,
+            _4 = const 7_i32,
+            (*_2) = _4,
+            _0 = _5,
         ],
         terminator: Some(
             Terminator {

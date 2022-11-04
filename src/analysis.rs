@@ -389,7 +389,7 @@ impl<'tcx> Analysis<'tcx> for FindImmutabilitySpans {
 }
 
 #[derive(Debug)]
-pub struct ImmutabilitySpan(Local, Vec<Location>);
+pub struct ImmutabilitySpan(pub Local, pub Vec<Location>);
 
 pub type ImmutabilitySpans = HashMap<Location, ImmutabilitySpan>;
 
