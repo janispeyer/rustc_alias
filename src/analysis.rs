@@ -150,16 +150,19 @@ where
 
         match rvalue {
             Rvalue::AddressOf(_mt, borrowed_place) => {
-                if !borrowed_place.is_indirect() {
-                    self.trans.kill(borrowed_place.local);
-                }
+                self.trans.kill(borrowed_place.local);
             }
 
             Rvalue::Ref(_, _kind, borrowed_place) => {
                 self.trans.kill(borrowed_place.local);
             }
 
-            Rvalue::Cast(..)              // we probably have to cover casts: e.g. reference to pointer (TODO)
+            Rvalue::Cast(_, Operand::Copy(place), _) |
+            Rvalue::Cast(_, Operand::Move(place), _) => {
+                self.trans.kill(place.local);
+            }
+
+            Rvalue::Cast(..)              // x as y
             | Rvalue::ShallowInitBox(..)  // performs transmute --> we have to handle this (TODO)
             | Rvalue::Use(..)
             | Rvalue::ThreadLocalRef(..)
