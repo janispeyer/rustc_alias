@@ -28,6 +28,10 @@ struct MoveUpOptimisation<'tcx, 'a> {
 
 impl<'tcx, 'a> MoveUpOptimisation<'tcx, 'a> {
     pub fn run(mut self, immutability_spans: ImmutabilitySpans) {
+        // Sorting by location ensures deterministic output.
+        let mut immutability_spans: Vec<_> = immutability_spans.into_iter().collect();
+        immutability_spans.sort_unstable_by(|(a, _), (b, _)| a.cmp(b));
+
         for (location, span) in immutability_spans {
             self.move_up_span(location, span);
         }

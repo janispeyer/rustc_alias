@@ -713,8 +713,8 @@ bb18
         statements: [
             Retag([fn entry] _1),
             Retag([fn entry] _2),
-            _38 = const 42_i32,
-            (*_1) = _38,
+            _35 = const 42_i32,
+            (*_1) = _35,
             StorageLive(_5),
             StorageLive(_6),
             _6 = _3,
@@ -809,7 +809,7 @@ bb18
     BasicBlockData {
         statements: [
             StorageLive(_19),
-            _19 = _38,
+            _19 = _35,
             _7 = move _19,
             StorageDead(_19),
             _13 = const (),
@@ -851,8 +851,8 @@ bb18
             StorageDead(_11),
             StorageDead(_9),
             StorageDead(_8),
-            _40 = const 5_i32,
-            (*_1) = _40,
+            _36 = const 5_i32,
+            (*_1) = _36,
             StorageLive(_20),
             StorageLive(_21),
             _21 = (*_2),
@@ -920,8 +920,8 @@ bb18
     },
     BasicBlockData {
         statements: [
-            _35 = const 7_i32,
-            (*_2) = _35,
+            _38 = const 7_i32,
+            (*_2) = _38,
             StorageLive(_22),
             StorageLive(_23),
             _23 = &mut (*_1),
@@ -1079,8 +1079,8 @@ bb18
         statements: [
             StorageDead(_6),
             StorageDead(_5),
-            _36 = const 12_i32,
-            (*_2) = _36,
+            _40 = const 12_i32,
+            (*_2) = _40,
             _0 = (*_1),
         ],
         terminator: Some(

@@ -12,7 +12,7 @@ use rustc_mir_dataflow::{
     JoinSemiLattice, ResultsVisitor,
 };
 
-pub fn compute_immutability_span<'tcx>(
+pub fn compute_immutability_spans<'tcx>(
     tcx: TyCtxt<'tcx>,
     body: &Body<'tcx>,
     retagged: Vec<Local>,
