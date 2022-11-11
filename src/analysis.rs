@@ -18,6 +18,12 @@ pub fn compute_immutability_spans<'tcx>(
     retagged: Vec<Local>,
     verbose: bool,
 ) -> ImmutabilitySpans {
+    // Only consider mutable references in this analysis.
+    let retagged = retagged
+        .into_iter()
+        .filter(|local| body.local_decls[*local].ty.ref_mutability() == Some(Mutability::Mut))
+        .collect();
+
     println!("# MaybeTopOfBorrowStack Analysis");
     let mut maybe_top_visitor = MaybeTopOfBorrowStackVisitor::new();
     MaybeTopOfBorrowStack { retagged }
