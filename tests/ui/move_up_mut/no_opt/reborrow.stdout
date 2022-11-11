@@ -1,13 +1,13 @@
 # Analysing main
-# Analysing move_up_mut_no_opt3
+# Analysing move_up_mut_no_opt2
 # MaybeTopOfBorrowStack Analysis
 bb0
 [ 0] [_1, _2] -> Retag([fn entry] _1)
 [ 1] [_1, _2] -> Retag([fn entry] _2)
 [ 2] [_1, _2] -> (*_1) = const 42_i32
 [ 3] [_1, _2] -> StorageLive(_4)
-[ 4] [_2] -> _4 = &raw mut (*_1)
-[ 5] [_2] -> Retag([raw] _4)
+[ 4] [_2] -> _4 = &mut (*_1)
+[ 5] [_2] -> Retag(_4)
 [ 6] [_2] -> (*_2) = const 7_i32
 [ 7] [_2] -> _0 = (*_1)
 [ 8] [_2] -> StorageDead(_4)
@@ -19,8 +19,8 @@ bb0
 [ 1] {} -> Retag([fn entry] _2)
 [ 2] {_1: Span(bb0[2])} -> (*_1) = const 42_i32
 [ 3] {_1: Span(bb0[2])} -> StorageLive(_4)
-[ 4] {_1: Top} -> _4 = &raw mut (*_1)
-[ 5] {_1: Top} -> Retag([raw] _4)
+[ 4] {_1: Top} -> _4 = &mut (*_1)
+[ 5] {_1: Top} -> Retag(_4)
 [ 6] {_1: Top, _2: Span(bb0[6])} -> (*_2) = const 7_i32
 [ 7] {_1: Top, _2: Span(bb0[6])} -> _0 = (*_1)
 [ 8] {_1: Top, _2: Span(bb0[6])} -> StorageDead(_4)
@@ -35,8 +35,8 @@ bb0
             Retag([fn entry] _2),
             (*_1) = const 42_i32,
             StorageLive(_4),
-            _4 = &raw mut (*_1),
-            Retag([raw] _4),
+            _4 = &mut (*_1),
+            Retag(_4),
             (*_2) = const 7_i32,
             _0 = (*_1),
             StorageDead(_4),
@@ -44,7 +44,7 @@ bb0
         terminator: Some(
             Terminator {
                 source_info: SourceInfo {
-                    span: $DIR/move_up_mut_no_opt3.rs:8:2: 8:2 (#0),
+                    span: $DIR/reborrow.rs:8:2: 8:2 (#0),
                     scope: scope[0],
                 },
                 kind: return,
@@ -62,8 +62,8 @@ bb0
             _5 = const 42_i32,
             (*_1) = _5,
             StorageLive(_4),
-            _4 = &raw mut (*_1),
-            Retag([raw] _4),
+            _4 = &mut (*_1),
+            Retag(_4),
             _6 = const 7_i32,
             (*_2) = _6,
             _0 = (*_1),
@@ -72,7 +72,7 @@ bb0
         terminator: Some(
             Terminator {
                 source_info: SourceInfo {
-                    span: $DIR/move_up_mut_no_opt3.rs:8:2: 8:2 (#0),
+                    span: $DIR/reborrow.rs:8:2: 8:2 (#0),
                     scope: scope[0],
                 },
                 kind: return,
