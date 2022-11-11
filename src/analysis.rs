@@ -16,6 +16,7 @@ pub fn compute_immutability_spans<'tcx>(
     tcx: TyCtxt<'tcx>,
     body: &Body<'tcx>,
     retagged: Vec<Local>,
+    verbose: bool,
 ) -> ImmutabilitySpans {
     println!("# MaybeTopOfBorrowStack Analysis");
     let mut maybe_top_visitor = MaybeTopOfBorrowStackVisitor::new();
@@ -24,6 +25,22 @@ pub fn compute_immutability_spans<'tcx>(
         .iterate_to_fixpoint()
         .visit_reachable_with(body, &mut maybe_top_visitor);
 
+    if verbose {
+        print_top_of_borrow_stack(body, &maybe_top_visitor.top_of_borrow_stack);
+    }
+
+    println!("# FindImmutabilitySpans Analysis");
+    let mut immutability_span_visitor = ImmutabilitySpanVisitor::new(verbose);
+    FindImmutabilitySpans::new(maybe_top_visitor.top_of_borrow_stack)
+        .into_engine(tcx, body)
+        .iterate_to_fixpoint()
+        .visit_reachable_with(body, &mut immutability_span_visitor);
+    println!();
+
+    return immutability_span_visitor.immutability_spans;
+}
+
+fn print_top_of_borrow_stack(body: &Body, top_of_borrow_stack: &TopOfBorrowStackLocations) {
     for (block_index, _block) in body.basic_blocks.iter_enumerated() {
         println!("{:?}", block_index);
         let mut location: Location = block_index.start_location();
@@ -32,8 +49,7 @@ pub fn compute_immutability_spans<'tcx>(
             print!("[{:>2}] ", location.statement_index);
             let statement = body.stmt_at(location);
 
-            let mut top_locals: Vec<_> = maybe_top_visitor
-                .top_of_borrow_stack
+            let mut top_locals: Vec<_> = top_of_borrow_stack
                 .iter()
                 .filter(|(_, l)| *l == location)
                 .map(|(local, _)| local)
@@ -54,20 +70,10 @@ pub fn compute_immutability_spans<'tcx>(
         }
         println!()
     }
-
-    println!("# FindImmutabilitySpans Analysis");
-    let mut immutability_span_visitor = ImmutabilitySpanVisitor::new(true);
-    FindImmutabilitySpans::new(maybe_top_visitor.top_of_borrow_stack)
-        .into_engine(tcx, body)
-        .iterate_to_fixpoint()
-        .visit_reachable_with(body, &mut immutability_span_visitor);
-    println!();
-
-    return immutability_span_visitor.immutability_spans;
 }
 
-/// A dataflow analysis that tracks whether a given local is on the top of the borrow stack,
-/// given the local is a reference.
+/// A dataflow analysis that tracks whether a given local is on the top mutable of the borrow stack,
+/// given the local is a reference. Immutable borrows may be above it on the borrow stack.
 pub struct MaybeTopOfBorrowStack {
     retagged: Vec<Local>,
 }
@@ -83,7 +89,6 @@ impl<'tcx> AnalysisDomain<'tcx> for MaybeTopOfBorrowStack {
     const NAME: &'static str = "maybe_top_of_borrow_stack";
 
     fn bottom_value(&self, body: &Body<'tcx>) -> Self::Domain {
-        // bottom = TODO
         BitSet::new_empty(body.local_decls().len())
     }
 
@@ -153,12 +158,12 @@ where
                 self.trans.kill(borrowed_place.local);
             }
 
+            Rvalue::Ref(_, BorrowKind::Shared | BorrowKind::Unique, _) => {} // Allow immutable borrows.
             Rvalue::Ref(_, _kind, borrowed_place) => {
                 self.trans.kill(borrowed_place.local);
             }
 
-            Rvalue::Cast(_, Operand::Copy(place), _) |
-            Rvalue::Cast(_, Operand::Move(place), _) => {
+            Rvalue::Cast(_, Operand::Copy(place) | Operand::Move(place), _) => {
                 self.trans.kill(place.local);
             }
 

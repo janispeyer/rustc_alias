@@ -23,7 +23,7 @@ impl<'tcx> MirPass<'tcx> for Alias {
             return; // Abort pass early, if there is nothing to do.
         }
 
-        let immutability_spans = compute_immutability_spans(tcx, body, retagged.clone());
+        let immutability_spans = compute_immutability_spans(tcx, body, retagged.clone(), true);
 
         println!("# CFG Before");
         println!("{:#?}", body.basic_blocks.as_mut());
