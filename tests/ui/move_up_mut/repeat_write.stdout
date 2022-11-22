@@ -1,0 +1,150 @@
+# Analysing main
+# Analysing repeat_write
+# MaybeTopOfBorrowStack Analysis
+bb0
+[ 0] [_1, _2] -> Retag([fn entry] _1)
+[ 1] [_1, _2] -> Retag([fn entry] _2)
+[ 2] [_1, _2] -> (*_1) = const 42_i32
+[ 3] [_1, _2] -> (*_2) = const 7_i32
+[ 4] [_1, _2] -> StorageLive(_4)
+[ 5] [_1, _2] -> _4 = (*_1)
+[ 6] [_1, _2] -> (*_1) = move _4
+[ 7] [_1, _2] -> StorageDead(_4)
+[ 8] [_1, _2] -> (*_2) = const 8_i32
+[ 9] [_1, _2] -> StorageLive(_5)
+[10] [_1, _2] -> _5 = (*_1)
+[11] [_1, _2] -> _6 = CheckedAdd(_5, const 1_i32)
+[12] [_1, _2] -> assert(!move (_6.1: bool), "attempt to compute `{} + {}`, which would overflow", move _5, const 1_i32) -> bb1
+
+bb1
+[ 0] [_1, _2] -> (*_1) = move (_6.0: i32)
+[ 1] [_1, _2] -> StorageDead(_5)
+[ 2] [_1, _2] -> (*_2) = const 9_i32
+[ 3] [_1, _2] -> _0 = (*_1)
+[ 4] [_1, _2] -> return
+
+# FindImmutabilitySpans Analysis
+bb0
+[ 0] {} -> Retag([fn entry] _1)
+[ 1] {} -> Retag([fn entry] _2)
+[ 2] {_1: Span(bb0[2])} -> (*_1) = const 42_i32
+[ 3] {_1: Span(bb0[2]), _2: Span(bb0[3])} -> (*_2) = const 7_i32
+[ 4] {_1: Span(bb0[2]), _2: Span(bb0[3])} -> StorageLive(_4)
+[ 5] {_1: Span(bb0[2]), _2: Span(bb0[3])} -> _4 = (*_1)
+[ 6] {_1: Span(bb0[6]), _2: Span(bb0[3])} -> (*_1) = move _4
+[ 7] {_1: Span(bb0[6]), _2: Span(bb0[3])} -> StorageDead(_4)
+[ 8] {_1: Span(bb0[6]), _2: Span(bb0[8])} -> (*_2) = const 8_i32
+[ 9] {_1: Span(bb0[6]), _2: Span(bb0[8])} -> StorageLive(_5)
+[10] {_1: Span(bb0[6]), _2: Span(bb0[8])} -> _5 = (*_1)
+[11] {_1: Span(bb0[6]), _2: Span(bb0[8])} -> _6 = CheckedAdd(_5, const 1_i32)
+[12] {_1: Span(bb0[6]), _2: Span(bb0[8])} -> assert(!move (_6.1: bool), "attempt to compute `{} + {}`, which would overflow", move _5, const 1_i32) -> bb1
+
+bb1
+[ 0] {_1: Span(bb1[0]), _2: Span(bb0[8])} -> (*_1) = move (_6.0: i32)
+[ 1] {_1: Span(bb1[0]), _2: Span(bb0[8])} -> StorageDead(_5)
+[ 2] {_1: Span(bb1[0]), _2: Span(bb1[2])} -> (*_2) = const 9_i32
+[ 3] {_1: Span(bb1[0]), _2: Span(bb1[2])} -> _0 = (*_1)
+[ 4] {_1: Span(bb1[0]), _2: Span(bb1[2])} -> return
+
+
+# CFG Before
+[
+    BasicBlockData {
+        statements: [
+            Retag([fn entry] _1),
+            Retag([fn entry] _2),
+            (*_1) = const 42_i32,
+            (*_2) = const 7_i32,
+            StorageLive(_4),
+            _4 = (*_1),
+            (*_1) = move _4,
+            StorageDead(_4),
+            (*_2) = const 8_i32,
+            StorageLive(_5),
+            _5 = (*_1),
+            _6 = CheckedAdd(_5, const 1_i32),
+        ],
+        terminator: Some(
+            Terminator {
+                source_info: SourceInfo {
+                    span: $DIR/repeat_write.rs:8:10: 8:16 (#0),
+                    scope: scope[0],
+                },
+                kind: assert(!move (_6.1: bool), "attempt to compute `{} + {}`, which would overflow", move _5, const 1_i32) -> bb1,
+            },
+        ),
+        is_cleanup: false,
+    },
+    BasicBlockData {
+        statements: [
+            (*_1) = move (_6.0: i32),
+            StorageDead(_5),
+            (*_2) = const 9_i32,
+            _0 = (*_1),
+        ],
+        terminator: Some(
+            Terminator {
+                source_info: SourceInfo {
+                    span: $DIR/repeat_write.rs:11:2: 11:2 (#0),
+                    scope: scope[0],
+                },
+                kind: return,
+            },
+        ),
+        is_cleanup: false,
+    },
+]
+# CFG After
+[
+    BasicBlockData {
+        statements: [
+            Retag([fn entry] _1),
+            Retag([fn entry] _2),
+            _7 = const 42_i32,
+            (*_1) = _7,
+            _8 = const 7_i32,
+            (*_2) = _8,
+            StorageLive(_4),
+            _4 = _7,
+            _9 = move _4,
+            (*_1) = _9,
+            StorageDead(_4),
+            _10 = const 8_i32,
+            (*_2) = _10,
+            StorageLive(_5),
+            _5 = _9,
+            _6 = CheckedAdd(_5, const 1_i32),
+        ],
+        terminator: Some(
+            Terminator {
+                source_info: SourceInfo {
+                    span: $DIR/repeat_write.rs:8:10: 8:16 (#0),
+                    scope: scope[0],
+                },
+                kind: assert(!move (_6.1: bool), "attempt to compute `{} + {}`, which would overflow", move _5, const 1_i32) -> bb1,
+            },
+        ),
+        is_cleanup: false,
+    },
+    BasicBlockData {
+        statements: [
+            _11 = move (_6.0: i32),
+            (*_1) = _11,
+            StorageDead(_5),
+            _12 = const 9_i32,
+            (*_2) = _12,
+            _0 = _11,
+        ],
+        terminator: Some(
+            Terminator {
+                source_info: SourceInfo {
+                    span: $DIR/repeat_write.rs:11:2: 11:2 (#0),
+                    scope: scope[0],
+                },
+                kind: return,
+            },
+        ),
+        is_cleanup: false,
+    },
+]
+

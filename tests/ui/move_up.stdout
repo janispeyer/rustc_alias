@@ -469,10 +469,10 @@ bb6
 # Analysing main::{closure#0}
 # MaybeTopOfBorrowStack Analysis
 bb0
-[ 0] [_1] -> Retag([fn entry] _1)
-[ 1] [_1] -> Retag([fn entry] _2)
-[ 2] [_1] -> _0 = const ()
-[ 3] [_1] -> return
+[ 0] [] -> Retag([fn entry] _1)
+[ 1] [] -> Retag([fn entry] _2)
+[ 2] [] -> _0 = const ()
+[ 3] [] -> return
 
 # FindImmutabilitySpans Analysis
 bb0

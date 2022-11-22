@@ -21,7 +21,10 @@ pub fn compute_immutability_spans<'tcx>(
     // Only consider mutable references in this analysis.
     let retagged = retagged
         .into_iter()
-        .filter(|local| body.local_decls[*local].ty.ref_mutability() == Some(Mutability::Mut))
+        .filter(|local| match body.local_decls[*local].ty.kind() {
+            rustc_type_ir::TyKind::Ref(_, ty, Mutability::Mut) => ty.is_primitive(),
+            _ => false,
+        })
         .collect();
 
     println!("# MaybeTopOfBorrowStack Analysis");
