@@ -1,0 +1,176 @@
+# Analysing main
+# Analysing reborrow
+# MaybeTopOfBorrowStack Analysis
+bb0
+[ 0] [_1, _2] -> Retag([fn entry] _1)
+[ 1] [_1, _2] -> Retag([fn entry] _2)
+[ 2] [_1, _2] -> (*_1) = const 7_i32
+[ 3] [_1, _2] -> StorageLive(_4)
+[ 4] [_1, _2] -> StorageLive(_5)
+[ 5] [_2] -> _5 = &mut (*_1)
+[ 6] [_2] -> Retag([2phase] _5)
+[ 7] [_2] -> _4 = std::mem::replace::<i32>(move _5, const 42_i32) -> bb1
+
+bb1
+[ 0] [_2] -> StorageDead(_5)
+[ 1] [_2] -> StorageLive(_6)
+[ 2] [_2] -> _6 = _4
+[ 3] [_2] -> _7 = CheckedAdd(_6, const 1_i32)
+[ 4] [_2] -> assert(!move (_7.1: bool), "attempt to compute `{} + {}`, which would overflow", move _6, const 1_i32) -> bb2
+
+bb2
+[ 0] [_2] -> (*_2) = move (_7.0: i32)
+[ 1] [_2] -> StorageDead(_6)
+[ 2] [_2] -> _0 = (*_1)
+[ 3] [_2] -> StorageDead(_4)
+[ 4] [_2] -> return
+
+# FindImmutabilitySpans Analysis
+bb0
+[ 0] {} -> Retag([fn entry] _1)
+[ 1] {} -> Retag([fn entry] _2)
+[ 2] {_1: Span(bb0[2])} -> (*_1) = const 7_i32
+[ 3] {_1: Span(bb0[2])} -> StorageLive(_4)
+[ 4] {_1: Span(bb0[2])} -> StorageLive(_5)
+[ 5] {_1: Top} -> _5 = &mut (*_1)
+[ 6] {_1: Top} -> Retag([2phase] _5)
+[ 7] {_1: Top} -> _4 = std::mem::replace::<i32>(move _5, const 42_i32) -> bb1
+
+bb1
+[ 0] {_1: Top} -> StorageDead(_5)
+[ 1] {_1: Top} -> StorageLive(_6)
+[ 2] {_1: Top} -> _6 = _4
+[ 3] {_1: Top} -> _7 = CheckedAdd(_6, const 1_i32)
+[ 4] {_1: Top} -> assert(!move (_7.1: bool), "attempt to compute `{} + {}`, which would overflow", move _6, const 1_i32) -> bb2
+
+bb2
+[ 0] {_1: Top, _2: Span(bb2[0])} -> (*_2) = move (_7.0: i32)
+[ 1] {_1: Top, _2: Span(bb2[0])} -> StorageDead(_6)
+[ 2] {_1: Top, _2: Span(bb2[0])} -> _0 = (*_1)
+[ 3] {_1: Top, _2: Span(bb2[0])} -> StorageDead(_4)
+[ 4] {_1: Top, _2: Span(bb2[0])} -> return
+
+
+# CFG Before
+[
+    BasicBlockData {
+        statements: [
+            Retag([fn entry] _1),
+            Retag([fn entry] _2),
+            (*_1) = const 7_i32,
+            StorageLive(_4),
+            StorageLive(_5),
+            _5 = &mut (*_1),
+            Retag([2phase] _5),
+        ],
+        terminator: Some(
+            Terminator {
+                source_info: SourceInfo {
+                    span: $DIR/mem_replace.rs:5:13: 5:37 (#0),
+                    scope: scope[0],
+                },
+                kind: _4 = std::mem::replace::<i32>(move _5, const 42_i32) -> bb1,
+            },
+        ),
+        is_cleanup: false,
+    },
+    BasicBlockData {
+        statements: [
+            StorageDead(_5),
+            StorageLive(_6),
+            _6 = _4,
+            _7 = CheckedAdd(_6, const 1_i32),
+        ],
+        terminator: Some(
+            Terminator {
+                source_info: SourceInfo {
+                    span: $DIR/mem_replace.rs:6:10: 6:15 (#0),
+                    scope: scope[1],
+                },
+                kind: assert(!move (_7.1: bool), "attempt to compute `{} + {}`, which would overflow", move _6, const 1_i32) -> bb2,
+            },
+        ),
+        is_cleanup: false,
+    },
+    BasicBlockData {
+        statements: [
+            (*_2) = move (_7.0: i32),
+            StorageDead(_6),
+            _0 = (*_1),
+            StorageDead(_4),
+        ],
+        terminator: Some(
+            Terminator {
+                source_info: SourceInfo {
+                    span: $DIR/mem_replace.rs:8:2: 8:2 (#0),
+                    scope: scope[0],
+                },
+                kind: return,
+            },
+        ),
+        is_cleanup: false,
+    },
+]
+# CFG After
+[
+    BasicBlockData {
+        statements: [
+            Retag([fn entry] _1),
+            Retag([fn entry] _2),
+            _8 = const 7_i32,
+            (*_1) = _8,
+            StorageLive(_4),
+            StorageLive(_5),
+            _5 = &mut (*_1),
+            Retag([2phase] _5),
+        ],
+        terminator: Some(
+            Terminator {
+                source_info: SourceInfo {
+                    span: $DIR/mem_replace.rs:5:13: 5:37 (#0),
+                    scope: scope[0],
+                },
+                kind: _4 = std::mem::replace::<i32>(move _5, const 42_i32) -> bb1,
+            },
+        ),
+        is_cleanup: false,
+    },
+    BasicBlockData {
+        statements: [
+            StorageDead(_5),
+            StorageLive(_6),
+            _6 = _4,
+            _7 = CheckedAdd(_6, const 1_i32),
+        ],
+        terminator: Some(
+            Terminator {
+                source_info: SourceInfo {
+                    span: $DIR/mem_replace.rs:6:10: 6:15 (#0),
+                    scope: scope[1],
+                },
+                kind: assert(!move (_7.1: bool), "attempt to compute `{} + {}`, which would overflow", move _6, const 1_i32) -> bb2,
+            },
+        ),
+        is_cleanup: false,
+    },
+    BasicBlockData {
+        statements: [
+            _9 = move (_7.0: i32),
+            (*_2) = _9,
+            StorageDead(_6),
+            _0 = (*_1),
+            StorageDead(_4),
+        ],
+        terminator: Some(
+            Terminator {
+                source_info: SourceInfo {
+                    span: $DIR/mem_replace.rs:8:2: 8:2 (#0),
+                    scope: scope[0],
+                },
+                kind: return,
+            },
+        ),
+        is_cleanup: false,
+    },
+]
+

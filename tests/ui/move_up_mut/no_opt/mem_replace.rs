@@ -1,9 +1,9 @@
 // compile-flags: -Zmir-emit-retag
 
 fn reborrow(x: &mut i32, y: &mut i32) -> i32 {
-    *x = 42;
-    let z = &mut *x;
-    *y = 7;
+    *x = 7;
+    let z = std::mem::replace(x, 42);
+    *y = z + 1;
     return *x;
 }
 

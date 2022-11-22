@@ -1,5 +1,5 @@
 # Analysing main
-# Analysing move_up_mut_no_opt3
+# Analysing cast_to_pointer
 # MaybeTopOfBorrowStack Analysis
 bb0
 [ 0] [_1, _2] -> Retag([fn entry] _1)

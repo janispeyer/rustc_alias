@@ -129,6 +129,13 @@ impl<'tcx> GenKillAnalysis<'tcx> for MaybeTopOfBorrowStack {
     ) {
         self.transfer_function(trans)
             .visit_terminator(terminator, location);
+
+        match terminator.kind {
+            TerminatorKind::InlineAsm { .. } => {
+                trans.kill_all(self.retagged.clone());
+            }
+            _ => {}
+        }
     }
 
     fn call_return_effect(
@@ -172,12 +179,13 @@ where
                 self.trans.kill(borrowed_place.local);
             }
 
-            Rvalue::Cast(_, Operand::Copy(place) | Operand::Move(place), _) => {
+            Rvalue::Cast(_, Operand::Copy(place) | Operand::Move(place), _)
+            | Rvalue::ShallowInitBox(Operand::Copy(place) | Operand::Move(place), _) => { // performs transmute --> we have to handle this
                 self.trans.kill(place.local);
             }
 
             Rvalue::Cast(..)              // x as y
-            | Rvalue::ShallowInitBox(..)  // performs transmute --> we have to handle this (TODO)
+            | Rvalue::ShallowInitBox(..)
             | Rvalue::Use(..)
             | Rvalue::ThreadLocalRef(..)
             | Rvalue::Repeat(..)          // array initialiser: [value; repetitions]
