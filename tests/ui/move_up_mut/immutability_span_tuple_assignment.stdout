@@ -60,89 +60,62 @@ bb0
 
 
 # CFG Before
-[
-    BasicBlockData {
-        statements: [
-            Retag([fn entry] _1),
-            Retag([fn entry] _2),
-            StorageLive(_4),
-            StorageLive(_7),
-            Deinit(_7),
-            (_7.0: i32) = const 42_i32,
-            (_7.1: i32) = const 7_i32,
-            StorageLive(_5),
-            _5 = (_7.0: i32),
-            StorageLive(_6),
-            _6 = (_7.1: i32),
-            StorageDead(_7),
-            StorageLive(_8),
-            _8 = _5,
-            (*_1) = move _8,
-            StorageDead(_8),
-            StorageLive(_9),
-            _9 = _6,
-            (*_2) = move _9,
-            StorageDead(_9),
-            _4 = const (),
-            StorageDead(_6),
-            StorageDead(_5),
-            StorageDead(_4),
-            _0 = (*_1),
-        ],
-        terminator: Some(
-            Terminator {
-                source_info: SourceInfo {
-                    span: $DIR/immutability_span_tuple_assignment.rs:6:2: 6:2 (#0),
-                    scope: scope[0],
-                },
-                kind: return,
-            },
-        ),
-        is_cleanup: false,
-    },
-]
+bb0
+Retag([fn entry] _1)
+Retag([fn entry] _2)
+StorageLive(_4)
+StorageLive(_7)
+Deinit(_7)
+(_7.0: i32) = const 42_i32
+(_7.1: i32) = const 7_i32
+StorageLive(_5)
+_5 = (_7.0: i32)
+StorageLive(_6)
+_6 = (_7.1: i32)
+StorageDead(_7)
+StorageLive(_8)
+_8 = _5
+(*_1) = move _8
+StorageDead(_8)
+StorageLive(_9)
+_9 = _6
+(*_2) = move _9
+StorageDead(_9)
+_4 = const ()
+StorageDead(_6)
+StorageDead(_5)
+StorageDead(_4)
+_0 = (*_1)
+return
+
 # CFG After
-[
-    BasicBlockData {
-        statements: [
-            Retag([fn entry] _1),
-            Retag([fn entry] _2),
-            StorageLive(_4),
-            StorageLive(_7),
-            Deinit(_7),
-            (_7.0: i32) = const 42_i32,
-            (_7.1: i32) = const 7_i32,
-            StorageLive(_5),
-            _5 = (_7.0: i32),
-            StorageLive(_6),
-            _6 = (_7.1: i32),
-            StorageDead(_7),
-            StorageLive(_8),
-            _8 = _5,
-            _10 = move _8,
-            (*_1) = _10,
-            StorageDead(_8),
-            StorageLive(_9),
-            _9 = _6,
-            _11 = move _9,
-            (*_2) = _11,
-            StorageDead(_9),
-            _4 = const (),
-            StorageDead(_6),
-            StorageDead(_5),
-            StorageDead(_4),
-            _0 = _10,
-        ],
-        terminator: Some(
-            Terminator {
-                source_info: SourceInfo {
-                    span: $DIR/immutability_span_tuple_assignment.rs:6:2: 6:2 (#0),
-                    scope: scope[0],
-                },
-                kind: return,
-            },
-        ),
-        is_cleanup: false,
-    },
-]
+bb0
+Retag([fn entry] _1)
+Retag([fn entry] _2)
+StorageLive(_4)
+StorageLive(_7)
+Deinit(_7)
+(_7.0: i32) = const 42_i32
+(_7.1: i32) = const 7_i32
+StorageLive(_5)
+_5 = (_7.0: i32)
+StorageLive(_6)
+_6 = (_7.1: i32)
+StorageDead(_7)
+StorageLive(_8)
+_8 = _5
+_10 = move _8
+(*_1) = _10
+StorageDead(_8)
+StorageLive(_9)
+_9 = _6
+_11 = move _9
+(*_2) = _11
+StorageDead(_9)
+_4 = const ()
+StorageDead(_6)
+StorageDead(_5)
+StorageDead(_4)
+_0 = _10
+return
 

@@ -28,57 +28,30 @@ bb0
 
 
 # CFG Before
-[
-    BasicBlockData {
-        statements: [
-            Retag([fn entry] _1),
-            Retag([fn entry] _2),
-            (*_1) = const 42_i32,
-            StorageLive(_4),
-            _4 = &raw mut (*_1),
-            Retag([raw] _4),
-            (*_2) = const 7_i32,
-            _0 = (*_1),
-            StorageDead(_4),
-        ],
-        terminator: Some(
-            Terminator {
-                source_info: SourceInfo {
-                    span: $DIR/cast_to_pointer.rs:8:2: 8:2 (#0),
-                    scope: scope[0],
-                },
-                kind: return,
-            },
-        ),
-        is_cleanup: false,
-    },
-]
+bb0
+Retag([fn entry] _1)
+Retag([fn entry] _2)
+(*_1) = const 42_i32
+StorageLive(_4)
+_4 = &raw mut (*_1)
+Retag([raw] _4)
+(*_2) = const 7_i32
+_0 = (*_1)
+StorageDead(_4)
+return
+
 # CFG After
-[
-    BasicBlockData {
-        statements: [
-            Retag([fn entry] _1),
-            Retag([fn entry] _2),
-            _5 = const 42_i32,
-            (*_1) = _5,
-            StorageLive(_4),
-            _4 = &raw mut (*_1),
-            Retag([raw] _4),
-            _6 = const 7_i32,
-            (*_2) = _6,
-            _0 = (*_1),
-            StorageDead(_4),
-        ],
-        terminator: Some(
-            Terminator {
-                source_info: SourceInfo {
-                    span: $DIR/cast_to_pointer.rs:8:2: 8:2 (#0),
-                    scope: scope[0],
-                },
-                kind: return,
-            },
-        ),
-        is_cleanup: false,
-    },
-]
+bb0
+Retag([fn entry] _1)
+Retag([fn entry] _2)
+_5 = const 42_i32
+(*_1) = _5
+StorageLive(_4)
+_4 = &raw mut (*_1)
+Retag([raw] _4)
+_6 = const 7_i32
+(*_2) = _6
+_0 = (*_1)
+StorageDead(_4)
+return
 

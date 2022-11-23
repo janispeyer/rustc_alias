@@ -140,365 +140,142 @@ bb7
 
 
 # CFG Before
-[
-    BasicBlockData {
-        statements: [
-            Retag([fn entry] _1),
-            Retag([fn entry] _2),
-            StorageLive(_3),
-            StorageLive(_4),
-        ],
-        terminator: Some(
-            Terminator {
-                source_info: SourceInfo {
-                    span: $DIR/interior_mutability.rs:10:18: 10:31 (#0),
-                    scope: scope[0],
-                },
-                kind: _4 = std::cell::Cell::<i32>::new(const 42_i32) -> bb1,
-            },
-        ),
-        is_cleanup: false,
-    },
-    BasicBlockData {
-        statements: [],
-        terminator: Some(
-            Terminator {
-                source_info: SourceInfo {
-                    span: $DIR/interior_mutability.rs:10:10: 10:32 (#0),
-                    scope: scope[0],
-                },
-                kind: _3 = std::rc::Rc::<std::cell::Cell<i32>>::new(move _4) -> bb2,
-            },
-        ),
-        is_cleanup: false,
-    },
-    BasicBlockData {
-        statements: [
-            StorageDead(_4),
-        ],
-        terminator: Some(
-            Terminator {
-                source_info: SourceInfo {
-                    span: $DIR/interior_mutability.rs:10:5: 10:7 (#0),
-                    scope: scope[0],
-                },
-                kind: drop((*_1)) -> [return: bb9, unwind: bb8],
-            },
-        ),
-        is_cleanup: false,
-    },
-    BasicBlockData {
-        statements: [
-            Retag(_7),
-            _6 = &(*_7),
-            Retag(_6),
-            StorageDead(_8),
-        ],
-        terminator: Some(
-            Terminator {
-                source_info: SourceInfo {
-                    span: $DIR/interior_mutability.rs:11:5: 11:13 (#0),
-                    scope: scope[0],
-                },
-                kind: _5 = std::cell::Cell::<i32>::set(move _6, const 7_i32) -> bb4,
-            },
-        ),
-        is_cleanup: false,
-    },
-    BasicBlockData {
-        statements: [
-            StorageDead(_6),
-            StorageDead(_7),
-            StorageDead(_5),
-            StorageLive(_9),
-            StorageLive(_10),
-            _10 = &(*_1),
-            Retag(_10),
-        ],
-        terminator: Some(
-            Terminator {
-                source_info: SourceInfo {
-                    span: $DIR/interior_mutability.rs:12:5: 12:14 (#0),
-                    scope: scope[0],
-                },
-                kind: _9 = access(move _10) -> bb5,
-            },
-        ),
-        is_cleanup: false,
-    },
-    BasicBlockData {
-        statements: [
-            StorageDead(_10),
-            StorageDead(_9),
-            StorageLive(_11),
-            StorageLive(_12),
-            StorageLive(_13),
-            _13 = &(*_1),
-            Retag(_13),
-        ],
-        terminator: Some(
-            Terminator {
-                source_info: SourceInfo {
-                    span: $DIR/interior_mutability.rs:13:5: 13:12 (#0),
-                    scope: scope[0],
-                },
-                kind: _12 = <std::rc::Rc<std::cell::Cell<i32>> as std::ops::Deref>::deref(move _13) -> bb6,
-            },
-        ),
-        is_cleanup: false,
-    },
-    BasicBlockData {
-        statements: [
-            Retag(_12),
-            _11 = &(*_12),
-            Retag(_11),
-            StorageDead(_13),
-        ],
-        terminator: Some(
-            Terminator {
-                source_info: SourceInfo {
-                    span: $DIR/interior_mutability.rs:13:5: 13:12 (#0),
-                    scope: scope[0],
-                },
-                kind: _0 = std::cell::Cell::<i32>::get(move _11) -> bb7,
-            },
-        ),
-        is_cleanup: false,
-    },
-    BasicBlockData {
-        statements: [
-            StorageDead(_11),
-            StorageDead(_12),
-        ],
-        terminator: Some(
-            Terminator {
-                source_info: SourceInfo {
-                    span: $DIR/interior_mutability.rs:14:2: 14:2 (#0),
-                    scope: scope[0],
-                },
-                kind: return,
-            },
-        ),
-        is_cleanup: false,
-    },
-    BasicBlockData {
-        statements: [
-            (*_1) = move _3,
-        ],
-        terminator: Some(
-            Terminator {
-                source_info: SourceInfo {
-                    span: $DIR/interior_mutability.rs:9:1: 14:2 (#0),
-                    scope: scope[0],
-                },
-                kind: resume,
-            },
-        ),
-        is_cleanup: true,
-    },
-    BasicBlockData {
-        statements: [
-            (*_1) = move _3,
-            StorageDead(_3),
-            StorageLive(_5),
-            StorageLive(_6),
-            StorageLive(_7),
-            StorageLive(_8),
-            _8 = &(*_2),
-            Retag(_8),
-        ],
-        terminator: Some(
-            Terminator {
-                source_info: SourceInfo {
-                    span: $DIR/interior_mutability.rs:11:5: 11:13 (#0),
-                    scope: scope[0],
-                },
-                kind: _7 = <std::rc::Rc<std::cell::Cell<i32>> as std::ops::Deref>::deref(move _8) -> bb3,
-            },
-        ),
-        is_cleanup: false,
-    },
-]
+bb0
+Retag([fn entry] _1)
+Retag([fn entry] _2)
+StorageLive(_3)
+StorageLive(_4)
+_4 = std::cell::Cell::<i32>::new(const 42_i32) -> bb1
+
+bb1
+_3 = std::rc::Rc::<std::cell::Cell<i32>>::new(move _4) -> bb2
+
+bb2
+StorageDead(_4)
+drop((*_1)) -> [return: bb9, unwind: bb8]
+
+bb3
+Retag(_7)
+_6 = &(*_7)
+Retag(_6)
+StorageDead(_8)
+_5 = std::cell::Cell::<i32>::set(move _6, const 7_i32) -> bb4
+
+bb4
+StorageDead(_6)
+StorageDead(_7)
+StorageDead(_5)
+StorageLive(_9)
+StorageLive(_10)
+_10 = &(*_1)
+Retag(_10)
+_9 = access(move _10) -> bb5
+
+bb5
+StorageDead(_10)
+StorageDead(_9)
+StorageLive(_11)
+StorageLive(_12)
+StorageLive(_13)
+_13 = &(*_1)
+Retag(_13)
+_12 = <std::rc::Rc<std::cell::Cell<i32>> as std::ops::Deref>::deref(move _13) -> bb6
+
+bb6
+Retag(_12)
+_11 = &(*_12)
+Retag(_11)
+StorageDead(_13)
+_0 = std::cell::Cell::<i32>::get(move _11) -> bb7
+
+bb7
+StorageDead(_11)
+StorageDead(_12)
+return
+
+bb8
+(*_1) = move _3
+resume
+
+bb9
+(*_1) = move _3
+StorageDead(_3)
+StorageLive(_5)
+StorageLive(_6)
+StorageLive(_7)
+StorageLive(_8)
+_8 = &(*_2)
+Retag(_8)
+_7 = <std::rc::Rc<std::cell::Cell<i32>> as std::ops::Deref>::deref(move _8) -> bb3
+
 # CFG After
-[
-    BasicBlockData {
-        statements: [
-            Retag([fn entry] _1),
-            Retag([fn entry] _2),
-            StorageLive(_3),
-            StorageLive(_4),
-        ],
-        terminator: Some(
-            Terminator {
-                source_info: SourceInfo {
-                    span: $DIR/interior_mutability.rs:10:18: 10:31 (#0),
-                    scope: scope[0],
-                },
-                kind: _4 = std::cell::Cell::<i32>::new(const 42_i32) -> bb1,
-            },
-        ),
-        is_cleanup: false,
-    },
-    BasicBlockData {
-        statements: [],
-        terminator: Some(
-            Terminator {
-                source_info: SourceInfo {
-                    span: $DIR/interior_mutability.rs:10:10: 10:32 (#0),
-                    scope: scope[0],
-                },
-                kind: _3 = std::rc::Rc::<std::cell::Cell<i32>>::new(move _4) -> bb2,
-            },
-        ),
-        is_cleanup: false,
-    },
-    BasicBlockData {
-        statements: [
-            StorageDead(_4),
-        ],
-        terminator: Some(
-            Terminator {
-                source_info: SourceInfo {
-                    span: $DIR/interior_mutability.rs:10:5: 10:7 (#0),
-                    scope: scope[0],
-                },
-                kind: drop((*_1)) -> [return: bb9, unwind: bb8],
-            },
-        ),
-        is_cleanup: false,
-    },
-    BasicBlockData {
-        statements: [
-            Retag(_7),
-            _6 = &(*_7),
-            Retag(_6),
-            StorageDead(_8),
-        ],
-        terminator: Some(
-            Terminator {
-                source_info: SourceInfo {
-                    span: $DIR/interior_mutability.rs:11:5: 11:13 (#0),
-                    scope: scope[0],
-                },
-                kind: _5 = std::cell::Cell::<i32>::set(move _6, const 7_i32) -> bb4,
-            },
-        ),
-        is_cleanup: false,
-    },
-    BasicBlockData {
-        statements: [
-            StorageDead(_6),
-            StorageDead(_7),
-            StorageDead(_5),
-            StorageLive(_9),
-            StorageLive(_10),
-            _10 = &(*_1),
-            Retag(_10),
-        ],
-        terminator: Some(
-            Terminator {
-                source_info: SourceInfo {
-                    span: $DIR/interior_mutability.rs:12:5: 12:14 (#0),
-                    scope: scope[0],
-                },
-                kind: _9 = access(move _10) -> bb5,
-            },
-        ),
-        is_cleanup: false,
-    },
-    BasicBlockData {
-        statements: [
-            StorageDead(_10),
-            StorageDead(_9),
-            StorageLive(_11),
-            StorageLive(_12),
-            StorageLive(_13),
-            _13 = &(*_1),
-            Retag(_13),
-        ],
-        terminator: Some(
-            Terminator {
-                source_info: SourceInfo {
-                    span: $DIR/interior_mutability.rs:13:5: 13:12 (#0),
-                    scope: scope[0],
-                },
-                kind: _12 = <std::rc::Rc<std::cell::Cell<i32>> as std::ops::Deref>::deref(move _13) -> bb6,
-            },
-        ),
-        is_cleanup: false,
-    },
-    BasicBlockData {
-        statements: [
-            Retag(_12),
-            _11 = &(*_12),
-            Retag(_11),
-            StorageDead(_13),
-        ],
-        terminator: Some(
-            Terminator {
-                source_info: SourceInfo {
-                    span: $DIR/interior_mutability.rs:13:5: 13:12 (#0),
-                    scope: scope[0],
-                },
-                kind: _0 = std::cell::Cell::<i32>::get(move _11) -> bb7,
-            },
-        ),
-        is_cleanup: false,
-    },
-    BasicBlockData {
-        statements: [
-            StorageDead(_11),
-            StorageDead(_12),
-        ],
-        terminator: Some(
-            Terminator {
-                source_info: SourceInfo {
-                    span: $DIR/interior_mutability.rs:14:2: 14:2 (#0),
-                    scope: scope[0],
-                },
-                kind: return,
-            },
-        ),
-        is_cleanup: false,
-    },
-    BasicBlockData {
-        statements: [
-            (*_1) = move _3,
-        ],
-        terminator: Some(
-            Terminator {
-                source_info: SourceInfo {
-                    span: $DIR/interior_mutability.rs:9:1: 14:2 (#0),
-                    scope: scope[0],
-                },
-                kind: resume,
-            },
-        ),
-        is_cleanup: true,
-    },
-    BasicBlockData {
-        statements: [
-            (*_1) = move _3,
-            StorageDead(_3),
-            StorageLive(_5),
-            StorageLive(_6),
-            StorageLive(_7),
-            StorageLive(_8),
-            _8 = &(*_2),
-            Retag(_8),
-        ],
-        terminator: Some(
-            Terminator {
-                source_info: SourceInfo {
-                    span: $DIR/interior_mutability.rs:11:5: 11:13 (#0),
-                    scope: scope[0],
-                },
-                kind: _7 = <std::rc::Rc<std::cell::Cell<i32>> as std::ops::Deref>::deref(move _8) -> bb3,
-            },
-        ),
-        is_cleanup: false,
-    },
-]
+bb0
+Retag([fn entry] _1)
+Retag([fn entry] _2)
+StorageLive(_3)
+StorageLive(_4)
+_4 = std::cell::Cell::<i32>::new(const 42_i32) -> bb1
+
+bb1
+_3 = std::rc::Rc::<std::cell::Cell<i32>>::new(move _4) -> bb2
+
+bb2
+StorageDead(_4)
+drop((*_1)) -> [return: bb9, unwind: bb8]
+
+bb3
+Retag(_7)
+_6 = &(*_7)
+Retag(_6)
+StorageDead(_8)
+_5 = std::cell::Cell::<i32>::set(move _6, const 7_i32) -> bb4
+
+bb4
+StorageDead(_6)
+StorageDead(_7)
+StorageDead(_5)
+StorageLive(_9)
+StorageLive(_10)
+_10 = &(*_1)
+Retag(_10)
+_9 = access(move _10) -> bb5
+
+bb5
+StorageDead(_10)
+StorageDead(_9)
+StorageLive(_11)
+StorageLive(_12)
+StorageLive(_13)
+_13 = &(*_1)
+Retag(_13)
+_12 = <std::rc::Rc<std::cell::Cell<i32>> as std::ops::Deref>::deref(move _13) -> bb6
+
+bb6
+Retag(_12)
+_11 = &(*_12)
+Retag(_11)
+StorageDead(_13)
+_0 = std::cell::Cell::<i32>::get(move _11) -> bb7
+
+bb7
+StorageDead(_11)
+StorageDead(_12)
+return
+
+bb8
+(*_1) = move _3
+resume
+
+bb9
+(*_1) = move _3
+StorageDead(_3)
+StorageLive(_5)
+StorageLive(_6)
+StorageLive(_7)
+StorageLive(_8)
+_8 = &(*_2)
+Retag(_8)
+_7 = <std::rc::Rc<std::cell::Cell<i32>> as std::ops::Deref>::deref(move _8) -> bb3
 
 # Analysing access
 # MaybeTopOfBorrowStack Analysis
@@ -553,123 +330,52 @@ bb2
 
 
 # CFG Before
-[
-    BasicBlockData {
-        statements: [
-            Retag([fn entry] _1),
-            StorageLive(_2),
-            StorageLive(_3),
-            StorageLive(_4),
-            StorageLive(_5),
-            _5 = &(*_1),
-            Retag(_5),
-        ],
-        terminator: Some(
-            Terminator {
-                source_info: SourceInfo {
-                    span: $DIR/interior_mutability.rs:6:5: 6:14 (#0),
-                    scope: scope[0],
-                },
-                kind: _4 = <std::rc::Rc<std::cell::Cell<i32>> as std::ops::Deref>::deref(move _5) -> bb1,
-            },
-        ),
-        is_cleanup: false,
-    },
-    BasicBlockData {
-        statements: [
-            Retag(_4),
-            _3 = &(*_4),
-            Retag(_3),
-            StorageDead(_5),
-        ],
-        terminator: Some(
-            Terminator {
-                source_info: SourceInfo {
-                    span: $DIR/interior_mutability.rs:6:5: 6:14 (#0),
-                    scope: scope[0],
-                },
-                kind: _2 = std::cell::Cell::<i32>::set(move _3, const 13_i32) -> bb2,
-            },
-        ),
-        is_cleanup: false,
-    },
-    BasicBlockData {
-        statements: [
-            StorageDead(_3),
-            StorageDead(_4),
-            StorageDead(_2),
-            _0 = const (),
-        ],
-        terminator: Some(
-            Terminator {
-                source_info: SourceInfo {
-                    span: $DIR/interior_mutability.rs:7:2: 7:2 (#0),
-                    scope: scope[0],
-                },
-                kind: return,
-            },
-        ),
-        is_cleanup: false,
-    },
-]
+bb0
+Retag([fn entry] _1)
+StorageLive(_2)
+StorageLive(_3)
+StorageLive(_4)
+StorageLive(_5)
+_5 = &(*_1)
+Retag(_5)
+_4 = <std::rc::Rc<std::cell::Cell<i32>> as std::ops::Deref>::deref(move _5) -> bb1
+
+bb1
+Retag(_4)
+_3 = &(*_4)
+Retag(_3)
+StorageDead(_5)
+_2 = std::cell::Cell::<i32>::set(move _3, const 13_i32) -> bb2
+
+bb2
+StorageDead(_3)
+StorageDead(_4)
+StorageDead(_2)
+_0 = const ()
+return
+
 # CFG After
-[
-    BasicBlockData {
-        statements: [
-            Retag([fn entry] _1),
-            StorageLive(_2),
-            StorageLive(_3),
-            StorageLive(_4),
-            StorageLive(_5),
-            _5 = &(*_1),
-            Retag(_5),
-        ],
-        terminator: Some(
-            Terminator {
-                source_info: SourceInfo {
-                    span: $DIR/interior_mutability.rs:6:5: 6:14 (#0),
-                    scope: scope[0],
-                },
-                kind: _4 = <std::rc::Rc<std::cell::Cell<i32>> as std::ops::Deref>::deref(move _5) -> bb1,
-            },
-        ),
-        is_cleanup: false,
-    },
-    BasicBlockData {
-        statements: [
-            Retag(_4),
-            _3 = &(*_4),
-            Retag(_3),
-            StorageDead(_5),
-        ],
-        terminator: Some(
-            Terminator {
-                source_info: SourceInfo {
-                    span: $DIR/interior_mutability.rs:6:5: 6:14 (#0),
-                    scope: scope[0],
-                },
-                kind: _2 = std::cell::Cell::<i32>::set(move _3, const 13_i32) -> bb2,
-            },
-        ),
-        is_cleanup: false,
-    },
-    BasicBlockData {
-        statements: [
-            StorageDead(_3),
-            StorageDead(_4),
-            StorageDead(_2),
-            _0 = const (),
-        ],
-        terminator: Some(
-            Terminator {
-                source_info: SourceInfo {
-                    span: $DIR/interior_mutability.rs:7:2: 7:2 (#0),
-                    scope: scope[0],
-                },
-                kind: return,
-            },
-        ),
-        is_cleanup: false,
-    },
-]
+bb0
+Retag([fn entry] _1)
+StorageLive(_2)
+StorageLive(_3)
+StorageLive(_4)
+StorageLive(_5)
+_5 = &(*_1)
+Retag(_5)
+_4 = <std::rc::Rc<std::cell::Cell<i32>> as std::ops::Deref>::deref(move _5) -> bb1
+
+bb1
+Retag(_4)
+_3 = &(*_4)
+Retag(_3)
+StorageDead(_5)
+_2 = std::cell::Cell::<i32>::set(move _3, const 13_i32) -> bb2
+
+bb2
+StorageDead(_3)
+StorageDead(_4)
+StorageDead(_2)
+_0 = const ()
+return
 

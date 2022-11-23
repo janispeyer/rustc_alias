@@ -326,775 +326,334 @@ bb18
 
 
 # CFG Before
-[
-    BasicBlockData {
-        statements: [
-            Retag([fn entry] _1),
-            Retag([fn entry] _2),
-            (*_1) = const 42_i32,
-            StorageLive(_5),
-            StorageLive(_6),
-            _6 = _3,
-        ],
-        terminator: Some(
-            Terminator {
-                source_info: SourceInfo {
-                    span: $DIR/immutability_span.rs:10:8: 10:12 (#4),
-                    scope: scope[0],
-                },
-                kind: switchInt(move _6) -> [false: bb11, otherwise: bb1],
-            },
-        ),
-        is_cleanup: false,
-    },
-    BasicBlockData {
-        statements: [
-            StorageLive(_7),
-            StorageLive(_8),
-            StorageLive(_9),
-            StorageLive(_10),
-            Deinit(_10),
-            (_10.0: i32) = const 0_i32,
-            (_10.1: i32) = const 3_i32,
-        ],
-        terminator: Some(
-            Terminator {
-                source_info: SourceInfo {
-                    span: $DIR/immutability_span.rs:12:18: 12:22 (#6),
-                    scope: scope[1],
-                },
-                kind: _9 = <std::ops::Range<i32> as std::iter::IntoIterator>::into_iter(move _10) -> bb2,
-            },
-        ),
-        is_cleanup: false,
-    },
-    BasicBlockData {
-        statements: [
-            StorageDead(_10),
-            StorageLive(_11),
-            _11 = move _9,
-        ],
-        terminator: Some(
-            Terminator {
-                source_info: SourceInfo {
-                    span: $DIR/immutability_span.rs:12:9: 14:10 (#5),
-                    scope: scope[2],
-                },
-                kind: goto -> bb3,
-            },
-        ),
-        is_cleanup: false,
-    },
-    BasicBlockData {
-        statements: [
-            StorageLive(_13),
-            StorageLive(_14),
-            StorageLive(_15),
-            StorageLive(_16),
-            _16 = &mut _11,
-            Retag(_16),
-            _15 = &mut (*_16),
-            Retag([2phase] _15),
-        ],
-        terminator: Some(
-            Terminator {
-                source_info: SourceInfo {
-                    span: $DIR/immutability_span.rs:12:18: 12:22 (#6),
-                    scope: scope[2],
-                },
-                kind: _14 = <std::ops::Range<i32> as std::iter::Iterator>::next(move _15) -> bb4,
-            },
-        ),
-        is_cleanup: false,
-    },
-    BasicBlockData {
-        statements: [
-            StorageDead(_15),
-            _17 = discriminant(_14),
-        ],
-        terminator: Some(
-            Terminator {
-                source_info: SourceInfo {
-                    span: $DIR/immutability_span.rs:12:18: 12:22 (#6),
-                    scope: scope[2],
-                },
-                kind: switchInt(move _17) -> [0_isize: bb7, 1_isize: bb5, otherwise: bb6],
-            },
-        ),
-        is_cleanup: false,
-    },
-    BasicBlockData {
-        statements: [
-            StorageLive(_19),
-            _19 = (*_1),
-            _7 = move _19,
-            StorageDead(_19),
-            _13 = const (),
-            StorageDead(_16),
-            StorageDead(_14),
-            StorageDead(_13),
-            _12 = const (),
-        ],
-        terminator: Some(
-            Terminator {
-                source_info: SourceInfo {
-                    span: $DIR/immutability_span.rs:12:9: 14:10 (#5),
-                    scope: scope[2],
-                },
-                kind: goto -> bb3,
-            },
-        ),
-        is_cleanup: false,
-    },
-    BasicBlockData {
-        statements: [],
-        terminator: Some(
-            Terminator {
-                source_info: SourceInfo {
-                    span: $DIR/immutability_span.rs:12:18: 12:22 (#6),
-                    scope: scope[2],
-                },
-                kind: unreachable,
-            },
-        ),
-        is_cleanup: false,
-    },
-    BasicBlockData {
-        statements: [
-            _8 = const (),
-            StorageDead(_16),
-            StorageDead(_14),
-            StorageDead(_13),
-            StorageDead(_11),
-            StorageDead(_9),
-            StorageDead(_8),
-            (*_1) = const 5_i32,
-            StorageLive(_20),
-            StorageLive(_21),
-            _21 = (*_2),
-            _20 = Eq(move _21, const 0_i32),
-            StorageDead(_21),
-        ],
-        terminator: Some(
-            Terminator {
-                source_info: SourceInfo {
-                    span: $DIR/immutability_span.rs:19:12: 19:19 (#8),
-                    scope: scope[3],
-                },
-                kind: switchInt(move _20) -> [false: bb9, otherwise: bb8],
-            },
-        ),
-        is_cleanup: false,
-    },
-    BasicBlockData {
-        statements: [
-            (*_2) = const 1_i32,
-            _5 = const (),
-        ],
-        terminator: Some(
-            Terminator {
-                source_info: SourceInfo {
-                    span: $DIR/immutability_span.rs:19:9: 21:10 (#0),
-                    scope: scope[3],
-                },
-                kind: goto -> bb10,
-            },
-        ),
-        is_cleanup: false,
-    },
-    BasicBlockData {
-        statements: [
-            _5 = const (),
-        ],
-        terminator: Some(
-            Terminator {
-                source_info: SourceInfo {
-                    span: $DIR/immutability_span.rs:19:9: 21:10 (#0),
-                    scope: scope[3],
-                },
-                kind: goto -> bb10,
-            },
-        ),
-        is_cleanup: false,
-    },
-    BasicBlockData {
-        statements: [
-            StorageDead(_20),
-            StorageDead(_7),
-        ],
-        terminator: Some(
-            Terminator {
-                source_info: SourceInfo {
-                    span: $DIR/immutability_span.rs:10:5: 33:6 (#0),
-                    scope: scope[0],
-                },
-                kind: goto -> bb19,
-            },
-        ),
-        is_cleanup: false,
-    },
-    BasicBlockData {
-        statements: [
-            (*_2) = const 7_i32,
-            StorageLive(_22),
-            StorageLive(_23),
-            _23 = &mut (*_1),
-            Retag([2phase] _23),
-        ],
-        terminator: Some(
-            Terminator {
-                source_info: SourceInfo {
-                    span: $DIR/immutability_span.rs:24:9: 24:18 (#0),
-                    scope: scope[0],
-                },
-                kind: _22 = access(move _23) -> bb12,
-            },
-        ),
-        is_cleanup: false,
-    },
-    BasicBlockData {
-        statements: [
-            StorageDead(_23),
-            StorageDead(_22),
-            StorageLive(_24),
-            StorageLive(_25),
-            StorageLive(_26),
-            Deinit(_26),
-            (_26.0: i32) = const 0_i32,
-            (_26.1: i32) = const 5_i32,
-        ],
-        terminator: Some(
-            Terminator {
-                source_info: SourceInfo {
-                    span: $DIR/immutability_span.rs:26:18: 26:22 (#10),
-                    scope: scope[0],
-                },
-                kind: _25 = <std::ops::Range<i32> as std::iter::IntoIterator>::into_iter(move _26) -> bb13,
-            },
-        ),
-        is_cleanup: false,
-    },
-    BasicBlockData {
-        statements: [
-            StorageDead(_26),
-            StorageLive(_27),
-            _27 = move _25,
-        ],
-        terminator: Some(
-            Terminator {
-                source_info: SourceInfo {
-                    span: $DIR/immutability_span.rs:26:9: 29:10 (#9),
-                    scope: scope[4],
-                },
-                kind: goto -> bb14,
-            },
-        ),
-        is_cleanup: false,
-    },
-    BasicBlockData {
-        statements: [
-            StorageLive(_28),
-            StorageLive(_29),
-            StorageLive(_30),
-            StorageLive(_31),
-            _31 = &mut _27,
-            Retag(_31),
-            _30 = &mut (*_31),
-            Retag([2phase] _30),
-        ],
-        terminator: Some(
-            Terminator {
-                source_info: SourceInfo {
-                    span: $DIR/immutability_span.rs:26:18: 26:22 (#10),
-                    scope: scope[4],
-                },
-                kind: _29 = <std::ops::Range<i32> as std::iter::Iterator>::next(move _30) -> bb15,
-            },
-        ),
-        is_cleanup: false,
-    },
-    BasicBlockData {
-        statements: [
-            StorageDead(_30),
-            _32 = discriminant(_29),
-        ],
-        terminator: Some(
-            Terminator {
-                source_info: SourceInfo {
-                    span: $DIR/immutability_span.rs:26:18: 26:22 (#10),
-                    scope: scope[4],
-                },
-                kind: switchInt(move _32) -> [0_isize: bb18, 1_isize: bb16, otherwise: bb17],
-            },
-        ),
-        is_cleanup: false,
-    },
-    BasicBlockData {
-        statements: [
-            (*_2) = const 11_i32,
-            (*_1) = const 17_i32,
-            _28 = const (),
-            StorageDead(_31),
-            StorageDead(_29),
-            StorageDead(_28),
-            _12 = const (),
-        ],
-        terminator: Some(
-            Terminator {
-                source_info: SourceInfo {
-                    span: $DIR/immutability_span.rs:26:9: 29:10 (#9),
-                    scope: scope[4],
-                },
-                kind: goto -> bb14,
-            },
-        ),
-        is_cleanup: false,
-    },
-    BasicBlockData {
-        statements: [],
-        terminator: Some(
-            Terminator {
-                source_info: SourceInfo {
-                    span: $DIR/immutability_span.rs:26:18: 26:22 (#10),
-                    scope: scope[4],
-                },
-                kind: unreachable,
-            },
-        ),
-        is_cleanup: false,
-    },
-    BasicBlockData {
-        statements: [
-            _24 = const (),
-            StorageDead(_31),
-            StorageDead(_29),
-            StorageDead(_28),
-            StorageDead(_27),
-            StorageDead(_25),
-            StorageDead(_24),
-            StorageLive(_34),
-            _34 = (*_1),
-            _5 = const (),
-            StorageDead(_34),
-        ],
-        terminator: Some(
-            Terminator {
-                source_info: SourceInfo {
-                    span: $DIR/immutability_span.rs:10:5: 33:6 (#0),
-                    scope: scope[0],
-                },
-                kind: goto -> bb19,
-            },
-        ),
-        is_cleanup: false,
-    },
-    BasicBlockData {
-        statements: [
-            StorageDead(_6),
-            StorageDead(_5),
-            (*_2) = const 12_i32,
-            _0 = (*_1),
-        ],
-        terminator: Some(
-            Terminator {
-                source_info: SourceInfo {
-                    span: $DIR/immutability_span.rs:38:2: 38:2 (#0),
-                    scope: scope[0],
-                },
-                kind: return,
-            },
-        ),
-        is_cleanup: false,
-    },
-]
+bb0
+Retag([fn entry] _1)
+Retag([fn entry] _2)
+(*_1) = const 42_i32
+StorageLive(_5)
+StorageLive(_6)
+_6 = _3
+switchInt(move _6) -> [false: bb11, otherwise: bb1]
+
+bb1
+StorageLive(_7)
+StorageLive(_8)
+StorageLive(_9)
+StorageLive(_10)
+Deinit(_10)
+(_10.0: i32) = const 0_i32
+(_10.1: i32) = const 3_i32
+_9 = <std::ops::Range<i32> as std::iter::IntoIterator>::into_iter(move _10) -> bb2
+
+bb2
+StorageDead(_10)
+StorageLive(_11)
+_11 = move _9
+goto -> bb3
+
+bb3
+StorageLive(_13)
+StorageLive(_14)
+StorageLive(_15)
+StorageLive(_16)
+_16 = &mut _11
+Retag(_16)
+_15 = &mut (*_16)
+Retag([2phase] _15)
+_14 = <std::ops::Range<i32> as std::iter::Iterator>::next(move _15) -> bb4
+
+bb4
+StorageDead(_15)
+_17 = discriminant(_14)
+switchInt(move _17) -> [0_isize: bb7, 1_isize: bb5, otherwise: bb6]
+
+bb5
+StorageLive(_19)
+_19 = (*_1)
+_7 = move _19
+StorageDead(_19)
+_13 = const ()
+StorageDead(_16)
+StorageDead(_14)
+StorageDead(_13)
+_12 = const ()
+goto -> bb3
+
+bb6
+unreachable
+
+bb7
+_8 = const ()
+StorageDead(_16)
+StorageDead(_14)
+StorageDead(_13)
+StorageDead(_11)
+StorageDead(_9)
+StorageDead(_8)
+(*_1) = const 5_i32
+StorageLive(_20)
+StorageLive(_21)
+_21 = (*_2)
+_20 = Eq(move _21, const 0_i32)
+StorageDead(_21)
+switchInt(move _20) -> [false: bb9, otherwise: bb8]
+
+bb8
+(*_2) = const 1_i32
+_5 = const ()
+goto -> bb10
+
+bb9
+_5 = const ()
+goto -> bb10
+
+bb10
+StorageDead(_20)
+StorageDead(_7)
+goto -> bb19
+
+bb11
+(*_2) = const 7_i32
+StorageLive(_22)
+StorageLive(_23)
+_23 = &mut (*_1)
+Retag([2phase] _23)
+_22 = access(move _23) -> bb12
+
+bb12
+StorageDead(_23)
+StorageDead(_22)
+StorageLive(_24)
+StorageLive(_25)
+StorageLive(_26)
+Deinit(_26)
+(_26.0: i32) = const 0_i32
+(_26.1: i32) = const 5_i32
+_25 = <std::ops::Range<i32> as std::iter::IntoIterator>::into_iter(move _26) -> bb13
+
+bb13
+StorageDead(_26)
+StorageLive(_27)
+_27 = move _25
+goto -> bb14
+
+bb14
+StorageLive(_28)
+StorageLive(_29)
+StorageLive(_30)
+StorageLive(_31)
+_31 = &mut _27
+Retag(_31)
+_30 = &mut (*_31)
+Retag([2phase] _30)
+_29 = <std::ops::Range<i32> as std::iter::Iterator>::next(move _30) -> bb15
+
+bb15
+StorageDead(_30)
+_32 = discriminant(_29)
+switchInt(move _32) -> [0_isize: bb18, 1_isize: bb16, otherwise: bb17]
+
+bb16
+(*_2) = const 11_i32
+(*_1) = const 17_i32
+_28 = const ()
+StorageDead(_31)
+StorageDead(_29)
+StorageDead(_28)
+_12 = const ()
+goto -> bb14
+
+bb17
+unreachable
+
+bb18
+_24 = const ()
+StorageDead(_31)
+StorageDead(_29)
+StorageDead(_28)
+StorageDead(_27)
+StorageDead(_25)
+StorageDead(_24)
+StorageLive(_34)
+_34 = (*_1)
+_5 = const ()
+StorageDead(_34)
+goto -> bb19
+
+bb19
+StorageDead(_6)
+StorageDead(_5)
+(*_2) = const 12_i32
+_0 = (*_1)
+return
+
 # CFG After
-[
-    BasicBlockData {
-        statements: [
-            Retag([fn entry] _1),
-            Retag([fn entry] _2),
-            _35 = const 42_i32,
-            (*_1) = _35,
-            StorageLive(_5),
-            StorageLive(_6),
-            _6 = _3,
-        ],
-        terminator: Some(
-            Terminator {
-                source_info: SourceInfo {
-                    span: $DIR/immutability_span.rs:10:8: 10:12 (#4),
-                    scope: scope[0],
-                },
-                kind: switchInt(move _6) -> [false: bb11, otherwise: bb1],
-            },
-        ),
-        is_cleanup: false,
-    },
-    BasicBlockData {
-        statements: [
-            StorageLive(_7),
-            StorageLive(_8),
-            StorageLive(_9),
-            StorageLive(_10),
-            Deinit(_10),
-            (_10.0: i32) = const 0_i32,
-            (_10.1: i32) = const 3_i32,
-        ],
-        terminator: Some(
-            Terminator {
-                source_info: SourceInfo {
-                    span: $DIR/immutability_span.rs:12:18: 12:22 (#6),
-                    scope: scope[1],
-                },
-                kind: _9 = <std::ops::Range<i32> as std::iter::IntoIterator>::into_iter(move _10) -> bb2,
-            },
-        ),
-        is_cleanup: false,
-    },
-    BasicBlockData {
-        statements: [
-            StorageDead(_10),
-            StorageLive(_11),
-            _11 = move _9,
-        ],
-        terminator: Some(
-            Terminator {
-                source_info: SourceInfo {
-                    span: $DIR/immutability_span.rs:12:9: 14:10 (#5),
-                    scope: scope[2],
-                },
-                kind: goto -> bb3,
-            },
-        ),
-        is_cleanup: false,
-    },
-    BasicBlockData {
-        statements: [
-            StorageLive(_13),
-            StorageLive(_14),
-            StorageLive(_15),
-            StorageLive(_16),
-            _16 = &mut _11,
-            Retag(_16),
-            _15 = &mut (*_16),
-            Retag([2phase] _15),
-        ],
-        terminator: Some(
-            Terminator {
-                source_info: SourceInfo {
-                    span: $DIR/immutability_span.rs:12:18: 12:22 (#6),
-                    scope: scope[2],
-                },
-                kind: _14 = <std::ops::Range<i32> as std::iter::Iterator>::next(move _15) -> bb4,
-            },
-        ),
-        is_cleanup: false,
-    },
-    BasicBlockData {
-        statements: [
-            StorageDead(_15),
-            _17 = discriminant(_14),
-        ],
-        terminator: Some(
-            Terminator {
-                source_info: SourceInfo {
-                    span: $DIR/immutability_span.rs:12:18: 12:22 (#6),
-                    scope: scope[2],
-                },
-                kind: switchInt(move _17) -> [0_isize: bb7, 1_isize: bb5, otherwise: bb6],
-            },
-        ),
-        is_cleanup: false,
-    },
-    BasicBlockData {
-        statements: [
-            StorageLive(_19),
-            _19 = _35,
-            _7 = move _19,
-            StorageDead(_19),
-            _13 = const (),
-            StorageDead(_16),
-            StorageDead(_14),
-            StorageDead(_13),
-            _12 = const (),
-        ],
-        terminator: Some(
-            Terminator {
-                source_info: SourceInfo {
-                    span: $DIR/immutability_span.rs:12:9: 14:10 (#5),
-                    scope: scope[2],
-                },
-                kind: goto -> bb3,
-            },
-        ),
-        is_cleanup: false,
-    },
-    BasicBlockData {
-        statements: [],
-        terminator: Some(
-            Terminator {
-                source_info: SourceInfo {
-                    span: $DIR/immutability_span.rs:12:18: 12:22 (#6),
-                    scope: scope[2],
-                },
-                kind: unreachable,
-            },
-        ),
-        is_cleanup: false,
-    },
-    BasicBlockData {
-        statements: [
-            _8 = const (),
-            StorageDead(_16),
-            StorageDead(_14),
-            StorageDead(_13),
-            StorageDead(_11),
-            StorageDead(_9),
-            StorageDead(_8),
-            _36 = const 5_i32,
-            (*_1) = _36,
-            StorageLive(_20),
-            StorageLive(_21),
-            _21 = (*_2),
-            _20 = Eq(move _21, const 0_i32),
-            StorageDead(_21),
-        ],
-        terminator: Some(
-            Terminator {
-                source_info: SourceInfo {
-                    span: $DIR/immutability_span.rs:19:12: 19:19 (#8),
-                    scope: scope[3],
-                },
-                kind: switchInt(move _20) -> [false: bb9, otherwise: bb8],
-            },
-        ),
-        is_cleanup: false,
-    },
-    BasicBlockData {
-        statements: [
-            _37 = const 1_i32,
-            (*_2) = _37,
-            _5 = const (),
-        ],
-        terminator: Some(
-            Terminator {
-                source_info: SourceInfo {
-                    span: $DIR/immutability_span.rs:19:9: 21:10 (#0),
-                    scope: scope[3],
-                },
-                kind: goto -> bb10,
-            },
-        ),
-        is_cleanup: false,
-    },
-    BasicBlockData {
-        statements: [
-            _5 = const (),
-        ],
-        terminator: Some(
-            Terminator {
-                source_info: SourceInfo {
-                    span: $DIR/immutability_span.rs:19:9: 21:10 (#0),
-                    scope: scope[3],
-                },
-                kind: goto -> bb10,
-            },
-        ),
-        is_cleanup: false,
-    },
-    BasicBlockData {
-        statements: [
-            StorageDead(_20),
-            StorageDead(_7),
-        ],
-        terminator: Some(
-            Terminator {
-                source_info: SourceInfo {
-                    span: $DIR/immutability_span.rs:10:5: 33:6 (#0),
-                    scope: scope[0],
-                },
-                kind: goto -> bb19,
-            },
-        ),
-        is_cleanup: false,
-    },
-    BasicBlockData {
-        statements: [
-            _38 = const 7_i32,
-            (*_2) = _38,
-            StorageLive(_22),
-            StorageLive(_23),
-            _23 = &mut (*_1),
-            Retag([2phase] _23),
-        ],
-        terminator: Some(
-            Terminator {
-                source_info: SourceInfo {
-                    span: $DIR/immutability_span.rs:24:9: 24:18 (#0),
-                    scope: scope[0],
-                },
-                kind: _22 = access(move _23) -> bb12,
-            },
-        ),
-        is_cleanup: false,
-    },
-    BasicBlockData {
-        statements: [
-            StorageDead(_23),
-            StorageDead(_22),
-            StorageLive(_24),
-            StorageLive(_25),
-            StorageLive(_26),
-            Deinit(_26),
-            (_26.0: i32) = const 0_i32,
-            (_26.1: i32) = const 5_i32,
-        ],
-        terminator: Some(
-            Terminator {
-                source_info: SourceInfo {
-                    span: $DIR/immutability_span.rs:26:18: 26:22 (#10),
-                    scope: scope[0],
-                },
-                kind: _25 = <std::ops::Range<i32> as std::iter::IntoIterator>::into_iter(move _26) -> bb13,
-            },
-        ),
-        is_cleanup: false,
-    },
-    BasicBlockData {
-        statements: [
-            StorageDead(_26),
-            StorageLive(_27),
-            _27 = move _25,
-        ],
-        terminator: Some(
-            Terminator {
-                source_info: SourceInfo {
-                    span: $DIR/immutability_span.rs:26:9: 29:10 (#9),
-                    scope: scope[4],
-                },
-                kind: goto -> bb14,
-            },
-        ),
-        is_cleanup: false,
-    },
-    BasicBlockData {
-        statements: [
-            StorageLive(_28),
-            StorageLive(_29),
-            StorageLive(_30),
-            StorageLive(_31),
-            _31 = &mut _27,
-            Retag(_31),
-            _30 = &mut (*_31),
-            Retag([2phase] _30),
-        ],
-        terminator: Some(
-            Terminator {
-                source_info: SourceInfo {
-                    span: $DIR/immutability_span.rs:26:18: 26:22 (#10),
-                    scope: scope[4],
-                },
-                kind: _29 = <std::ops::Range<i32> as std::iter::Iterator>::next(move _30) -> bb15,
-            },
-        ),
-        is_cleanup: false,
-    },
-    BasicBlockData {
-        statements: [
-            StorageDead(_30),
-            _32 = discriminant(_29),
-        ],
-        terminator: Some(
-            Terminator {
-                source_info: SourceInfo {
-                    span: $DIR/immutability_span.rs:26:18: 26:22 (#10),
-                    scope: scope[4],
-                },
-                kind: switchInt(move _32) -> [0_isize: bb18, 1_isize: bb16, otherwise: bb17],
-            },
-        ),
-        is_cleanup: false,
-    },
-    BasicBlockData {
-        statements: [
-            _39 = const 11_i32,
-            (*_2) = _39,
-            (*_1) = const 17_i32,
-            _28 = const (),
-            StorageDead(_31),
-            StorageDead(_29),
-            StorageDead(_28),
-            _12 = const (),
-        ],
-        terminator: Some(
-            Terminator {
-                source_info: SourceInfo {
-                    span: $DIR/immutability_span.rs:26:9: 29:10 (#9),
-                    scope: scope[4],
-                },
-                kind: goto -> bb14,
-            },
-        ),
-        is_cleanup: false,
-    },
-    BasicBlockData {
-        statements: [],
-        terminator: Some(
-            Terminator {
-                source_info: SourceInfo {
-                    span: $DIR/immutability_span.rs:26:18: 26:22 (#10),
-                    scope: scope[4],
-                },
-                kind: unreachable,
-            },
-        ),
-        is_cleanup: false,
-    },
-    BasicBlockData {
-        statements: [
-            _24 = const (),
-            StorageDead(_31),
-            StorageDead(_29),
-            StorageDead(_28),
-            StorageDead(_27),
-            StorageDead(_25),
-            StorageDead(_24),
-            StorageLive(_34),
-            _34 = (*_1),
-            _5 = const (),
-            StorageDead(_34),
-        ],
-        terminator: Some(
-            Terminator {
-                source_info: SourceInfo {
-                    span: $DIR/immutability_span.rs:10:5: 33:6 (#0),
-                    scope: scope[0],
-                },
-                kind: goto -> bb19,
-            },
-        ),
-        is_cleanup: false,
-    },
-    BasicBlockData {
-        statements: [
-            StorageDead(_6),
-            StorageDead(_5),
-            _40 = const 12_i32,
-            (*_2) = _40,
-            _0 = (*_1),
-        ],
-        terminator: Some(
-            Terminator {
-                source_info: SourceInfo {
-                    span: $DIR/immutability_span.rs:38:2: 38:2 (#0),
-                    scope: scope[0],
-                },
-                kind: return,
-            },
-        ),
-        is_cleanup: false,
-    },
-]
+bb0
+Retag([fn entry] _1)
+Retag([fn entry] _2)
+_35 = const 42_i32
+(*_1) = _35
+StorageLive(_5)
+StorageLive(_6)
+_6 = _3
+switchInt(move _6) -> [false: bb11, otherwise: bb1]
+
+bb1
+StorageLive(_7)
+StorageLive(_8)
+StorageLive(_9)
+StorageLive(_10)
+Deinit(_10)
+(_10.0: i32) = const 0_i32
+(_10.1: i32) = const 3_i32
+_9 = <std::ops::Range<i32> as std::iter::IntoIterator>::into_iter(move _10) -> bb2
+
+bb2
+StorageDead(_10)
+StorageLive(_11)
+_11 = move _9
+goto -> bb3
+
+bb3
+StorageLive(_13)
+StorageLive(_14)
+StorageLive(_15)
+StorageLive(_16)
+_16 = &mut _11
+Retag(_16)
+_15 = &mut (*_16)
+Retag([2phase] _15)
+_14 = <std::ops::Range<i32> as std::iter::Iterator>::next(move _15) -> bb4
+
+bb4
+StorageDead(_15)
+_17 = discriminant(_14)
+switchInt(move _17) -> [0_isize: bb7, 1_isize: bb5, otherwise: bb6]
+
+bb5
+StorageLive(_19)
+_19 = _35
+_7 = move _19
+StorageDead(_19)
+_13 = const ()
+StorageDead(_16)
+StorageDead(_14)
+StorageDead(_13)
+_12 = const ()
+goto -> bb3
+
+bb6
+unreachable
+
+bb7
+_8 = const ()
+StorageDead(_16)
+StorageDead(_14)
+StorageDead(_13)
+StorageDead(_11)
+StorageDead(_9)
+StorageDead(_8)
+_36 = const 5_i32
+(*_1) = _36
+StorageLive(_20)
+StorageLive(_21)
+_21 = (*_2)
+_20 = Eq(move _21, const 0_i32)
+StorageDead(_21)
+switchInt(move _20) -> [false: bb9, otherwise: bb8]
+
+bb8
+_37 = const 1_i32
+(*_2) = _37
+_5 = const ()
+goto -> bb10
+
+bb9
+_5 = const ()
+goto -> bb10
+
+bb10
+StorageDead(_20)
+StorageDead(_7)
+goto -> bb19
+
+bb11
+_38 = const 7_i32
+(*_2) = _38
+StorageLive(_22)
+StorageLive(_23)
+_23 = &mut (*_1)
+Retag([2phase] _23)
+_22 = access(move _23) -> bb12
+
+bb12
+StorageDead(_23)
+StorageDead(_22)
+StorageLive(_24)
+StorageLive(_25)
+StorageLive(_26)
+Deinit(_26)
+(_26.0: i32) = const 0_i32
+(_26.1: i32) = const 5_i32
+_25 = <std::ops::Range<i32> as std::iter::IntoIterator>::into_iter(move _26) -> bb13
+
+bb13
+StorageDead(_26)
+StorageLive(_27)
+_27 = move _25
+goto -> bb14
+
+bb14
+StorageLive(_28)
+StorageLive(_29)
+StorageLive(_30)
+StorageLive(_31)
+_31 = &mut _27
+Retag(_31)
+_30 = &mut (*_31)
+Retag([2phase] _30)
+_29 = <std::ops::Range<i32> as std::iter::Iterator>::next(move _30) -> bb15
+
+bb15
+StorageDead(_30)
+_32 = discriminant(_29)
+switchInt(move _32) -> [0_isize: bb18, 1_isize: bb16, otherwise: bb17]
+
+bb16
+_39 = const 11_i32
+(*_2) = _39
+(*_1) = const 17_i32
+_28 = const ()
+StorageDead(_31)
+StorageDead(_29)
+StorageDead(_28)
+_12 = const ()
+goto -> bb14
+
+bb17
+unreachable
+
+bb18
+_24 = const ()
+StorageDead(_31)
+StorageDead(_29)
+StorageDead(_28)
+StorageDead(_27)
+StorageDead(_25)
+StorageDead(_24)
+StorageLive(_34)
+_34 = (*_1)
+_5 = const ()
+StorageDead(_34)
+goto -> bb19
+
+bb19
+StorageDead(_6)
+StorageDead(_5)
+_40 = const 12_i32
+(*_2) = _40
+_0 = (*_1)
+return
 
 # Analysing access
 # MaybeTopOfBorrowStack Analysis
@@ -1113,44 +672,17 @@ bb0
 
 
 # CFG Before
-[
-    BasicBlockData {
-        statements: [
-            Retag([fn entry] _1),
-            (*_1) = const 5_i32,
-            _0 = const (),
-        ],
-        terminator: Some(
-            Terminator {
-                source_info: SourceInfo {
-                    span: $DIR/immutability_span.rs:5:2: 5:2 (#0),
-                    scope: scope[0],
-                },
-                kind: return,
-            },
-        ),
-        is_cleanup: false,
-    },
-]
+bb0
+Retag([fn entry] _1)
+(*_1) = const 5_i32
+_0 = const ()
+return
+
 # CFG After
-[
-    BasicBlockData {
-        statements: [
-            Retag([fn entry] _1),
-            _2 = const 5_i32,
-            (*_1) = _2,
-            _0 = const (),
-        ],
-        terminator: Some(
-            Terminator {
-                source_info: SourceInfo {
-                    span: $DIR/immutability_span.rs:5:2: 5:2 (#0),
-                    scope: scope[0],
-                },
-                kind: return,
-            },
-        ),
-        is_cleanup: false,
-    },
-]
+bb0
+Retag([fn entry] _1)
+_2 = const 5_i32
+(*_1) = _2
+_0 = const ()
+return
 

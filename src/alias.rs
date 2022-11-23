@@ -1,5 +1,6 @@
 use rustc_middle::mir::*;
 
+use rustc_middle::mir::visit::Visitor;
 use rustc_middle::ty::TyCtxt;
 
 use crate::analysis::compute_immutability_spans;
@@ -25,14 +26,14 @@ impl<'tcx> MirPass<'tcx> for Alias {
 
         let immutability_spans = compute_immutability_spans(tcx, body, retagged.clone(), true);
 
+        let mut printer = PrintBodyVisitor;
         println!("# CFG Before");
-        println!("{:#?}", body.basic_blocks.as_mut());
+        printer.visit_body(body);
 
         optimisation::move_up(tcx, body, immutability_spans);
 
         println!("# CFG After");
-        println!("{:#?}", body.basic_blocks.as_mut());
-        println!();
+        printer.visit_body(body);
     }
 }
 
@@ -52,4 +53,24 @@ fn get_retags<'tcx>(body: &mut Body<'tcx>) -> Vec<Local> {
         }
     }
     retagged
+}
+
+struct PrintBodyVisitor;
+
+impl<'tcx> Visitor<'tcx> for PrintBodyVisitor {
+    fn visit_basic_block_data(&mut self, block: BasicBlock, data: &BasicBlockData<'tcx>) {
+        println!("{:?}", block);
+        self.super_basic_block_data(block, data);
+        println!();
+    }
+
+    fn visit_statement(&mut self, statement: &Statement<'tcx>, location: Location) {
+        self.super_statement(statement, location);
+        println!("{:?}", statement);
+    }
+
+    fn visit_terminator(&mut self, terminator: &Terminator<'tcx>, location: Location) {
+        self.super_terminator(terminator, location);
+        println!("{:?}", terminator.kind);
+    }
 }

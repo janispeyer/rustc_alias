@@ -38,88 +38,39 @@ bb1
 
 
 # CFG Before
-[
-    BasicBlockData {
-        statements: [
-            Retag([fn entry] _1),
-            Retag([fn entry] _2),
-            (*_1) = const 42_i32,
-            StorageLive(_4),
-            StorageLive(_5),
-            _5 = const (),
-        ],
-        terminator: Some(
-            Terminator {
-                source_info: SourceInfo {
-                    span: $DIR/inline_asm.rs:7:9: 10:10 (#0),
-                    scope: scope[1],
-                },
-                kind: asm!("mov {0}, 7", out(reg) _, options((empty))) -> bb1,
-            },
-        ),
-        is_cleanup: false,
-    },
-    BasicBlockData {
-        statements: [
-            StorageDead(_5),
-            _4 = const (),
-            StorageDead(_4),
-            (*_2) = const 7_i32,
-            _0 = (*_1),
-        ],
-        terminator: Some(
-            Terminator {
-                source_info: SourceInfo {
-                    span: $DIR/inline_asm.rs:14:2: 14:2 (#0),
-                    scope: scope[0],
-                },
-                kind: return,
-            },
-        ),
-        is_cleanup: false,
-    },
-]
+bb0
+Retag([fn entry] _1)
+Retag([fn entry] _2)
+(*_1) = const 42_i32
+StorageLive(_4)
+StorageLive(_5)
+_5 = const ()
+asm!("mov {0}, 7", out(reg) _, options((empty))) -> bb1
+
+bb1
+StorageDead(_5)
+_4 = const ()
+StorageDead(_4)
+(*_2) = const 7_i32
+_0 = (*_1)
+return
+
 # CFG After
-[
-    BasicBlockData {
-        statements: [
-            Retag([fn entry] _1),
-            Retag([fn entry] _2),
-            _6 = const 42_i32,
-            (*_1) = _6,
-            StorageLive(_4),
-            StorageLive(_5),
-            _5 = const (),
-        ],
-        terminator: Some(
-            Terminator {
-                source_info: SourceInfo {
-                    span: $DIR/inline_asm.rs:7:9: 10:10 (#0),
-                    scope: scope[1],
-                },
-                kind: asm!("mov {0}, 7", out(reg) _, options((empty))) -> bb1,
-            },
-        ),
-        is_cleanup: false,
-    },
-    BasicBlockData {
-        statements: [
-            StorageDead(_5),
-            _4 = const (),
-            StorageDead(_4),
-            (*_2) = const 7_i32,
-            _0 = (*_1),
-        ],
-        terminator: Some(
-            Terminator {
-                source_info: SourceInfo {
-                    span: $DIR/inline_asm.rs:14:2: 14:2 (#0),
-                    scope: scope[0],
-                },
-                kind: return,
-            },
-        ),
-        is_cleanup: false,
-    },
-]
+bb0
+Retag([fn entry] _1)
+Retag([fn entry] _2)
+_6 = const 42_i32
+(*_1) = _6
+StorageLive(_4)
+StorageLive(_5)
+_5 = const ()
+asm!("mov {0}, 7", out(reg) _, options((empty))) -> bb1
+
+bb1
+StorageDead(_5)
+_4 = const ()
+StorageDead(_4)
+(*_2) = const 7_i32
+_0 = (*_1)
+return
 

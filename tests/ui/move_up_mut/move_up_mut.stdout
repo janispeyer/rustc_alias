@@ -20,49 +20,22 @@ bb0
 
 
 # CFG Before
-[
-    BasicBlockData {
-        statements: [
-            Retag([fn entry] _1),
-            Retag([fn entry] _2),
-            (*_1) = const 42_i32,
-            (*_2) = const 7_i32,
-            _0 = (*_1),
-        ],
-        terminator: Some(
-            Terminator {
-                source_info: SourceInfo {
-                    span: $DIR/move_up_mut.rs:7:2: 7:2 (#0),
-                    scope: scope[0],
-                },
-                kind: return,
-            },
-        ),
-        is_cleanup: false,
-    },
-]
+bb0
+Retag([fn entry] _1)
+Retag([fn entry] _2)
+(*_1) = const 42_i32
+(*_2) = const 7_i32
+_0 = (*_1)
+return
+
 # CFG After
-[
-    BasicBlockData {
-        statements: [
-            Retag([fn entry] _1),
-            Retag([fn entry] _2),
-            _4 = const 42_i32,
-            (*_1) = _4,
-            _5 = const 7_i32,
-            (*_2) = _5,
-            _0 = _4,
-        ],
-        terminator: Some(
-            Terminator {
-                source_info: SourceInfo {
-                    span: $DIR/move_up_mut.rs:7:2: 7:2 (#0),
-                    scope: scope[0],
-                },
-                kind: return,
-            },
-        ),
-        is_cleanup: false,
-    },
-]
+bb0
+Retag([fn entry] _1)
+Retag([fn entry] _2)
+_4 = const 42_i32
+(*_1) = _4
+_5 = const 7_i32
+(*_2) = _5
+_0 = _4
+return
 
