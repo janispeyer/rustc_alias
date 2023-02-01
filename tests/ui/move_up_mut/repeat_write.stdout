@@ -2,49 +2,49 @@
 # Analysing repeat_write
 # MaybeTopOfBorrowStack Analysis
 bb0
-[ 0] [_1, _2] -> Retag([fn entry] _1)
-[ 1] [_1, _2] -> Retag([fn entry] _2)
-[ 2] [_1, _2] -> (*_1) = const 42_i32
-[ 3] [_1, _2] -> (*_2) = const 7_i32
-[ 4] [_1, _2] -> StorageLive(_4)
-[ 5] [_1, _2] -> _4 = (*_1)
-[ 6] [_1, _2] -> (*_1) = move _4
-[ 7] [_1, _2] -> StorageDead(_4)
-[ 8] [_1, _2] -> (*_2) = const 8_i32
-[ 9] [_1, _2] -> StorageLive(_5)
-[10] [_1, _2] -> _5 = (*_1)
-[11] [_1, _2] -> _6 = CheckedAdd(_5, const 1_i32)
-[12] [_1, _2] -> assert(!move (_6.1: bool), "attempt to compute `{} + {}`, which would overflow", move _5, const 1_i32) -> bb1
+[ 0] [_1, _2] <- Retag([fn entry] _1)
+[ 1] [_1, _2] <- Retag([fn entry] _2)
+[ 2] [_1, _2] <- (*_1) = const 42_i32
+[ 3] [_1, _2] <- (*_2) = const 7_i32
+[ 4] [_1, _2] <- StorageLive(_4)
+[ 5] [_1, _2] <- _4 = (*_1)
+[ 6] [_1, _2] <- (*_1) = move _4
+[ 7] [_1, _2] <- StorageDead(_4)
+[ 8] [_1, _2] <- (*_2) = const 8_i32
+[ 9] [_1, _2] <- StorageLive(_5)
+[10] [_1, _2] <- _5 = (*_1)
+[11] [_1, _2] <- _6 = CheckedAdd(_5, const 1_i32)
+[12] [_1, _2] <- assert(!move (_6.1: bool), "attempt to compute `{} + {}`, which would overflow", move _5, const 1_i32) -> bb1
 
 bb1
-[ 0] [_1, _2] -> (*_1) = move (_6.0: i32)
-[ 1] [_1, _2] -> StorageDead(_5)
-[ 2] [_1, _2] -> (*_2) = const 9_i32
-[ 3] [_1, _2] -> _0 = (*_1)
-[ 4] [_1, _2] -> return
+[ 0] [_1, _2] <- (*_1) = move (_6.0: i32)
+[ 1] [_1, _2] <- StorageDead(_5)
+[ 2] [_1, _2] <- (*_2) = const 9_i32
+[ 3] [_1, _2] <- _0 = (*_1)
+[ 4] [_1, _2] <- return
 
 # FindImmutabilitySpans Analysis
 bb0
-[ 0] {} -> Retag([fn entry] _1)
-[ 1] {} -> Retag([fn entry] _2)
-[ 2] {_1: Span(bb0[2])} -> (*_1) = const 42_i32
-[ 3] {_1: Span(bb0[2]), _2: Span(bb0[3])} -> (*_2) = const 7_i32
-[ 4] {_1: Span(bb0[2]), _2: Span(bb0[3])} -> StorageLive(_4)
-[ 5] {_1: Span(bb0[2]), _2: Span(bb0[3])} -> _4 = (*_1)
-[ 6] {_1: Span(bb0[6]), _2: Span(bb0[3])} -> (*_1) = move _4
-[ 7] {_1: Span(bb0[6]), _2: Span(bb0[3])} -> StorageDead(_4)
-[ 8] {_1: Span(bb0[6]), _2: Span(bb0[8])} -> (*_2) = const 8_i32
-[ 9] {_1: Span(bb0[6]), _2: Span(bb0[8])} -> StorageLive(_5)
-[10] {_1: Span(bb0[6]), _2: Span(bb0[8])} -> _5 = (*_1)
-[11] {_1: Span(bb0[6]), _2: Span(bb0[8])} -> _6 = CheckedAdd(_5, const 1_i32)
-[12] {_1: Span(bb0[6]), _2: Span(bb0[8])} -> assert(!move (_6.1: bool), "attempt to compute `{} + {}`, which would overflow", move _5, const 1_i32) -> bb1
+[ 0] {} <- Retag([fn entry] _1)
+[ 1] {} <- Retag([fn entry] _2)
+[ 2] {_1: Span(bb0[2])} <- (*_1) = const 42_i32
+[ 3] {_1: Span(bb0[2]), _2: Span(bb0[3])} <- (*_2) = const 7_i32
+[ 4] {_1: Span(bb0[2]), _2: Span(bb0[3])} <- StorageLive(_4)
+[ 5] {_1: Span(bb0[2]), _2: Span(bb0[3])} <- _4 = (*_1)
+[ 6] {_1: Span(bb0[6]), _2: Span(bb0[3])} <- (*_1) = move _4
+[ 7] {_1: Span(bb0[6]), _2: Span(bb0[3])} <- StorageDead(_4)
+[ 8] {_1: Span(bb0[6]), _2: Span(bb0[8])} <- (*_2) = const 8_i32
+[ 9] {_1: Span(bb0[6]), _2: Span(bb0[8])} <- StorageLive(_5)
+[10] {_1: Span(bb0[6]), _2: Span(bb0[8])} <- _5 = (*_1)
+[11] {_1: Span(bb0[6]), _2: Span(bb0[8])} <- _6 = CheckedAdd(_5, const 1_i32)
+[12] {_1: Span(bb0[6]), _2: Span(bb0[8])} <- assert(!move (_6.1: bool), "attempt to compute `{} + {}`, which would overflow", move _5, const 1_i32) -> bb1
 
 bb1
-[ 0] {_1: Span(bb1[0]), _2: Span(bb0[8])} -> (*_1) = move (_6.0: i32)
-[ 1] {_1: Span(bb1[0]), _2: Span(bb0[8])} -> StorageDead(_5)
-[ 2] {_1: Span(bb1[0]), _2: Span(bb1[2])} -> (*_2) = const 9_i32
-[ 3] {_1: Span(bb1[0]), _2: Span(bb1[2])} -> _0 = (*_1)
-[ 4] {_1: Span(bb1[0]), _2: Span(bb1[2])} -> return
+[ 0] {_1: Span(bb1[0]), _2: Span(bb0[8])} <- (*_1) = move (_6.0: i32)
+[ 1] {_1: Span(bb1[0]), _2: Span(bb0[8])} <- StorageDead(_5)
+[ 2] {_1: Span(bb1[0]), _2: Span(bb1[2])} <- (*_2) = const 9_i32
+[ 3] {_1: Span(bb1[0]), _2: Span(bb1[2])} <- _0 = (*_1)
+[ 4] {_1: Span(bb1[0]), _2: Span(bb1[2])} <- return
 
 
 # CFG Before

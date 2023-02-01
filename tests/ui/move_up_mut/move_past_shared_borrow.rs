@@ -19,5 +19,5 @@ fn mid(x: &mut u32, y: &mut u32) -> bool {
 fn main() {
     let mut x = 1;
     let mut y = 2;
-    mid(&mut x, &mut y);
+    println!("{}", mid(&mut x, &mut y));
 }

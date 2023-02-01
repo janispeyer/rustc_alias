@@ -2,101 +2,101 @@
 # Analysing mid
 # MaybeTopOfBorrowStack Analysis
 bb0
-[ 0] [_1, _2] -> Retag([fn entry] _1)
-[ 1] [_1, _2] -> Retag([fn entry] _2)
-[ 2] [_1, _2] -> (*_1) = const 7_u32
-[ 3] [_1, _2] -> (*_2) = const 42_u32
-[ 4] [_1, _2] -> StorageLive(_4)
-[ 5] [_1, _2] -> StorageLive(_5)
-[ 6] [_1, _2] -> _5 = &(*_1)
-[ 7] [_1, _2] -> Retag(_5)
-[ 8] [_1, _2] -> _4 = lib(move _5) -> bb1
+[ 0] [_1, _2] <- Retag([fn entry] _1)
+[ 1] [_1, _2] <- Retag([fn entry] _2)
+[ 2] [_1, _2] <- (*_1) = const 7_u32
+[ 3] [_1, _2] <- (*_2) = const 42_u32
+[ 4] [_1, _2] <- StorageLive(_4)
+[ 5] [_1, _2] <- StorageLive(_5)
+[ 6] [_1, _2] <- _5 = &(*_1)
+[ 7] [_1, _2] <- Retag(_5)
+[ 8] [_1, _2] <- _4 = lib(move _5) -> bb1
 
 bb1
-[ 0] [_1, _2] -> StorageDead(_5)
-[ 1] [_1, _2] -> StorageDead(_4)
-[ 2] [_1, _2] -> StorageLive(_6)
-[ 3] [_1, _2] -> StorageLive(_7)
-[ 4] [_1, _2] -> _7 = &(*_2)
-[ 5] [_1, _2] -> Retag(_7)
-[ 6] [_1, _2] -> _6 = lib(move _7) -> bb2
+[ 0] [_1, _2] <- StorageDead(_5)
+[ 1] [_1, _2] <- StorageDead(_4)
+[ 2] [_1, _2] <- StorageLive(_6)
+[ 3] [_1, _2] <- StorageLive(_7)
+[ 4] [_1, _2] <- _7 = &(*_2)
+[ 5] [_1, _2] <- Retag(_7)
+[ 6] [_1, _2] <- _6 = lib(move _7) -> bb2
 
 bb2
-[ 0] [_1, _2] -> StorageDead(_7)
-[ 1] [_1, _2] -> StorageDead(_6)
-[ 2] [_1, _2] -> StorageLive(_8)
-[ 3] [_1, _2] -> StorageLive(_9)
-[ 4] [_1, _2] -> _9 = (*_1)
-[ 5] [_1, _2] -> _8 = Eq(move _9, const 7_u32)
-[ 6] [_1, _2] -> StorageDead(_9)
-[ 7] [_1, _2] -> switchInt(move _8) -> [false: bb3, otherwise: bb4]
+[ 0] [_1, _2] <- StorageDead(_7)
+[ 1] [_1, _2] <- StorageDead(_6)
+[ 2] [_1, _2] <- StorageLive(_8)
+[ 3] [_1, _2] <- StorageLive(_9)
+[ 4] [_1, _2] <- _9 = (*_1)
+[ 5] [_1, _2] <- _8 = Eq(move _9, const 7_u32)
+[ 6] [_1, _2] <- StorageDead(_9)
+[ 7] [_1, _2] <- switchInt(move _8) -> [false: bb3, otherwise: bb4]
 
 bb3
-[ 0] [_1, _2] -> _0 = const false
-[ 1] [_1, _2] -> goto -> bb5
+[ 0] [_1, _2] <- _0 = const false
+[ 1] [_1, _2] <- goto -> bb5
 
 bb4
-[ 0] [_1, _2] -> StorageLive(_10)
-[ 1] [_1, _2] -> StorageLive(_11)
-[ 2] [_1, _2] -> _11 = (*_2)
-[ 3] [_1, _2] -> _10 = Eq(move _11, const 42_u32)
-[ 4] [_1, _2] -> StorageDead(_11)
-[ 5] [_1, _2] -> _0 = move _10
-[ 6] [_1, _2] -> goto -> bb5
+[ 0] [_1, _2] <- StorageLive(_10)
+[ 1] [_1, _2] <- StorageLive(_11)
+[ 2] [_1, _2] <- _11 = (*_2)
+[ 3] [_1, _2] <- _10 = Eq(move _11, const 42_u32)
+[ 4] [_1, _2] <- StorageDead(_11)
+[ 5] [_1, _2] <- _0 = move _10
+[ 6] [_1, _2] <- goto -> bb5
 
 bb5
-[ 0] [_1, _2] -> StorageDead(_10)
-[ 1] [_1, _2] -> StorageDead(_8)
-[ 2] [_1, _2] -> return
+[ 0] [_1, _2] <- StorageDead(_10)
+[ 1] [_1, _2] <- StorageDead(_8)
+[ 2] [_1, _2] <- return
 
 # FindImmutabilitySpans Analysis
 bb0
-[ 0] {} -> Retag([fn entry] _1)
-[ 1] {} -> Retag([fn entry] _2)
-[ 2] {_1: Span(bb0[2])} -> (*_1) = const 7_u32
-[ 3] {_1: Span(bb0[2]), _2: Span(bb0[3])} -> (*_2) = const 42_u32
-[ 4] {_1: Span(bb0[2]), _2: Span(bb0[3])} -> StorageLive(_4)
-[ 5] {_1: Span(bb0[2]), _2: Span(bb0[3])} -> StorageLive(_5)
-[ 6] {_1: Span(bb0[2]), _2: Span(bb0[3])} -> _5 = &(*_1)
-[ 7] {_1: Span(bb0[2]), _2: Span(bb0[3])} -> Retag(_5)
-[ 8] {_1: Span(bb0[2]), _2: Span(bb0[3])} -> _4 = lib(move _5) -> bb1
+[ 0] {} <- Retag([fn entry] _1)
+[ 1] {} <- Retag([fn entry] _2)
+[ 2] {_1: Span(bb0[2])} <- (*_1) = const 7_u32
+[ 3] {_1: Span(bb0[2]), _2: Span(bb0[3])} <- (*_2) = const 42_u32
+[ 4] {_1: Span(bb0[2]), _2: Span(bb0[3])} <- StorageLive(_4)
+[ 5] {_1: Span(bb0[2]), _2: Span(bb0[3])} <- StorageLive(_5)
+[ 6] {_1: Span(bb0[2]), _2: Span(bb0[3])} <- _5 = &(*_1)
+[ 7] {_1: Span(bb0[2]), _2: Span(bb0[3])} <- Retag(_5)
+[ 8] {_1: Span(bb0[2]), _2: Span(bb0[3])} <- _4 = lib(move _5) -> bb1
 
 bb1
-[ 0] {_1: Span(bb0[2]), _2: Span(bb0[3])} -> StorageDead(_5)
-[ 1] {_1: Span(bb0[2]), _2: Span(bb0[3])} -> StorageDead(_4)
-[ 2] {_1: Span(bb0[2]), _2: Span(bb0[3])} -> StorageLive(_6)
-[ 3] {_1: Span(bb0[2]), _2: Span(bb0[3])} -> StorageLive(_7)
-[ 4] {_1: Span(bb0[2]), _2: Span(bb0[3])} -> _7 = &(*_2)
-[ 5] {_1: Span(bb0[2]), _2: Span(bb0[3])} -> Retag(_7)
-[ 6] {_1: Span(bb0[2]), _2: Span(bb0[3])} -> _6 = lib(move _7) -> bb2
+[ 0] {_1: Span(bb0[2]), _2: Span(bb0[3])} <- StorageDead(_5)
+[ 1] {_1: Span(bb0[2]), _2: Span(bb0[3])} <- StorageDead(_4)
+[ 2] {_1: Span(bb0[2]), _2: Span(bb0[3])} <- StorageLive(_6)
+[ 3] {_1: Span(bb0[2]), _2: Span(bb0[3])} <- StorageLive(_7)
+[ 4] {_1: Span(bb0[2]), _2: Span(bb0[3])} <- _7 = &(*_2)
+[ 5] {_1: Span(bb0[2]), _2: Span(bb0[3])} <- Retag(_7)
+[ 6] {_1: Span(bb0[2]), _2: Span(bb0[3])} <- _6 = lib(move _7) -> bb2
 
 bb2
-[ 0] {_1: Span(bb0[2]), _2: Span(bb0[3])} -> StorageDead(_7)
-[ 1] {_1: Span(bb0[2]), _2: Span(bb0[3])} -> StorageDead(_6)
-[ 2] {_1: Span(bb0[2]), _2: Span(bb0[3])} -> StorageLive(_8)
-[ 3] {_1: Span(bb0[2]), _2: Span(bb0[3])} -> StorageLive(_9)
-[ 4] {_1: Span(bb0[2]), _2: Span(bb0[3])} -> _9 = (*_1)
-[ 5] {_1: Span(bb0[2]), _2: Span(bb0[3])} -> _8 = Eq(move _9, const 7_u32)
-[ 6] {_1: Span(bb0[2]), _2: Span(bb0[3])} -> StorageDead(_9)
-[ 7] {_1: Span(bb0[2]), _2: Span(bb0[3])} -> switchInt(move _8) -> [false: bb3, otherwise: bb4]
+[ 0] {_1: Span(bb0[2]), _2: Span(bb0[3])} <- StorageDead(_7)
+[ 1] {_1: Span(bb0[2]), _2: Span(bb0[3])} <- StorageDead(_6)
+[ 2] {_1: Span(bb0[2]), _2: Span(bb0[3])} <- StorageLive(_8)
+[ 3] {_1: Span(bb0[2]), _2: Span(bb0[3])} <- StorageLive(_9)
+[ 4] {_1: Span(bb0[2]), _2: Span(bb0[3])} <- _9 = (*_1)
+[ 5] {_1: Span(bb0[2]), _2: Span(bb0[3])} <- _8 = Eq(move _9, const 7_u32)
+[ 6] {_1: Span(bb0[2]), _2: Span(bb0[3])} <- StorageDead(_9)
+[ 7] {_1: Span(bb0[2]), _2: Span(bb0[3])} <- switchInt(move _8) -> [false: bb3, otherwise: bb4]
 
 bb4
-[ 0] {_1: Span(bb0[2]), _2: Span(bb0[3])} -> StorageLive(_10)
-[ 1] {_1: Span(bb0[2]), _2: Span(bb0[3])} -> StorageLive(_11)
-[ 2] {_1: Span(bb0[2]), _2: Span(bb0[3])} -> _11 = (*_2)
-[ 3] {_1: Span(bb0[2]), _2: Span(bb0[3])} -> _10 = Eq(move _11, const 42_u32)
-[ 4] {_1: Span(bb0[2]), _2: Span(bb0[3])} -> StorageDead(_11)
-[ 5] {_1: Span(bb0[2]), _2: Span(bb0[3])} -> _0 = move _10
-[ 6] {_1: Span(bb0[2]), _2: Span(bb0[3])} -> goto -> bb5
+[ 0] {_1: Span(bb0[2]), _2: Span(bb0[3])} <- StorageLive(_10)
+[ 1] {_1: Span(bb0[2]), _2: Span(bb0[3])} <- StorageLive(_11)
+[ 2] {_1: Span(bb0[2]), _2: Span(bb0[3])} <- _11 = (*_2)
+[ 3] {_1: Span(bb0[2]), _2: Span(bb0[3])} <- _10 = Eq(move _11, const 42_u32)
+[ 4] {_1: Span(bb0[2]), _2: Span(bb0[3])} <- StorageDead(_11)
+[ 5] {_1: Span(bb0[2]), _2: Span(bb0[3])} <- _0 = move _10
+[ 6] {_1: Span(bb0[2]), _2: Span(bb0[3])} <- goto -> bb5
 
 bb5
-[ 0] {_1: Span(bb0[2]), _2: Span(bb0[3])} -> StorageDead(_10)
-[ 1] {_1: Span(bb0[2]), _2: Span(bb0[3])} -> StorageDead(_8)
-[ 2] {_1: Span(bb0[2]), _2: Span(bb0[3])} -> return
+[ 0] {_1: Span(bb0[2]), _2: Span(bb0[3])} <- StorageDead(_10)
+[ 1] {_1: Span(bb0[2]), _2: Span(bb0[3])} <- StorageDead(_8)
+[ 2] {_1: Span(bb0[2]), _2: Span(bb0[3])} <- return
 
 bb3
-[ 0] {_1: Span(bb0[2]), _2: Span(bb0[3])} -> _0 = const false
-[ 1] {_1: Span(bb0[2]), _2: Span(bb0[3])} -> goto -> bb5
+[ 0] {_1: Span(bb0[2]), _2: Span(bb0[3])} <- _0 = const false
+[ 1] {_1: Span(bb0[2]), _2: Span(bb0[3])} <- goto -> bb5
 
 
 # CFG Before
@@ -202,131 +202,131 @@ return
 # Analysing lib
 # MaybeTopOfBorrowStack Analysis
 bb0
-[ 0] [] -> Retag([fn entry] _1)
-[ 1] [] -> StorageLive(_2)
-[ 2] [] -> StorageLive(_3)
-[ 3] [] -> StorageLive(_4)
-[ 4] [] -> StorageLive(_5)
-[ 5] [] -> StorageLive(_6)
-[ 6] [] -> StorageLive(_7)
-[ 7] [] -> _16 = const _
-[ 8] [] -> Retag(_16)
-[ 9] [] -> _7 = &(*_16)
-[10] [] -> Retag(_7)
-[11] [] -> _6 = &(*_7)
-[12] [] -> Retag(_6)
-[13] [] -> _5 = move _6 as &[&str] (Pointer(Unsize))
-[14] [] -> Retag(_5)
-[15] [] -> StorageDead(_6)
-[16] [] -> StorageLive(_9)
-[17] [] -> StorageLive(_10)
-[18] [] -> StorageLive(_11)
-[19] [] -> StorageLive(_12)
-[20] [] -> StorageLive(_13)
-[21] [] -> StorageLive(_14)
-[22] [] -> StorageLive(_15)
-[23] [] -> _15 = &_1
-[24] [] -> Retag(_15)
-[25] [] -> _14 = &(*_15)
-[26] [] -> Retag(_14)
-[27] [] -> _13 = std::fmt::ArgumentV1::<'_>::new_display::<&u32>(move _14) -> bb1
+[ 0] [] <- Retag([fn entry] _1)
+[ 1] [] <- StorageLive(_2)
+[ 2] [] <- StorageLive(_3)
+[ 3] [] <- StorageLive(_4)
+[ 4] [] <- StorageLive(_5)
+[ 5] [] <- StorageLive(_6)
+[ 6] [] <- StorageLive(_7)
+[ 7] [] <- _16 = const _
+[ 8] [] <- Retag(_16)
+[ 9] [] <- _7 = &(*_16)
+[10] [] <- Retag(_7)
+[11] [] <- _6 = &(*_7)
+[12] [] <- Retag(_6)
+[13] [] <- _5 = move _6 as &[&str] (Pointer(Unsize))
+[14] [] <- Retag(_5)
+[15] [] <- StorageDead(_6)
+[16] [] <- StorageLive(_9)
+[17] [] <- StorageLive(_10)
+[18] [] <- StorageLive(_11)
+[19] [] <- StorageLive(_12)
+[20] [] <- StorageLive(_13)
+[21] [] <- StorageLive(_14)
+[22] [] <- StorageLive(_15)
+[23] [] <- _15 = &_1
+[24] [] <- Retag(_15)
+[25] [] <- _14 = &(*_15)
+[26] [] <- Retag(_14)
+[27] [] <- _13 = std::fmt::ArgumentV1::<'_>::new_display::<&u32>(move _14) -> bb1
 
 bb1
-[ 0] [] -> Retag(_13)
-[ 1] [] -> StorageDead(_14)
-[ 2] [] -> _12 = [move _13]
-[ 3] [] -> Retag(_12)
-[ 4] [] -> StorageDead(_13)
-[ 5] [] -> _11 = &_12
-[ 6] [] -> Retag(_11)
-[ 7] [] -> _10 = &(*_11)
-[ 8] [] -> Retag(_10)
-[ 9] [] -> _9 = move _10 as &[std::fmt::ArgumentV1<'_>] (Pointer(Unsize))
-[10] [] -> Retag(_9)
-[11] [] -> StorageDead(_10)
-[12] [] -> _4 = std::fmt::Arguments::<'_>::new_v1(move _5, move _9) -> bb2
+[ 0] [] <- Retag(_13)
+[ 1] [] <- StorageDead(_14)
+[ 2] [] <- _12 = [move _13]
+[ 3] [] <- Retag(_12)
+[ 4] [] <- StorageDead(_13)
+[ 5] [] <- _11 = &_12
+[ 6] [] <- Retag(_11)
+[ 7] [] <- _10 = &(*_11)
+[ 8] [] <- Retag(_10)
+[ 9] [] <- _9 = move _10 as &[std::fmt::ArgumentV1<'_>] (Pointer(Unsize))
+[10] [] <- Retag(_9)
+[11] [] <- StorageDead(_10)
+[12] [] <- _4 = std::fmt::Arguments::<'_>::new_v1(move _5, move _9) -> bb2
 
 bb2
-[ 0] [] -> Retag(_4)
-[ 1] [] -> StorageDead(_9)
-[ 2] [] -> StorageDead(_5)
-[ 3] [] -> _3 = std::io::_print(move _4) -> bb3
+[ 0] [] <- Retag(_4)
+[ 1] [] <- StorageDead(_9)
+[ 2] [] <- StorageDead(_5)
+[ 3] [] <- _3 = std::io::_print(move _4) -> bb3
 
 bb3
-[ 0] [] -> StorageDead(_4)
-[ 1] [] -> StorageDead(_15)
-[ 2] [] -> StorageDead(_12)
-[ 3] [] -> StorageDead(_11)
-[ 4] [] -> StorageDead(_7)
-[ 5] [] -> StorageDead(_3)
-[ 6] [] -> _2 = const ()
-[ 7] [] -> StorageDead(_2)
-[ 8] [] -> _0 = const ()
-[ 9] [] -> return
+[ 0] [] <- StorageDead(_4)
+[ 1] [] <- StorageDead(_15)
+[ 2] [] <- StorageDead(_12)
+[ 3] [] <- StorageDead(_11)
+[ 4] [] <- StorageDead(_7)
+[ 5] [] <- StorageDead(_3)
+[ 6] [] <- _2 = const ()
+[ 7] [] <- StorageDead(_2)
+[ 8] [] <- _0 = const ()
+[ 9] [] <- return
 
 # FindImmutabilitySpans Analysis
 bb0
-[ 0] {} -> Retag([fn entry] _1)
-[ 1] {} -> StorageLive(_2)
-[ 2] {} -> StorageLive(_3)
-[ 3] {} -> StorageLive(_4)
-[ 4] {} -> StorageLive(_5)
-[ 5] {} -> StorageLive(_6)
-[ 6] {} -> StorageLive(_7)
-[ 7] {} -> _16 = const _
-[ 8] {} -> Retag(_16)
-[ 9] {} -> _7 = &(*_16)
-[10] {} -> Retag(_7)
-[11] {} -> _6 = &(*_7)
-[12] {} -> Retag(_6)
-[13] {} -> _5 = move _6 as &[&str] (Pointer(Unsize))
-[14] {} -> Retag(_5)
-[15] {} -> StorageDead(_6)
-[16] {} -> StorageLive(_9)
-[17] {} -> StorageLive(_10)
-[18] {} -> StorageLive(_11)
-[19] {} -> StorageLive(_12)
-[20] {} -> StorageLive(_13)
-[21] {} -> StorageLive(_14)
-[22] {} -> StorageLive(_15)
-[23] {} -> _15 = &_1
-[24] {} -> Retag(_15)
-[25] {} -> _14 = &(*_15)
-[26] {} -> Retag(_14)
-[27] {} -> _13 = std::fmt::ArgumentV1::<'_>::new_display::<&u32>(move _14) -> bb1
+[ 0] {} <- Retag([fn entry] _1)
+[ 1] {} <- StorageLive(_2)
+[ 2] {} <- StorageLive(_3)
+[ 3] {} <- StorageLive(_4)
+[ 4] {} <- StorageLive(_5)
+[ 5] {} <- StorageLive(_6)
+[ 6] {} <- StorageLive(_7)
+[ 7] {} <- _16 = const _
+[ 8] {} <- Retag(_16)
+[ 9] {} <- _7 = &(*_16)
+[10] {} <- Retag(_7)
+[11] {} <- _6 = &(*_7)
+[12] {} <- Retag(_6)
+[13] {} <- _5 = move _6 as &[&str] (Pointer(Unsize))
+[14] {} <- Retag(_5)
+[15] {} <- StorageDead(_6)
+[16] {} <- StorageLive(_9)
+[17] {} <- StorageLive(_10)
+[18] {} <- StorageLive(_11)
+[19] {} <- StorageLive(_12)
+[20] {} <- StorageLive(_13)
+[21] {} <- StorageLive(_14)
+[22] {} <- StorageLive(_15)
+[23] {} <- _15 = &_1
+[24] {} <- Retag(_15)
+[25] {} <- _14 = &(*_15)
+[26] {} <- Retag(_14)
+[27] {} <- _13 = std::fmt::ArgumentV1::<'_>::new_display::<&u32>(move _14) -> bb1
 
 bb1
-[ 0] {} -> Retag(_13)
-[ 1] {} -> StorageDead(_14)
-[ 2] {} -> _12 = [move _13]
-[ 3] {} -> Retag(_12)
-[ 4] {} -> StorageDead(_13)
-[ 5] {} -> _11 = &_12
-[ 6] {} -> Retag(_11)
-[ 7] {} -> _10 = &(*_11)
-[ 8] {} -> Retag(_10)
-[ 9] {} -> _9 = move _10 as &[std::fmt::ArgumentV1<'_>] (Pointer(Unsize))
-[10] {} -> Retag(_9)
-[11] {} -> StorageDead(_10)
-[12] {} -> _4 = std::fmt::Arguments::<'_>::new_v1(move _5, move _9) -> bb2
+[ 0] {} <- Retag(_13)
+[ 1] {} <- StorageDead(_14)
+[ 2] {} <- _12 = [move _13]
+[ 3] {} <- Retag(_12)
+[ 4] {} <- StorageDead(_13)
+[ 5] {} <- _11 = &_12
+[ 6] {} <- Retag(_11)
+[ 7] {} <- _10 = &(*_11)
+[ 8] {} <- Retag(_10)
+[ 9] {} <- _9 = move _10 as &[std::fmt::ArgumentV1<'_>] (Pointer(Unsize))
+[10] {} <- Retag(_9)
+[11] {} <- StorageDead(_10)
+[12] {} <- _4 = std::fmt::Arguments::<'_>::new_v1(move _5, move _9) -> bb2
 
 bb2
-[ 0] {} -> Retag(_4)
-[ 1] {} -> StorageDead(_9)
-[ 2] {} -> StorageDead(_5)
-[ 3] {} -> _3 = std::io::_print(move _4) -> bb3
+[ 0] {} <- Retag(_4)
+[ 1] {} <- StorageDead(_9)
+[ 2] {} <- StorageDead(_5)
+[ 3] {} <- _3 = std::io::_print(move _4) -> bb3
 
 bb3
-[ 0] {} -> StorageDead(_4)
-[ 1] {} -> StorageDead(_15)
-[ 2] {} -> StorageDead(_12)
-[ 3] {} -> StorageDead(_11)
-[ 4] {} -> StorageDead(_7)
-[ 5] {} -> StorageDead(_3)
-[ 6] {} -> _2 = const ()
-[ 7] {} -> StorageDead(_2)
-[ 8] {} -> _0 = const ()
-[ 9] {} -> return
+[ 0] {} <- StorageDead(_4)
+[ 1] {} <- StorageDead(_15)
+[ 2] {} <- StorageDead(_12)
+[ 3] {} <- StorageDead(_11)
+[ 4] {} <- StorageDead(_7)
+[ 5] {} <- StorageDead(_3)
+[ 6] {} <- _2 = const ()
+[ 7] {} <- StorageDead(_2)
+[ 8] {} <- _0 = const ()
+[ 9] {} <- return
 
 
 # CFG Before

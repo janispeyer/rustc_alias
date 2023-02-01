@@ -2,141 +2,141 @@
 # Analysing interior_mutability
 # MaybeTopOfBorrowStack Analysis
 bb0
-[ 0] [] -> Retag([fn entry] _1)
-[ 1] [] -> Retag([fn entry] _2)
-[ 2] [] -> StorageLive(_3)
-[ 3] [] -> StorageLive(_4)
-[ 4] [] -> _4 = std::cell::Cell::<i32>::new(const 42_i32) -> bb1
+[ 0] [] <- Retag([fn entry] _1)
+[ 1] [] <- Retag([fn entry] _2)
+[ 2] [] <- StorageLive(_3)
+[ 3] [] <- StorageLive(_4)
+[ 4] [] <- _4 = std::cell::Cell::<i32>::new(const 42_i32) -> bb1
 
 bb1
-[ 0] [] -> _3 = std::rc::Rc::<std::cell::Cell<i32>>::new(move _4) -> bb2
+[ 0] [] <- _3 = std::rc::Rc::<std::cell::Cell<i32>>::new(move _4) -> bb2
 
 bb2
-[ 0] [] -> StorageDead(_4)
-[ 1] [] -> drop((*_1)) -> [return: bb9, unwind: bb8]
+[ 0] [] <- StorageDead(_4)
+[ 1] [] <- drop((*_1)) -> [return: bb9, unwind: bb8]
 
 bb3
-[ 0] [] -> Retag(_7)
-[ 1] [] -> _6 = &(*_7)
-[ 2] [] -> Retag(_6)
-[ 3] [] -> StorageDead(_8)
-[ 4] [] -> _5 = std::cell::Cell::<i32>::set(move _6, const 7_i32) -> bb4
+[ 0] [] <- Retag(_7)
+[ 1] [] <- _6 = &(*_7)
+[ 2] [] <- Retag(_6)
+[ 3] [] <- StorageDead(_8)
+[ 4] [] <- _5 = std::cell::Cell::<i32>::set(move _6, const 7_i32) -> bb4
 
 bb4
-[ 0] [] -> StorageDead(_6)
-[ 1] [] -> StorageDead(_7)
-[ 2] [] -> StorageDead(_5)
-[ 3] [] -> StorageLive(_9)
-[ 4] [] -> StorageLive(_10)
-[ 5] [] -> _10 = &(*_1)
-[ 6] [] -> Retag(_10)
-[ 7] [] -> _9 = access(move _10) -> bb5
+[ 0] [] <- StorageDead(_6)
+[ 1] [] <- StorageDead(_7)
+[ 2] [] <- StorageDead(_5)
+[ 3] [] <- StorageLive(_9)
+[ 4] [] <- StorageLive(_10)
+[ 5] [] <- _10 = &(*_1)
+[ 6] [] <- Retag(_10)
+[ 7] [] <- _9 = access(move _10) -> bb5
 
 bb5
-[ 0] [] -> StorageDead(_10)
-[ 1] [] -> StorageDead(_9)
-[ 2] [] -> StorageLive(_11)
-[ 3] [] -> StorageLive(_12)
-[ 4] [] -> StorageLive(_13)
-[ 5] [] -> _13 = &(*_1)
-[ 6] [] -> Retag(_13)
-[ 7] [] -> _12 = <std::rc::Rc<std::cell::Cell<i32>> as std::ops::Deref>::deref(move _13) -> bb6
+[ 0] [] <- StorageDead(_10)
+[ 1] [] <- StorageDead(_9)
+[ 2] [] <- StorageLive(_11)
+[ 3] [] <- StorageLive(_12)
+[ 4] [] <- StorageLive(_13)
+[ 5] [] <- _13 = &(*_1)
+[ 6] [] <- Retag(_13)
+[ 7] [] <- _12 = <std::rc::Rc<std::cell::Cell<i32>> as std::ops::Deref>::deref(move _13) -> bb6
 
 bb6
-[ 0] [] -> Retag(_12)
-[ 1] [] -> _11 = &(*_12)
-[ 2] [] -> Retag(_11)
-[ 3] [] -> StorageDead(_13)
-[ 4] [] -> _0 = std::cell::Cell::<i32>::get(move _11) -> bb7
+[ 0] [] <- Retag(_12)
+[ 1] [] <- _11 = &(*_12)
+[ 2] [] <- Retag(_11)
+[ 3] [] <- StorageDead(_13)
+[ 4] [] <- _0 = std::cell::Cell::<i32>::get(move _11) -> bb7
 
 bb7
-[ 0] [] -> StorageDead(_11)
-[ 1] [] -> StorageDead(_12)
-[ 2] [] -> return
+[ 0] [] <- StorageDead(_11)
+[ 1] [] <- StorageDead(_12)
+[ 2] [] <- return
 
 bb8
-[ 0] [] -> (*_1) = move _3
-[ 1] [] -> resume
+[ 0] [] <- (*_1) = move _3
+[ 1] [] <- resume
 
 bb9
-[ 0] [] -> (*_1) = move _3
-[ 1] [] -> StorageDead(_3)
-[ 2] [] -> StorageLive(_5)
-[ 3] [] -> StorageLive(_6)
-[ 4] [] -> StorageLive(_7)
-[ 5] [] -> StorageLive(_8)
-[ 6] [] -> _8 = &(*_2)
-[ 7] [] -> Retag(_8)
-[ 8] [] -> _7 = <std::rc::Rc<std::cell::Cell<i32>> as std::ops::Deref>::deref(move _8) -> bb3
+[ 0] [] <- (*_1) = move _3
+[ 1] [] <- StorageDead(_3)
+[ 2] [] <- StorageLive(_5)
+[ 3] [] <- StorageLive(_6)
+[ 4] [] <- StorageLive(_7)
+[ 5] [] <- StorageLive(_8)
+[ 6] [] <- _8 = &(*_2)
+[ 7] [] <- Retag(_8)
+[ 8] [] <- _7 = <std::rc::Rc<std::cell::Cell<i32>> as std::ops::Deref>::deref(move _8) -> bb3
 
 # FindImmutabilitySpans Analysis
 bb0
-[ 0] {} -> Retag([fn entry] _1)
-[ 1] {} -> Retag([fn entry] _2)
-[ 2] {} -> StorageLive(_3)
-[ 3] {} -> StorageLive(_4)
-[ 4] {} -> _4 = std::cell::Cell::<i32>::new(const 42_i32) -> bb1
+[ 0] {} <- Retag([fn entry] _1)
+[ 1] {} <- Retag([fn entry] _2)
+[ 2] {} <- StorageLive(_3)
+[ 3] {} <- StorageLive(_4)
+[ 4] {} <- _4 = std::cell::Cell::<i32>::new(const 42_i32) -> bb1
 
 bb1
-[ 0] {} -> _3 = std::rc::Rc::<std::cell::Cell<i32>>::new(move _4) -> bb2
+[ 0] {} <- _3 = std::rc::Rc::<std::cell::Cell<i32>>::new(move _4) -> bb2
 
 bb2
-[ 0] {} -> StorageDead(_4)
-[ 1] {} -> drop((*_1)) -> [return: bb9, unwind: bb8]
+[ 0] {} <- StorageDead(_4)
+[ 1] {} <- drop((*_1)) -> [return: bb9, unwind: bb8]
 
 bb8
-[ 0] {} -> (*_1) = move _3
-[ 1] {} -> resume
+[ 0] {} <- (*_1) = move _3
+[ 1] {} <- resume
 
 bb9
-[ 0] {} -> (*_1) = move _3
-[ 1] {} -> StorageDead(_3)
-[ 2] {} -> StorageLive(_5)
-[ 3] {} -> StorageLive(_6)
-[ 4] {} -> StorageLive(_7)
-[ 5] {} -> StorageLive(_8)
-[ 6] {} -> _8 = &(*_2)
-[ 7] {} -> Retag(_8)
-[ 8] {} -> _7 = <std::rc::Rc<std::cell::Cell<i32>> as std::ops::Deref>::deref(move _8) -> bb3
+[ 0] {} <- (*_1) = move _3
+[ 1] {} <- StorageDead(_3)
+[ 2] {} <- StorageLive(_5)
+[ 3] {} <- StorageLive(_6)
+[ 4] {} <- StorageLive(_7)
+[ 5] {} <- StorageLive(_8)
+[ 6] {} <- _8 = &(*_2)
+[ 7] {} <- Retag(_8)
+[ 8] {} <- _7 = <std::rc::Rc<std::cell::Cell<i32>> as std::ops::Deref>::deref(move _8) -> bb3
 
 bb3
-[ 0] {} -> Retag(_7)
-[ 1] {} -> _6 = &(*_7)
-[ 2] {} -> Retag(_6)
-[ 3] {} -> StorageDead(_8)
-[ 4] {} -> _5 = std::cell::Cell::<i32>::set(move _6, const 7_i32) -> bb4
+[ 0] {} <- Retag(_7)
+[ 1] {} <- _6 = &(*_7)
+[ 2] {} <- Retag(_6)
+[ 3] {} <- StorageDead(_8)
+[ 4] {} <- _5 = std::cell::Cell::<i32>::set(move _6, const 7_i32) -> bb4
 
 bb4
-[ 0] {} -> StorageDead(_6)
-[ 1] {} -> StorageDead(_7)
-[ 2] {} -> StorageDead(_5)
-[ 3] {} -> StorageLive(_9)
-[ 4] {} -> StorageLive(_10)
-[ 5] {} -> _10 = &(*_1)
-[ 6] {} -> Retag(_10)
-[ 7] {} -> _9 = access(move _10) -> bb5
+[ 0] {} <- StorageDead(_6)
+[ 1] {} <- StorageDead(_7)
+[ 2] {} <- StorageDead(_5)
+[ 3] {} <- StorageLive(_9)
+[ 4] {} <- StorageLive(_10)
+[ 5] {} <- _10 = &(*_1)
+[ 6] {} <- Retag(_10)
+[ 7] {} <- _9 = access(move _10) -> bb5
 
 bb5
-[ 0] {} -> StorageDead(_10)
-[ 1] {} -> StorageDead(_9)
-[ 2] {} -> StorageLive(_11)
-[ 3] {} -> StorageLive(_12)
-[ 4] {} -> StorageLive(_13)
-[ 5] {} -> _13 = &(*_1)
-[ 6] {} -> Retag(_13)
-[ 7] {} -> _12 = <std::rc::Rc<std::cell::Cell<i32>> as std::ops::Deref>::deref(move _13) -> bb6
+[ 0] {} <- StorageDead(_10)
+[ 1] {} <- StorageDead(_9)
+[ 2] {} <- StorageLive(_11)
+[ 3] {} <- StorageLive(_12)
+[ 4] {} <- StorageLive(_13)
+[ 5] {} <- _13 = &(*_1)
+[ 6] {} <- Retag(_13)
+[ 7] {} <- _12 = <std::rc::Rc<std::cell::Cell<i32>> as std::ops::Deref>::deref(move _13) -> bb6
 
 bb6
-[ 0] {} -> Retag(_12)
-[ 1] {} -> _11 = &(*_12)
-[ 2] {} -> Retag(_11)
-[ 3] {} -> StorageDead(_13)
-[ 4] {} -> _0 = std::cell::Cell::<i32>::get(move _11) -> bb7
+[ 0] {} <- Retag(_12)
+[ 1] {} <- _11 = &(*_12)
+[ 2] {} <- Retag(_11)
+[ 3] {} <- StorageDead(_13)
+[ 4] {} <- _0 = std::cell::Cell::<i32>::get(move _11) -> bb7
 
 bb7
-[ 0] {} -> StorageDead(_11)
-[ 1] {} -> StorageDead(_12)
-[ 2] {} -> return
+[ 0] {} <- StorageDead(_11)
+[ 1] {} <- StorageDead(_12)
+[ 2] {} <- return
 
 
 # CFG Before
@@ -280,53 +280,53 @@ _7 = <std::rc::Rc<std::cell::Cell<i32>> as std::ops::Deref>::deref(move _8) -> b
 # Analysing access
 # MaybeTopOfBorrowStack Analysis
 bb0
-[ 0] [] -> Retag([fn entry] _1)
-[ 1] [] -> StorageLive(_2)
-[ 2] [] -> StorageLive(_3)
-[ 3] [] -> StorageLive(_4)
-[ 4] [] -> StorageLive(_5)
-[ 5] [] -> _5 = &(*_1)
-[ 6] [] -> Retag(_5)
-[ 7] [] -> _4 = <std::rc::Rc<std::cell::Cell<i32>> as std::ops::Deref>::deref(move _5) -> bb1
+[ 0] [] <- Retag([fn entry] _1)
+[ 1] [] <- StorageLive(_2)
+[ 2] [] <- StorageLive(_3)
+[ 3] [] <- StorageLive(_4)
+[ 4] [] <- StorageLive(_5)
+[ 5] [] <- _5 = &(*_1)
+[ 6] [] <- Retag(_5)
+[ 7] [] <- _4 = <std::rc::Rc<std::cell::Cell<i32>> as std::ops::Deref>::deref(move _5) -> bb1
 
 bb1
-[ 0] [] -> Retag(_4)
-[ 1] [] -> _3 = &(*_4)
-[ 2] [] -> Retag(_3)
-[ 3] [] -> StorageDead(_5)
-[ 4] [] -> _2 = std::cell::Cell::<i32>::set(move _3, const 13_i32) -> bb2
+[ 0] [] <- Retag(_4)
+[ 1] [] <- _3 = &(*_4)
+[ 2] [] <- Retag(_3)
+[ 3] [] <- StorageDead(_5)
+[ 4] [] <- _2 = std::cell::Cell::<i32>::set(move _3, const 13_i32) -> bb2
 
 bb2
-[ 0] [] -> StorageDead(_3)
-[ 1] [] -> StorageDead(_4)
-[ 2] [] -> StorageDead(_2)
-[ 3] [] -> _0 = const ()
-[ 4] [] -> return
+[ 0] [] <- StorageDead(_3)
+[ 1] [] <- StorageDead(_4)
+[ 2] [] <- StorageDead(_2)
+[ 3] [] <- _0 = const ()
+[ 4] [] <- return
 
 # FindImmutabilitySpans Analysis
 bb0
-[ 0] {} -> Retag([fn entry] _1)
-[ 1] {} -> StorageLive(_2)
-[ 2] {} -> StorageLive(_3)
-[ 3] {} -> StorageLive(_4)
-[ 4] {} -> StorageLive(_5)
-[ 5] {} -> _5 = &(*_1)
-[ 6] {} -> Retag(_5)
-[ 7] {} -> _4 = <std::rc::Rc<std::cell::Cell<i32>> as std::ops::Deref>::deref(move _5) -> bb1
+[ 0] {} <- Retag([fn entry] _1)
+[ 1] {} <- StorageLive(_2)
+[ 2] {} <- StorageLive(_3)
+[ 3] {} <- StorageLive(_4)
+[ 4] {} <- StorageLive(_5)
+[ 5] {} <- _5 = &(*_1)
+[ 6] {} <- Retag(_5)
+[ 7] {} <- _4 = <std::rc::Rc<std::cell::Cell<i32>> as std::ops::Deref>::deref(move _5) -> bb1
 
 bb1
-[ 0] {} -> Retag(_4)
-[ 1] {} -> _3 = &(*_4)
-[ 2] {} -> Retag(_3)
-[ 3] {} -> StorageDead(_5)
-[ 4] {} -> _2 = std::cell::Cell::<i32>::set(move _3, const 13_i32) -> bb2
+[ 0] {} <- Retag(_4)
+[ 1] {} <- _3 = &(*_4)
+[ 2] {} <- Retag(_3)
+[ 3] {} <- StorageDead(_5)
+[ 4] {} <- _2 = std::cell::Cell::<i32>::set(move _3, const 13_i32) -> bb2
 
 bb2
-[ 0] {} -> StorageDead(_3)
-[ 1] {} -> StorageDead(_4)
-[ 2] {} -> StorageDead(_2)
-[ 3] {} -> _0 = const ()
-[ 4] {} -> return
+[ 0] {} <- StorageDead(_3)
+[ 1] {} <- StorageDead(_4)
+[ 2] {} <- StorageDead(_2)
+[ 3] {} <- _0 = const ()
+[ 4] {} <- return
 
 
 # CFG Before

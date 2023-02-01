@@ -2,61 +2,61 @@
 # Analysing tuple_assignment
 # MaybeTopOfBorrowStack Analysis
 bb0
-[ 0] [_1, _2] -> Retag([fn entry] _1)
-[ 1] [_1, _2] -> Retag([fn entry] _2)
-[ 2] [_1, _2] -> StorageLive(_4)
-[ 3] [_1, _2] -> StorageLive(_7)
-[ 4] [_1, _2] -> Deinit(_7)
-[ 5] [_1, _2] -> (_7.0: i32) = const 42_i32
-[ 6] [_1, _2] -> (_7.1: i32) = const 7_i32
-[ 7] [_1, _2] -> StorageLive(_5)
-[ 8] [_1, _2] -> _5 = (_7.0: i32)
-[ 9] [_1, _2] -> StorageLive(_6)
-[10] [_1, _2] -> _6 = (_7.1: i32)
-[11] [_1, _2] -> StorageDead(_7)
-[12] [_1, _2] -> StorageLive(_8)
-[13] [_1, _2] -> _8 = _5
-[14] [_1, _2] -> (*_1) = move _8
-[15] [_1, _2] -> StorageDead(_8)
-[16] [_1, _2] -> StorageLive(_9)
-[17] [_1, _2] -> _9 = _6
-[18] [_1, _2] -> (*_2) = move _9
-[19] [_1, _2] -> StorageDead(_9)
-[20] [_1, _2] -> _4 = const ()
-[21] [_1, _2] -> StorageDead(_6)
-[22] [_1, _2] -> StorageDead(_5)
-[23] [_1, _2] -> StorageDead(_4)
-[24] [_1, _2] -> _0 = (*_1)
-[25] [_1, _2] -> return
+[ 0] [_1, _2] <- Retag([fn entry] _1)
+[ 1] [_1, _2] <- Retag([fn entry] _2)
+[ 2] [_1, _2] <- StorageLive(_4)
+[ 3] [_1, _2] <- StorageLive(_7)
+[ 4] [_1, _2] <- Deinit(_7)
+[ 5] [_1, _2] <- (_7.0: i32) = const 42_i32
+[ 6] [_1, _2] <- (_7.1: i32) = const 7_i32
+[ 7] [_1, _2] <- StorageLive(_5)
+[ 8] [_1, _2] <- _5 = (_7.0: i32)
+[ 9] [_1, _2] <- StorageLive(_6)
+[10] [_1, _2] <- _6 = (_7.1: i32)
+[11] [_1, _2] <- StorageDead(_7)
+[12] [_1, _2] <- StorageLive(_8)
+[13] [_1, _2] <- _8 = _5
+[14] [_1, _2] <- (*_1) = move _8
+[15] [_1, _2] <- StorageDead(_8)
+[16] [_1, _2] <- StorageLive(_9)
+[17] [_1, _2] <- _9 = _6
+[18] [_1, _2] <- (*_2) = move _9
+[19] [_1, _2] <- StorageDead(_9)
+[20] [_1, _2] <- _4 = const ()
+[21] [_1, _2] <- StorageDead(_6)
+[22] [_1, _2] <- StorageDead(_5)
+[23] [_1, _2] <- StorageDead(_4)
+[24] [_1, _2] <- _0 = (*_1)
+[25] [_1, _2] <- return
 
 # FindImmutabilitySpans Analysis
 bb0
-[ 0] {} -> Retag([fn entry] _1)
-[ 1] {} -> Retag([fn entry] _2)
-[ 2] {} -> StorageLive(_4)
-[ 3] {} -> StorageLive(_7)
-[ 4] {} -> Deinit(_7)
-[ 5] {} -> (_7.0: i32) = const 42_i32
-[ 6] {} -> (_7.1: i32) = const 7_i32
-[ 7] {} -> StorageLive(_5)
-[ 8] {} -> _5 = (_7.0: i32)
-[ 9] {} -> StorageLive(_6)
-[10] {} -> _6 = (_7.1: i32)
-[11] {} -> StorageDead(_7)
-[12] {} -> StorageLive(_8)
-[13] {} -> _8 = _5
-[14] {_1: Span(bb0[14])} -> (*_1) = move _8
-[15] {_1: Span(bb0[14])} -> StorageDead(_8)
-[16] {_1: Span(bb0[14])} -> StorageLive(_9)
-[17] {_1: Span(bb0[14])} -> _9 = _6
-[18] {_1: Span(bb0[14]), _2: Span(bb0[18])} -> (*_2) = move _9
-[19] {_1: Span(bb0[14]), _2: Span(bb0[18])} -> StorageDead(_9)
-[20] {_1: Span(bb0[14]), _2: Span(bb0[18])} -> _4 = const ()
-[21] {_1: Span(bb0[14]), _2: Span(bb0[18])} -> StorageDead(_6)
-[22] {_1: Span(bb0[14]), _2: Span(bb0[18])} -> StorageDead(_5)
-[23] {_1: Span(bb0[14]), _2: Span(bb0[18])} -> StorageDead(_4)
-[24] {_1: Span(bb0[14]), _2: Span(bb0[18])} -> _0 = (*_1)
-[25] {_1: Span(bb0[14]), _2: Span(bb0[18])} -> return
+[ 0] {} <- Retag([fn entry] _1)
+[ 1] {} <- Retag([fn entry] _2)
+[ 2] {} <- StorageLive(_4)
+[ 3] {} <- StorageLive(_7)
+[ 4] {} <- Deinit(_7)
+[ 5] {} <- (_7.0: i32) = const 42_i32
+[ 6] {} <- (_7.1: i32) = const 7_i32
+[ 7] {} <- StorageLive(_5)
+[ 8] {} <- _5 = (_7.0: i32)
+[ 9] {} <- StorageLive(_6)
+[10] {} <- _6 = (_7.1: i32)
+[11] {} <- StorageDead(_7)
+[12] {} <- StorageLive(_8)
+[13] {} <- _8 = _5
+[14] {_1: Span(bb0[14])} <- (*_1) = move _8
+[15] {_1: Span(bb0[14])} <- StorageDead(_8)
+[16] {_1: Span(bb0[14])} <- StorageLive(_9)
+[17] {_1: Span(bb0[14])} <- _9 = _6
+[18] {_1: Span(bb0[14]), _2: Span(bb0[18])} <- (*_2) = move _9
+[19] {_1: Span(bb0[14]), _2: Span(bb0[18])} <- StorageDead(_9)
+[20] {_1: Span(bb0[14]), _2: Span(bb0[18])} <- _4 = const ()
+[21] {_1: Span(bb0[14]), _2: Span(bb0[18])} <- StorageDead(_6)
+[22] {_1: Span(bb0[14]), _2: Span(bb0[18])} <- StorageDead(_5)
+[23] {_1: Span(bb0[14]), _2: Span(bb0[18])} <- StorageDead(_4)
+[24] {_1: Span(bb0[14]), _2: Span(bb0[18])} <- _0 = (*_1)
+[25] {_1: Span(bb0[14]), _2: Span(bb0[18])} <- return
 
 
 # CFG Before

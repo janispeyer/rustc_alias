@@ -38,7 +38,7 @@ impl<'tcx, 'a> MoveUpOptimisation<'tcx, 'a> {
 
         // Add back assignments that were replaced.
         // This will make previously calculated locations invalid,
-        // which is alsow why we need to start at the bottom.
+        // which is also why we need to start at the bottom.
         let mut assignments = self.assignments;
         assignments.sort_unstable_by(|(a, _), (b, _)| b.cmp(a));
         for (location, assignment) in assignments {

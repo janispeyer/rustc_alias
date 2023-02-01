@@ -64,7 +64,7 @@ fn print_top_of_borrow_stack(body: &Body, top_of_borrow_stack: &TopOfBorrowStack
                 .map(|(local, _)| local)
                 .collect();
             top_locals.sort();
-            print!("{:?} -> ", top_locals);
+            print!("{:?} <- ", top_locals);
 
             statement.either(
                 |statement| println!("{:?}", statement),
@@ -439,7 +439,7 @@ impl ImmutabilitySpanVisitor {
             .map(|(local, span)| format!("{:?}: {:?}", local, span))
             .collect::<Vec<_>>()
             .join(", ");
-        print!("[{:>2}] {{{}}} -> ", location.statement_index, state);
+        print!("[{:>2}] {{{}}} <- ", location.statement_index, state);
     }
 
     fn visit(&mut self, state: &<Self as ResultsVisitor>::FlowState, location: Location) {
