@@ -7,6 +7,38 @@ use rustc_mir_dataflow::{
     AnalysisDomain, CallReturnPlaces, GenKill, GenKillAnalysis, ResultsVisitor,
 };
 
+pub fn print_top_of_borrow_stack(body: &Body, top_of_borrow_stack: &TopOfBorrowStackLocations) {
+    for (block_index, _block) in body.basic_blocks.iter_enumerated() {
+        println!("{:?}", block_index);
+        let mut location: Location = block_index.start_location();
+
+        loop {
+            print!("[{:>2}] ", location.statement_index);
+            let statement = body.stmt_at(location);
+
+            let mut top_locals: Vec<_> = top_of_borrow_stack
+                .iter()
+                .filter(|(_, l)| *l == location)
+                .map(|(local, _)| local)
+                .collect();
+            top_locals.sort();
+            print!("{:?} <- ", top_locals);
+
+            statement.either(
+                |statement| println!("{:?}", statement),
+                |terminator| println!("{:?}", terminator.kind),
+            );
+
+            if statement.is_right() {
+                break;
+            }
+
+            location = location.successor_within_block();
+        }
+        println!()
+    }
+}
+
 /// A dataflow analysis that tracks whether a given local is on the top mutable of the borrow stack,
 /// given the local is a reference. Immutable borrows may be above it on the borrow stack.
 pub struct MaybeTopOfBorrowStack {
