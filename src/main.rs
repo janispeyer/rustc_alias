@@ -38,7 +38,7 @@ fn find_sysroot() -> String {
 
 /// Injects [Alias] as a pass into rustc_mir_transform optimisations.
 fn inject_alias_pass() {
-    let mut injection = MIR_PASS_INJECTION.lock().unwrap();
+    let mut injection = MIR_PASS_INJECTION.write().unwrap();
     *injection = Some(Box::new(Alias));
 }
 
