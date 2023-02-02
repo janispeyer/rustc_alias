@@ -1,0 +1,81 @@
+# Analysing main
+# Analysing f
+# MaybeTopOfBorrowStack Analysis
+bb0
+[ 0] [_1, _2] <- Retag([fn entry] _1)
+[ 1] [_1, _2] <- Retag([fn entry] _2)
+[ 2] [_1, _2] <- StorageLive(_4)
+[ 3] [_1, _2] <- _4 = const 42_u32
+[ 4] [_1, _2] <- StorageLive(_5)
+[ 5] [_1, _2] <- _5 = &mut _4
+[ 6] [_1, _2] <- Retag(_5)
+[ 7] [_1, _2] <- StorageLive(_6)
+[ 8] [_1, _2] <- _6 = (*_5)
+[ 9] [_1, _2] <- (*_1) = move _6
+[10] [_1, _2] <- StorageDead(_6)
+[11] [_1, _2] <- (*_2) = const 7_u32
+[12] [_1, _2] <- _0 = (*_1)
+[13] [_1, _2] <- StorageDead(_5)
+[14] [_1, _2] <- StorageDead(_4)
+[15] [_1, _2] <- return
+
+# FindImmutabilitySpans Analysis
+bb0
+[ 0] {} <- Retag([fn entry] _1)
+[ 1] {} <- Retag([fn entry] _2)
+[ 2] {} <- StorageLive(_4)
+[ 3] {} <- _4 = const 42_u32
+[ 4] {} <- StorageLive(_5)
+[ 5] {} <- _5 = &mut _4
+[ 6] {} <- Retag(_5)
+[ 7] {} <- StorageLive(_6)
+[ 8] {} <- _6 = (*_5)
+[ 9] {_1: Span(bb0[9])} <- (*_1) = move _6
+[10] {_1: Span(bb0[9])} <- StorageDead(_6)
+[11] {_1: Span(bb0[9]), _2: Span(bb0[11])} <- (*_2) = const 7_u32
+[12] {_1: Span(bb0[9]), _2: Span(bb0[11])} <- _0 = (*_1)
+[13] {_1: Span(bb0[9]), _2: Span(bb0[11])} <- StorageDead(_5)
+[14] {_1: Span(bb0[9]), _2: Span(bb0[11])} <- StorageDead(_4)
+[15] {_1: Span(bb0[9]), _2: Span(bb0[11])} <- return
+
+
+# CFG Before
+bb0
+Retag([fn entry] _1)
+Retag([fn entry] _2)
+StorageLive(_4)
+_4 = const 42_u32
+StorageLive(_5)
+_5 = &mut _4
+Retag(_5)
+StorageLive(_6)
+_6 = (*_5)
+(*_1) = move _6
+StorageDead(_6)
+(*_2) = const 7_u32
+_0 = (*_1)
+StorageDead(_5)
+StorageDead(_4)
+return
+
+# CFG After
+bb0
+Retag([fn entry] _1)
+Retag([fn entry] _2)
+StorageLive(_4)
+_4 = const 42_u32
+StorageLive(_5)
+_5 = &mut _4
+Retag(_5)
+StorageLive(_6)
+_6 = (*_5)
+_7 = move _6
+(*_1) = _7
+StorageDead(_6)
+_8 = const 7_u32
+(*_2) = _8
+_0 = _7
+StorageDead(_5)
+StorageDead(_4)
+return
+
