@@ -80,8 +80,7 @@ return
 bb0
 Retag([fn entry] _1)
 Retag([fn entry] _2)
-_8 = const 7_i32
-(*_1) = _8
+(*_1) = const 7_i32
 StorageLive(_4)
 StorageLive(_5)
 _5 = &mut (*_1)
@@ -96,8 +95,7 @@ _7 = CheckedAdd(_6, const 1_i32)
 assert(!move (_7.1: bool), "attempt to compute `{} + {}`, which would overflow", move _6, const 1_i32) -> bb2
 
 bb2
-_9 = move (_7.0: i32)
-(*_2) = _9
+(*_2) = move (_7.0: i32)
 StorageDead(_6)
 _0 = (*_1)
 StorageDead(_4)

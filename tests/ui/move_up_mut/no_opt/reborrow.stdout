@@ -44,13 +44,11 @@ return
 bb0
 Retag([fn entry] _1)
 Retag([fn entry] _2)
-_5 = const 42_i32
-(*_1) = _5
+(*_1) = const 42_i32
 StorageLive(_4)
 _4 = &mut (*_1)
 Retag(_4)
-_6 = const 7_i32
-(*_2) = _6
+(*_2) = const 7_i32
 _0 = (*_1)
 StorageDead(_4)
 return

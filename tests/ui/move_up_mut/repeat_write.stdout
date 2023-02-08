@@ -76,26 +76,23 @@ Retag([fn entry] _1)
 Retag([fn entry] _2)
 _7 = const 42_i32
 (*_1) = _7
-_8 = const 7_i32
-(*_2) = _8
+(*_2) = const 7_i32
 StorageLive(_4)
 _4 = _7
-_9 = move _4
-(*_1) = _9
+_8 = move _4
+(*_1) = _8
 StorageDead(_4)
-_10 = const 8_i32
-(*_2) = _10
+(*_2) = const 8_i32
 StorageLive(_5)
-_5 = _9
+_5 = _8
 _6 = CheckedAdd(_5, const 1_i32)
 assert(!move (_6.1: bool), "attempt to compute `{} + {}`, which would overflow", move _5, const 1_i32) -> bb1
 
 bb1
-_11 = move (_6.0: i32)
-(*_1) = _11
+_9 = move (_6.0: i32)
+(*_1) = _9
 StorageDead(_5)
-_12 = const 9_i32
-(*_2) = _12
-_0 = _11
+(*_2) = const 9_i32
+_0 = _9
 return
 

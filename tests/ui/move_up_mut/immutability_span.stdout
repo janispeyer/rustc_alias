@@ -553,8 +553,7 @@ StorageDead(_13)
 StorageDead(_11)
 StorageDead(_9)
 StorageDead(_8)
-_36 = const 5_i32
-(*_1) = _36
+(*_1) = const 5_i32
 StorageLive(_20)
 StorageLive(_21)
 _21 = (*_2)
@@ -563,8 +562,7 @@ StorageDead(_21)
 switchInt(move _20) -> [false: bb9, otherwise: bb8]
 
 bb8
-_37 = const 1_i32
-(*_2) = _37
+(*_2) = const 1_i32
 _5 = const ()
 goto -> bb10
 
@@ -578,8 +576,7 @@ StorageDead(_7)
 goto -> bb19
 
 bb11
-_38 = const 7_i32
-(*_2) = _38
+(*_2) = const 7_i32
 StorageLive(_22)
 StorageLive(_23)
 _23 = &mut (*_1)
@@ -620,8 +617,7 @@ _32 = discriminant(_29)
 switchInt(move _32) -> [0_isize: bb18, 1_isize: bb16, otherwise: bb17]
 
 bb16
-_39 = const 11_i32
-(*_2) = _39
+(*_2) = const 11_i32
 (*_1) = const 17_i32
 _28 = const ()
 StorageDead(_31)
@@ -650,8 +646,7 @@ goto -> bb19
 bb19
 StorageDead(_6)
 StorageDead(_5)
-_40 = const 12_i32
-(*_2) = _40
+(*_2) = const 12_i32
 _0 = (*_1)
 return
 
@@ -681,8 +676,7 @@ return
 # CFG After
 bb0
 Retag([fn entry] _1)
-_2 = const 5_i32
-(*_1) = _2
+(*_1) = const 5_i32
 _0 = const ()
 return
 

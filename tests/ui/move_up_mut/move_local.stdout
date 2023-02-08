@@ -72,8 +72,7 @@ _6 = (*_5)
 _7 = move _6
 (*_1) = _7
 StorageDead(_6)
-_8 = const 7_u32
-(*_2) = _8
+(*_2) = const 7_u32
 _0 = _7
 StorageDead(_5)
 StorageDead(_4)

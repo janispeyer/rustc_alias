@@ -109,8 +109,7 @@ _10 = move _8
 StorageDead(_8)
 StorageLive(_9)
 _9 = _6
-_11 = move _9
-(*_2) = _11
+(*_2) = move _9
 StorageDead(_9)
 _4 = const ()
 StorageDead(_6)

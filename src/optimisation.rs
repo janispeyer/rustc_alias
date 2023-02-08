@@ -51,15 +51,11 @@ impl<'tcx, 'a> MoveUpOptimisation<'tcx, 'a> {
     fn move_up_span(&mut self, location: Location, span: ImmutabilitySpan) {
         // Get original assignment.
         let basic_blocks = self.body.basic_blocks.as_mut();
-        let mut statement = &mut basic_blocks[location.block].statements[location.statement_index];
-        let mut original_statement = statement.replace_nop();
-
-        let StatementKind::Assign(mut assignment) = original_statement.kind else {
-            panic!("ImmutabiltySpan always has to start at an assignment, but was given one that starts wih {:?}", original_statement);
+        let statement = &basic_blocks[location.block].statements[location.statement_index];
+        let StatementKind::Assign(ref assignment) = statement.kind else {
+            panic!("ImmutabiltySpan always has to start at an assignment, but was given one that starts wih {:?}", statement);
         };
 
-        // Swap assignment of kind `(*x) = rvalue` with `internal = rvalue`.
-        // This is done so we can replace reads of `*x` with `internal` where apropriate.
         let assignment_ty = assignment.0.ty(&self.body.local_decls, self.tcx).ty;
         let internal_local = self
             .body
@@ -70,13 +66,9 @@ impl<'tcx, 'a> MoveUpOptimisation<'tcx, 'a> {
             projection: List::empty(),
         };
         let internal_rvalue = Rvalue::Use(Operand::Copy(internal_place));
+        let mut rvalue_used = false;
 
-        let rvalue = std::mem::replace(&mut assignment.1, internal_rvalue.clone());
-        statement.kind = StatementKind::Assign(Box::new((internal_place, rvalue)));
-        original_statement.kind = StatementKind::Assign(assignment);
-        self.assignments.push((location, original_statement));
-
-        // Search for reads of `*x` and replace them with `internal`.
+        // Search for reads of `*x` and replace them with `internal_rvalue`.
         // TODO: Handle more statement kinds than just assignments.
         for span_location in span.1 {
             let statement = self.body.stmt_at(span_location);
@@ -104,6 +96,26 @@ impl<'tcx, 'a> MoveUpOptimisation<'tcx, 'a> {
                 unreachable!();
             };
             assignment.1 = internal_rvalue.clone();
+            rvalue_used = true;
+        }
+
+        if !rvalue_used {
+            self.body.local_decls.pop();
+        } else {
+            // Swap assignment of kind `(*x) = rvalue` with `internal = rvalue`.
+            // This is only done when we replaced reads of `*x` with `internal` where apropriate.
+            let basic_blocks = self.body.basic_blocks.as_mut();
+            let mut statement =
+                &mut basic_blocks[location.block].statements[location.statement_index];
+            let mut original_statement = statement.replace_nop();
+            let StatementKind::Assign(mut assignment) = original_statement.kind else {
+                unreachable!()
+            };
+
+            let rvalue = std::mem::replace(&mut assignment.1, internal_rvalue.clone());
+            statement.kind = StatementKind::Assign(Box::new((internal_place, rvalue)));
+            original_statement.kind = StatementKind::Assign(assignment);
+            self.assignments.push((location, original_statement));
         }
     }
 }

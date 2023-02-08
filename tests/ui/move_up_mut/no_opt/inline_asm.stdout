@@ -59,8 +59,7 @@ return
 bb0
 Retag([fn entry] _1)
 Retag([fn entry] _2)
-_6 = const 42_i32
-(*_1) = _6
+(*_1) = const 42_i32
 StorageLive(_4)
 StorageLive(_5)
 _5 = const ()

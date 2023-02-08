@@ -34,8 +34,7 @@ Retag([fn entry] _1)
 Retag([fn entry] _2)
 _4 = const 42_i32
 (*_1) = _4
-_5 = const 7_i32
-(*_2) = _5
+(*_2) = const 7_i32
 _0 = _4
 return
 
