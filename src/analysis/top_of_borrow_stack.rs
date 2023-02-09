@@ -51,7 +51,10 @@ impl MaybeTopOfBorrowStack {
     }
 
     fn transfer_function<'a, T>(&'a self, trans: &'a mut T) -> TransferFunction<'a, T> {
-        TransferFunction { trans }
+        TransferFunction {
+            trans,
+            retagged: &self.retagged,
+        }
     }
 }
 
@@ -91,13 +94,6 @@ impl<'tcx> GenKillAnalysis<'tcx> for MaybeTopOfBorrowStack {
     ) {
         self.transfer_function(trans)
             .visit_terminator(terminator, location);
-
-        match terminator.kind {
-            TerminatorKind::InlineAsm { .. } => {
-                trans.kill_all(self.retagged.clone());
-            }
-            _ => {}
-        }
     }
 
     fn call_return_effect(
@@ -112,6 +108,7 @@ impl<'tcx> GenKillAnalysis<'tcx> for MaybeTopOfBorrowStack {
 /// A `Visitor` that defines the transfer function for `MaybeBorrowedLocals`.
 struct TransferFunction<'a, T> {
     trans: &'a mut T,
+    retagged: &'a Vec<Local>,
 }
 
 impl<'tcx, T> Visitor<'tcx> for TransferFunction<'_, T>
@@ -185,6 +182,10 @@ where
                 self.trans.kill(dropped_place.local);
             }
 
+            TerminatorKind::InlineAsm { .. } => {
+                self.trans.kill_all(self.retagged.clone());
+            }
+
             TerminatorKind::Abort
             | TerminatorKind::Assert { .. }
             | TerminatorKind::Call { .. }
@@ -192,7 +193,6 @@ where
             | TerminatorKind::FalseUnwind { .. }
             | TerminatorKind::GeneratorDrop
             | TerminatorKind::Goto { .. }
-            | TerminatorKind::InlineAsm { .. }
             | TerminatorKind::Resume
             | TerminatorKind::Return
             | TerminatorKind::SwitchInt { .. }
