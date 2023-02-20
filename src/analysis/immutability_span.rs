@@ -25,14 +25,14 @@ impl JoinSemiLattice for ImmutabilitySpanLattice {
         for (local, other_span) in other.0.iter() {
             let self_span = self.0.get(local);
             match (self_span, other_span) {
-                // top join x = top
+                // top join Span(x) = top
                 (Some(ImmutabilitySpanState::Top), _) => {}
-                // bottom join x = x
+                // bottom join Span(x) = Span(x)
                 (None, _) => {
                     self.0.insert(*local, other_span.clone());
                     modified_self = true;
                 }
-                // x join top = top
+                // Span(x) join top = top
                 (_, ImmutabilitySpanState::Top) => {
                     self.0.insert(*local, ImmutabilitySpanState::Top);
                     modified_self = true;
@@ -176,7 +176,7 @@ impl ImmutabilitySpanVisitor {
 
             self.immutability_spans
                 .entry(*assignment)
-                .or_insert(ImmutabilitySpan(*local, Vec::new()))
+                .or_insert_with(|| ImmutabilitySpan(*local, Vec::new()))
                 .1
                 .push(location);
         }

@@ -12,6 +12,7 @@ pub use top_of_borrow_stack::{
 use rustc_middle::mir::*;
 use rustc_middle::ty::TyCtxt;
 use rustc_mir_dataflow::Analysis;
+use rustc_type_ir::TyKind;
 
 pub fn compute_immutability_spans<'tcx>(
     tcx: TyCtxt<'tcx>,
@@ -19,11 +20,11 @@ pub fn compute_immutability_spans<'tcx>(
     retagged: Vec<Local>,
     verbose: bool,
 ) -> ImmutabilitySpans {
-    // Only consider mutable references in this analysis.
+    // Only consider mutable references to primitives in this analysis.
     let retagged = retagged
         .into_iter()
         .filter(|local| match body.local_decls[*local].ty.kind() {
-            rustc_type_ir::TyKind::Ref(_, ty, Mutability::Mut) => ty.is_primitive(),
+            TyKind::Ref(_, ty, Mutability::Mut) => ty.is_primitive(),
             _ => false,
         })
         .collect();

@@ -38,8 +38,6 @@ impl<'tcx> MirPass<'tcx> for Alias {
 }
 
 /// Collect places that should be checked by seeing if they are retagged.
-///
-/// TODO: Remove types with interior mutability.
 fn get_retags<'tcx>(body: &mut Body<'tcx>) -> Vec<Local> {
     let Some(bb0_index) = body.basic_blocks.indices().nth(0) else {
         return Vec::new(); // no basic blocks ==> no retags
