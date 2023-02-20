@@ -118,10 +118,25 @@ where
     fn visit_statement(&mut self, stmt: &Statement<'tcx>, location: Location) {
         self.super_statement(stmt, location);
 
-        // When we reach a `StorageDead` statement, we can assume that any pointers to this memory
-        // are now invalid.
-        if let StatementKind::StorageDead(local) = stmt.kind {
-            self.trans.kill(local);
+        match stmt.kind {
+            StatementKind::StorageDead(local) => {
+                // When we reach a `StorageDead` statement,
+                // we can assume that any pointers to this memory are now invalid.
+                self.trans.kill(local);
+            }
+            StatementKind::Assign(_)
+            | StatementKind::FakeRead(_)
+            | StatementKind::SetDiscriminant {
+                place: _,
+                variant_index: _,
+            }
+            | StatementKind::Deinit(_)
+            | StatementKind::StorageLive(_)
+            | StatementKind::Retag(_, _)
+            | StatementKind::AscribeUserType(_, _)
+            | StatementKind::Coverage(_)
+            | StatementKind::Intrinsic(_)
+            | StatementKind::Nop => {}
         }
     }
 
