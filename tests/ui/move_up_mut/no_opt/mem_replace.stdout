@@ -23,7 +23,7 @@ bb2
 [ 1] [_2] <- StorageDead(_6)
 [ 2] [_2] <- _0 = (*_1)
 [ 3] [_2] <- StorageDead(_4)
-[ 4] [_2] <- return
+[ 4] [] <- return
 
 # FindImmutabilitySpans Analysis
 bb0

@@ -124,14 +124,48 @@ where
                 // we can assume that any pointers to this memory are now invalid.
                 self.trans.kill(local);
             }
-            StatementKind::Assign(_)
-            | StatementKind::FakeRead(_)
+
+            StatementKind::StorageLive(local) => {
+                // We should never reach a `StorageLive` statement for
+                // the locals we visit: to ensure soundness we kill here.
+                self.trans.kill(local);
+            }
+
+            // The rvalue part of the assignment will be handled by `visit_rvalue`.
+            StatementKind::Assign(ref assignment) => {
+                let place = assignment.0;
+                /* TODO:
+                    If we extended the analysis to contain three states (bottom, top-of-stack, top),
+                    we could (re-)generate on an assignment. As of now this would lead to the analysis
+                    claiming x is top-of-stack in cases where this is not true:
+                    ```
+                    y = &mut *x; // kill(x) happens here.
+                    *y = 5;
+                    for _ in 0..3 {
+                        some_fn(); // Here x should not be considered top-of-stack, because it is not true in the first iteration.
+                        *x = 7; // gen(x) happens here.
+                    }
+                    ```
+                // gen(x) for assignments of the form `*x = ...`, because this
+                // causes x to be on top of the borrow stack again.
+                if let [ProjectionElem::Deref] = place.projection.as_slice()
+                    && self.retagged.contains(&place.local)
+                {
+                    self.trans.gen(place.local);
+                }
+                // kill(x) for assignments of the form `x = ...`.
+                else */
+                if place.projection.len() == 0 {
+                    self.trans.kill(place.local);
+                }
+            }
+
+            StatementKind::FakeRead(_)
             | StatementKind::SetDiscriminant {
                 place: _,
                 variant_index: _,
             }
             | StatementKind::Deinit(_)
-            | StatementKind::StorageLive(_)
             | StatementKind::Retag(_, _)
             | StatementKind::AscribeUserType(_, _)
             | StatementKind::Coverage(_)
@@ -197,19 +231,19 @@ where
                 self.trans.kill(dropped_place.local);
             }
 
-            TerminatorKind::InlineAsm { .. } => {
+            TerminatorKind::InlineAsm { .. }
+            | TerminatorKind::Abort
+            | TerminatorKind::Resume
+            | TerminatorKind::Return
+            | TerminatorKind::GeneratorDrop => {
                 self.trans.kill_all(self.retagged.clone());
             }
 
-            TerminatorKind::Abort
-            | TerminatorKind::Assert { .. }
+            TerminatorKind::Assert { .. }
             | TerminatorKind::Call { .. }
             | TerminatorKind::FalseEdge { .. }
             | TerminatorKind::FalseUnwind { .. }
-            | TerminatorKind::GeneratorDrop
             | TerminatorKind::Goto { .. }
-            | TerminatorKind::Resume
-            | TerminatorKind::Return
             | TerminatorKind::SwitchInt { .. }
             | TerminatorKind::Unreachable
             | TerminatorKind::Yield { .. } => {}

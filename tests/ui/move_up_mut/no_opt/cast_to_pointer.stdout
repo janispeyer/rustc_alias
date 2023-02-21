@@ -11,7 +11,7 @@ bb0
 [ 6] [_2] <- (*_2) = const 7_i32
 [ 7] [_2] <- _0 = (*_1)
 [ 8] [_2] <- StorageDead(_4)
-[ 9] [_2] <- return
+[ 9] [] <- return
 
 # FindImmutabilitySpans Analysis
 bb0

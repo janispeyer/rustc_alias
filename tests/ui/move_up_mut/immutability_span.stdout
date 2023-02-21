@@ -160,7 +160,7 @@ bb19
 [ 1] [_1, _2] <- StorageDead(_5)
 [ 2] [_1, _2] <- (*_2) = const 12_i32
 [ 3] [_1, _2] <- _0 = (*_1)
-[ 4] [_1, _2] <- return
+[ 4] [] <- return
 
 # FindImmutabilitySpans Analysis
 bb0
@@ -656,7 +656,7 @@ bb0
 [ 0] [_1] <- Retag([fn entry] _1)
 [ 1] [_1] <- (*_1) = const 5_i32
 [ 2] [_1] <- _0 = const ()
-[ 3] [_1] <- return
+[ 3] [] <- return
 
 # FindImmutabilitySpans Analysis
 bb0

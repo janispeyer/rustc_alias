@@ -47,7 +47,7 @@ bb4
 bb5
 [ 0] [_1, _2] <- StorageDead(_10)
 [ 1] [_1, _2] <- StorageDead(_8)
-[ 2] [_1, _2] <- return
+[ 2] [] <- return
 
 # FindImmutabilitySpans Analysis
 bb0
