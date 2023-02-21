@@ -24,7 +24,7 @@ bb0
 [ 6] {_1: Top, _2: Span(bb0[6])} <- (*_2) = const 7_i32
 [ 7] {_1: Top, _2: Span(bb0[6])} <- _0 = (*_1)
 [ 8] {_1: Top, _2: Span(bb0[6])} <- StorageDead(_4)
-[ 9] {_1: Top, _2: Span(bb0[6])} <- return
+[ 9] {_1: Top, _2: Top} <- return
 
 
 # CFG Before

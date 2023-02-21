@@ -42,7 +42,7 @@ bb1
 [ 3] {} <- (*_1) = const 42_i32
 [ 4] {_2: Span(bb1[4])} <- (*_2) = const 7_i32
 [ 5] {_2: Span(bb1[4])} <- _0 = (*_1)
-[ 6] {_2: Span(bb1[4])} <- return
+[ 6] {_2: Top} <- return
 
 
 # CFG Before

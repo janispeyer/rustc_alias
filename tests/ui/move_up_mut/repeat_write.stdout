@@ -44,7 +44,7 @@ bb1
 [ 1] {_1: Span(bb1[0]), _2: Span(bb0[8])} <- StorageDead(_5)
 [ 2] {_1: Span(bb1[0]), _2: Span(bb1[2])} <- (*_2) = const 9_i32
 [ 3] {_1: Span(bb1[0]), _2: Span(bb1[2])} <- _0 = (*_1)
-[ 4] {_1: Span(bb1[0]), _2: Span(bb1[2])} <- return
+[ 4] {_1: Top, _2: Top} <- return
 
 
 # CFG Before

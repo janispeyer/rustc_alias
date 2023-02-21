@@ -26,7 +26,7 @@ bb0
 [ 3] {_1: Span(bb0[2])} <- StorageLive(_4)
 [ 4] {_1: Span(bb0[2])} <- StorageLive(_5)
 [ 5] {_1: Span(bb0[2])} <- _5 = const ()
-[ 6] {_1: Span(bb0[2])} <- asm!("mov {0}, 7", out(reg) _, options((empty))) -> bb1
+[ 6] {_1: Top} <- asm!("mov {0}, 7", out(reg) _, options((empty))) -> bb1
 
 bb1
 [ 0] {_1: Top} <- StorageDead(_5)

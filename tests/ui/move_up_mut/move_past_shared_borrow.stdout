@@ -92,7 +92,7 @@ bb4
 bb5
 [ 0] {_1: Span(bb0[2]), _2: Span(bb0[3])} <- StorageDead(_10)
 [ 1] {_1: Span(bb0[2]), _2: Span(bb0[3])} <- StorageDead(_8)
-[ 2] {_1: Span(bb0[2]), _2: Span(bb0[3])} <- return
+[ 2] {_1: Top, _2: Top} <- return
 
 bb3
 [ 0] {_1: Span(bb0[2]), _2: Span(bb0[3])} <- _0 = const false

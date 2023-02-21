@@ -48,7 +48,7 @@ bb2
 [ 1] {_1: Top, _2: Span(bb2[0])} <- StorageDead(_6)
 [ 2] {_1: Top, _2: Span(bb2[0])} <- _0 = (*_1)
 [ 3] {_1: Top, _2: Span(bb2[0])} <- StorageDead(_4)
-[ 4] {_1: Top, _2: Span(bb2[0])} <- return
+[ 4] {_1: Top, _2: Top} <- return
 
 
 # CFG Before

@@ -67,6 +67,24 @@ impl FindImmutabilitySpans {
             top_of_borrow_stack,
         }
     }
+
+    fn make_top_if_not_top_of_borrow_stack(
+        &self,
+        state: &mut ImmutabilitySpanLattice,
+        location: Location,
+    ) {
+        let mut deletions = Vec::new();
+        for &local in state.0.keys() {
+            let local_on_top = self.top_of_borrow_stack.contains(&(local, location));
+            if !local_on_top {
+                deletions.push(local);
+            }
+        }
+
+        for local in deletions {
+            state.0.insert(local, ImmutabilitySpanState::Top);
+        }
+    }
 }
 
 impl<'tcx> AnalysisDomain<'tcx> for FindImmutabilitySpans {
@@ -94,17 +112,7 @@ impl<'tcx> Analysis<'tcx> for FindImmutabilitySpans {
         statement: &rustc_middle::mir::Statement<'tcx>,
         location: Location,
     ) {
-        let mut deletions = Vec::new();
-        for &local in state.0.keys() {
-            let local_on_top = self.top_of_borrow_stack.contains(&(local, location));
-            if !local_on_top {
-                deletions.push(local);
-            }
-        }
-
-        for local in deletions {
-            state.0.insert(local, ImmutabilitySpanState::Top);
-        }
+        self.make_top_if_not_top_of_borrow_stack(state, location);
 
         let StatementKind::Assign(ref assignment) = statement.kind else {
             return;
@@ -124,10 +132,11 @@ impl<'tcx> Analysis<'tcx> for FindImmutabilitySpans {
 
     fn apply_terminator_effect(
         &self,
-        _state: &mut Self::Domain,
+        state: &mut Self::Domain,
         _terminator: &rustc_middle::mir::Terminator<'tcx>,
-        _location: Location,
+        location: Location,
     ) {
+        self.make_top_if_not_top_of_borrow_stack(state, location);
     }
 
     fn apply_call_return_effect(

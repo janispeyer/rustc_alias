@@ -20,7 +20,7 @@ bb0
 [ 4] {_2: Span(bb0[4])} <- (*_2) = const 7_i32
 [ 5] {_2: Span(bb0[4])} <- _5 = deref_copy (*_1)
 [ 6] {_2: Span(bb0[4])} <- _0 = (*_5)
-[ 7] {_2: Span(bb0[4])} <- return
+[ 7] {_2: Top} <- return
 
 
 # CFG Before

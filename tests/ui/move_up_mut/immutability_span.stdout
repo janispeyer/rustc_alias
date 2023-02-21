@@ -250,7 +250,7 @@ bb19
 [ 1] {_1: Top, _2: Top} <- StorageDead(_5)
 [ 2] {_1: Top, _2: Span(bb19[2])} <- (*_2) = const 12_i32
 [ 3] {_1: Top, _2: Span(bb19[2])} <- _0 = (*_1)
-[ 4] {_1: Top, _2: Span(bb19[2])} <- return
+[ 4] {_1: Top, _2: Top} <- return
 
 bb9
 [ 0] {_1: Span(bb7[7])} <- _5 = const ()
@@ -663,7 +663,7 @@ bb0
 [ 0] {} <- Retag([fn entry] _1)
 [ 1] {_1: Span(bb0[1])} <- (*_1) = const 5_i32
 [ 2] {_1: Span(bb0[1])} <- _0 = const ()
-[ 3] {_1: Span(bb0[1])} <- return
+[ 3] {_1: Top} <- return
 
 
 # CFG Before

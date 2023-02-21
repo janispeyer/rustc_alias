@@ -131,6 +131,14 @@ where
                 self.trans.kill(local);
             }
 
+            // Kill in the following cases, because not all scenarios where
+            // these statements can occur were examined. It might be sound to not kill here,
+            // but it is definitely sound to kill and potentially lose some precision.
+            StatementKind::Deinit(ref place) => {
+                self.trans.kill(place.local);
+            }
+            StatementKind::Intrinsic(_) => self.trans.kill_all(self.retagged.clone()),
+
             // The rvalue part of the assignment will be handled by `visit_rvalue`.
             StatementKind::Assign(ref assignment) => {
                 let place = assignment.0;
@@ -165,11 +173,9 @@ where
                 place: _,
                 variant_index: _,
             }
-            | StatementKind::Deinit(_)
             | StatementKind::Retag(_, _)
             | StatementKind::AscribeUserType(_, _)
             | StatementKind::Coverage(_)
-            | StatementKind::Intrinsic(_)
             | StatementKind::Nop => {}
         }
     }

@@ -16,7 +16,7 @@ bb0
 [ 2] {_1: Span(bb0[2])} <- (*_1) = const 42_i32
 [ 3] {_1: Span(bb0[2]), _2: Span(bb0[3])} <- (*_2) = const 7_i32
 [ 4] {_1: Span(bb0[2]), _2: Span(bb0[3])} <- _0 = (*_1)
-[ 5] {_1: Span(bb0[2]), _2: Span(bb0[3])} <- return
+[ 5] {_1: Top, _2: Top} <- return
 
 
 # CFG Before

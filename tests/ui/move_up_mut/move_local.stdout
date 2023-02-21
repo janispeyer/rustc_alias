@@ -36,7 +36,7 @@ bb0
 [12] {_1: Span(bb0[9]), _2: Span(bb0[11])} <- _0 = (*_1)
 [13] {_1: Span(bb0[9]), _2: Span(bb0[11])} <- StorageDead(_5)
 [14] {_1: Span(bb0[9]), _2: Span(bb0[11])} <- StorageDead(_4)
-[15] {_1: Span(bb0[9]), _2: Span(bb0[11])} <- return
+[15] {_1: Top, _2: Top} <- return
 
 
 # CFG Before
