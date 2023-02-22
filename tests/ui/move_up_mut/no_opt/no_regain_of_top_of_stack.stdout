@@ -1,6 +1,6 @@
 # Analysing main
 # Analysing regain_top_of_stack
-# MaybeTopOfBorrowStack Analysis
+# TopOfBorrowStack Analysis
 bb0
 [ 0] [_1, _2] <- Retag([fn entry] _1)
 [ 1] [_1, _2] <- Retag([fn entry] _2)
@@ -90,7 +90,7 @@ _0 = (*_1)
 return
 
 # Analysing access
-# MaybeTopOfBorrowStack Analysis
+# TopOfBorrowStack Analysis
 bb0
 [ 0] [_1] <- Retag([fn entry] _1)
 [ 1] [_1] <- StorageLive(_2)

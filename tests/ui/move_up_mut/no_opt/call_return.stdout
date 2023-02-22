@@ -1,6 +1,6 @@
 # Analysing main
 # Analysing call_return
-# MaybeTopOfBorrowStack Analysis
+# TopOfBorrowStack Analysis
 bb0
 [ 0] [_1] <- Retag([fn entry] _1)
 [ 1] [_1] <- (*_1) = const 7_i32

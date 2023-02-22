@@ -1,6 +1,6 @@
 # Analysing main
 # Analysing mid
-# MaybeTopOfBorrowStack Analysis
+# TopOfBorrowStack Analysis
 bb0
 [ 0] [_1, _2] <- Retag([fn entry] _1)
 [ 1] [_1, _2] <- Retag([fn entry] _2)
@@ -200,7 +200,7 @@ StorageDead(_8)
 return
 
 # Analysing lib
-# MaybeTopOfBorrowStack Analysis
+# TopOfBorrowStack Analysis
 bb0
 [ 0] [] <- Retag([fn entry] _1)
 [ 1] [] <- StorageLive(_2)

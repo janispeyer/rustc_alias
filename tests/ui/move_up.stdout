@@ -1,6 +1,6 @@
 # Analysing main
 # Analysing move_up
-# MaybeTopOfBorrowStack Analysis
+# TopOfBorrowStack Analysis
 bb0
 [ 0] [] <- Retag([fn entry] _1)
 [ 1] [] <- Retag([fn entry] _2)
@@ -270,7 +270,7 @@ bb8
 resume
 
 # Analysing main::{closure#0}
-# MaybeTopOfBorrowStack Analysis
+# TopOfBorrowStack Analysis
 bb0
 [ 0] [] <- Retag([fn entry] _1)
 [ 1] [] <- Retag([fn entry] _2)

@@ -41,11 +41,11 @@ pub fn print_top_of_borrow_stack(body: &Body, top_of_borrow_stack: &TopOfBorrowS
 
 /// A dataflow analysis that tracks whether a given local is on the top mutable of the borrow stack,
 /// given the local is a reference. Immutable borrows may be above it on the borrow stack.
-pub struct MaybeTopOfBorrowStack {
+pub struct TopOfBorrowStack {
     retagged: Vec<Local>,
 }
 
-impl MaybeTopOfBorrowStack {
+impl TopOfBorrowStack {
     pub fn new(retagged: Vec<Local>) -> Self {
         Self { retagged }
     }
@@ -58,9 +58,9 @@ impl MaybeTopOfBorrowStack {
     }
 }
 
-impl<'tcx> AnalysisDomain<'tcx> for MaybeTopOfBorrowStack {
+impl<'tcx> AnalysisDomain<'tcx> for TopOfBorrowStack {
     type Domain = BitSet<Local>;
-    const NAME: &'static str = "maybe_top_of_borrow_stack";
+    const NAME: &'static str = "top_of_borrow_stack";
 
     fn bottom_value(&self, body: &Body<'tcx>) -> Self::Domain {
         BitSet::new_empty(body.local_decls().len())
@@ -73,7 +73,7 @@ impl<'tcx> AnalysisDomain<'tcx> for MaybeTopOfBorrowStack {
     }
 }
 
-impl<'tcx> GenKillAnalysis<'tcx> for MaybeTopOfBorrowStack {
+impl<'tcx> GenKillAnalysis<'tcx> for TopOfBorrowStack {
     type Idx = Local;
 
     fn statement_effect(
@@ -105,7 +105,7 @@ impl<'tcx> GenKillAnalysis<'tcx> for MaybeTopOfBorrowStack {
     }
 }
 
-/// A `Visitor` that defines the transfer function for `MaybeBorrowedLocals`.
+/// A `Visitor` that defines the transfer function for `TopOfBorrowStack`.
 struct TransferFunction<'a, T> {
     trans: &'a mut T,
     retagged: &'a Vec<Local>,
@@ -263,11 +263,11 @@ where
 
 pub type TopOfBorrowStackLocations = HashSet<(Local, Location)>;
 
-pub struct MaybeTopOfBorrowStackVisitor {
+pub struct TopOfBorrowStackVisitor {
     pub top_of_borrow_stack: TopOfBorrowStackLocations,
 }
 
-impl MaybeTopOfBorrowStackVisitor {
+impl TopOfBorrowStackVisitor {
     pub fn new() -> Self {
         Self {
             top_of_borrow_stack: HashSet::new(),
@@ -281,7 +281,7 @@ impl MaybeTopOfBorrowStackVisitor {
     }
 }
 
-impl<'mir, 'tcx> ResultsVisitor<'mir, 'tcx> for MaybeTopOfBorrowStackVisitor {
+impl<'mir, 'tcx> ResultsVisitor<'mir, 'tcx> for TopOfBorrowStackVisitor {
     type FlowState = BitSet<Local>;
 
     fn visit_statement_after_primary_effect(

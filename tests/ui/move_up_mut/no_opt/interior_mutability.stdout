@@ -1,6 +1,6 @@
 # Analysing main
 # Analysing interior_mutability
-# MaybeTopOfBorrowStack Analysis
+# TopOfBorrowStack Analysis
 bb0
 [ 0] [] <- Retag([fn entry] _1)
 [ 1] [] <- Retag([fn entry] _2)
@@ -278,7 +278,7 @@ Retag(_8)
 _7 = <std::rc::Rc<std::cell::Cell<i32>> as std::ops::Deref>::deref(move _8) -> bb3
 
 # Analysing access
-# MaybeTopOfBorrowStack Analysis
+# TopOfBorrowStack Analysis
 bb0
 [ 0] [] <- Retag([fn entry] _1)
 [ 1] [] <- StorageLive(_2)

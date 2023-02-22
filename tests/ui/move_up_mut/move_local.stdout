@@ -1,6 +1,6 @@
 # Analysing main
 # Analysing f
-# MaybeTopOfBorrowStack Analysis
+# TopOfBorrowStack Analysis
 bb0
 [ 0] [_1, _2] <- Retag([fn entry] _1)
 [ 1] [_1, _2] <- Retag([fn entry] _2)
