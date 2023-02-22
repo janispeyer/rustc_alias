@@ -245,8 +245,12 @@ where
                 self.trans.kill_all(self.retagged.clone());
             }
 
+            // kill(x) for `x = some_fn(...);`
+            TerminatorKind::Call { destination, .. } => {
+                self.trans.kill(destination.local);
+            }
+
             TerminatorKind::Assert { .. }
-            | TerminatorKind::Call { .. }
             | TerminatorKind::FalseEdge { .. }
             | TerminatorKind::FalseUnwind { .. }
             | TerminatorKind::Goto { .. }
