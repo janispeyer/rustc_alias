@@ -241,7 +241,8 @@ where
             | TerminatorKind::Abort
             | TerminatorKind::Resume
             | TerminatorKind::Return
-            | TerminatorKind::GeneratorDrop => {
+            | TerminatorKind::GeneratorDrop
+            | TerminatorKind::Yield { .. } => {
                 self.trans.kill_all(self.retagged.clone());
             }
 
@@ -255,8 +256,7 @@ where
             | TerminatorKind::FalseUnwind { .. }
             | TerminatorKind::Goto { .. }
             | TerminatorKind::SwitchInt { .. }
-            | TerminatorKind::Unreachable
-            | TerminatorKind::Yield { .. } => {}
+            | TerminatorKind::Unreachable => {}
         }
     }
 }
