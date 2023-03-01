@@ -13,40 +13,40 @@ bb0
 [ 8] [_1, _2] <- _4 = lib(move _5) -> bb1
 
 bb1
-[ 0] [_1, _2] <- StorageDead(_5)
-[ 1] [_1, _2] <- StorageDead(_4)
-[ 2] [_1, _2] <- StorageLive(_6)
-[ 3] [_1, _2] <- StorageLive(_7)
-[ 4] [_1, _2] <- _7 = &(*_2)
-[ 5] [_1, _2] <- Retag(_7)
-[ 6] [_1, _2] <- _6 = lib(move _7) -> bb2
+[ 0] [] <- StorageDead(_5)
+[ 1] [] <- StorageDead(_4)
+[ 2] [] <- StorageLive(_6)
+[ 3] [] <- StorageLive(_7)
+[ 4] [] <- _7 = &(*_2)
+[ 5] [] <- Retag(_7)
+[ 6] [] <- _6 = lib(move _7) -> bb2
 
 bb2
-[ 0] [_1, _2] <- StorageDead(_7)
-[ 1] [_1, _2] <- StorageDead(_6)
-[ 2] [_1, _2] <- StorageLive(_8)
-[ 3] [_1, _2] <- StorageLive(_9)
-[ 4] [_1, _2] <- _9 = (*_1)
-[ 5] [_1, _2] <- _8 = Eq(move _9, const 7_u32)
-[ 6] [_1, _2] <- StorageDead(_9)
-[ 7] [_1, _2] <- switchInt(move _8) -> [false: bb3, otherwise: bb4]
+[ 0] [] <- StorageDead(_7)
+[ 1] [] <- StorageDead(_6)
+[ 2] [] <- StorageLive(_8)
+[ 3] [] <- StorageLive(_9)
+[ 4] [] <- _9 = (*_1)
+[ 5] [] <- _8 = Eq(move _9, const 7_u32)
+[ 6] [] <- StorageDead(_9)
+[ 7] [] <- switchInt(move _8) -> [false: bb3, otherwise: bb4]
 
 bb3
-[ 0] [_1, _2] <- _0 = const false
-[ 1] [_1, _2] <- goto -> bb5
+[ 0] [] <- _0 = const false
+[ 1] [] <- goto -> bb5
 
 bb4
-[ 0] [_1, _2] <- StorageLive(_10)
-[ 1] [_1, _2] <- StorageLive(_11)
-[ 2] [_1, _2] <- _11 = (*_2)
-[ 3] [_1, _2] <- _10 = Eq(move _11, const 42_u32)
-[ 4] [_1, _2] <- StorageDead(_11)
-[ 5] [_1, _2] <- _0 = move _10
-[ 6] [_1, _2] <- goto -> bb5
+[ 0] [] <- StorageLive(_10)
+[ 1] [] <- StorageLive(_11)
+[ 2] [] <- _11 = (*_2)
+[ 3] [] <- _10 = Eq(move _11, const 42_u32)
+[ 4] [] <- StorageDead(_11)
+[ 5] [] <- _0 = move _10
+[ 6] [] <- goto -> bb5
 
 bb5
-[ 0] [_1, _2] <- StorageDead(_10)
-[ 1] [_1, _2] <- StorageDead(_8)
+[ 0] [] <- StorageDead(_10)
+[ 1] [] <- StorageDead(_8)
 [ 2] [] <- return
 
 # FindImmutabilitySpans Analysis
@@ -62,41 +62,41 @@ bb0
 [ 8] {_1: Span(bb0[2]), _2: Span(bb0[3])} <- _4 = lib(move _5) -> bb1
 
 bb1
-[ 0] {_1: Span(bb0[2]), _2: Span(bb0[3])} <- StorageDead(_5)
-[ 1] {_1: Span(bb0[2]), _2: Span(bb0[3])} <- StorageDead(_4)
-[ 2] {_1: Span(bb0[2]), _2: Span(bb0[3])} <- StorageLive(_6)
-[ 3] {_1: Span(bb0[2]), _2: Span(bb0[3])} <- StorageLive(_7)
-[ 4] {_1: Span(bb0[2]), _2: Span(bb0[3])} <- _7 = &(*_2)
-[ 5] {_1: Span(bb0[2]), _2: Span(bb0[3])} <- Retag(_7)
-[ 6] {_1: Span(bb0[2]), _2: Span(bb0[3])} <- _6 = lib(move _7) -> bb2
+[ 0] {_1: Top, _2: Top} <- StorageDead(_5)
+[ 1] {_1: Top, _2: Top} <- StorageDead(_4)
+[ 2] {_1: Top, _2: Top} <- StorageLive(_6)
+[ 3] {_1: Top, _2: Top} <- StorageLive(_7)
+[ 4] {_1: Top, _2: Top} <- _7 = &(*_2)
+[ 5] {_1: Top, _2: Top} <- Retag(_7)
+[ 6] {_1: Top, _2: Top} <- _6 = lib(move _7) -> bb2
 
 bb2
-[ 0] {_1: Span(bb0[2]), _2: Span(bb0[3])} <- StorageDead(_7)
-[ 1] {_1: Span(bb0[2]), _2: Span(bb0[3])} <- StorageDead(_6)
-[ 2] {_1: Span(bb0[2]), _2: Span(bb0[3])} <- StorageLive(_8)
-[ 3] {_1: Span(bb0[2]), _2: Span(bb0[3])} <- StorageLive(_9)
-[ 4] {_1: Span(bb0[2]), _2: Span(bb0[3])} <- _9 = (*_1)
-[ 5] {_1: Span(bb0[2]), _2: Span(bb0[3])} <- _8 = Eq(move _9, const 7_u32)
-[ 6] {_1: Span(bb0[2]), _2: Span(bb0[3])} <- StorageDead(_9)
-[ 7] {_1: Span(bb0[2]), _2: Span(bb0[3])} <- switchInt(move _8) -> [false: bb3, otherwise: bb4]
+[ 0] {_1: Top, _2: Top} <- StorageDead(_7)
+[ 1] {_1: Top, _2: Top} <- StorageDead(_6)
+[ 2] {_1: Top, _2: Top} <- StorageLive(_8)
+[ 3] {_1: Top, _2: Top} <- StorageLive(_9)
+[ 4] {_1: Top, _2: Top} <- _9 = (*_1)
+[ 5] {_1: Top, _2: Top} <- _8 = Eq(move _9, const 7_u32)
+[ 6] {_1: Top, _2: Top} <- StorageDead(_9)
+[ 7] {_1: Top, _2: Top} <- switchInt(move _8) -> [false: bb3, otherwise: bb4]
 
 bb4
-[ 0] {_1: Span(bb0[2]), _2: Span(bb0[3])} <- StorageLive(_10)
-[ 1] {_1: Span(bb0[2]), _2: Span(bb0[3])} <- StorageLive(_11)
-[ 2] {_1: Span(bb0[2]), _2: Span(bb0[3])} <- _11 = (*_2)
-[ 3] {_1: Span(bb0[2]), _2: Span(bb0[3])} <- _10 = Eq(move _11, const 42_u32)
-[ 4] {_1: Span(bb0[2]), _2: Span(bb0[3])} <- StorageDead(_11)
-[ 5] {_1: Span(bb0[2]), _2: Span(bb0[3])} <- _0 = move _10
-[ 6] {_1: Span(bb0[2]), _2: Span(bb0[3])} <- goto -> bb5
+[ 0] {_1: Top, _2: Top} <- StorageLive(_10)
+[ 1] {_1: Top, _2: Top} <- StorageLive(_11)
+[ 2] {_1: Top, _2: Top} <- _11 = (*_2)
+[ 3] {_1: Top, _2: Top} <- _10 = Eq(move _11, const 42_u32)
+[ 4] {_1: Top, _2: Top} <- StorageDead(_11)
+[ 5] {_1: Top, _2: Top} <- _0 = move _10
+[ 6] {_1: Top, _2: Top} <- goto -> bb5
 
 bb5
-[ 0] {_1: Span(bb0[2]), _2: Span(bb0[3])} <- StorageDead(_10)
-[ 1] {_1: Span(bb0[2]), _2: Span(bb0[3])} <- StorageDead(_8)
+[ 0] {_1: Top, _2: Top} <- StorageDead(_10)
+[ 1] {_1: Top, _2: Top} <- StorageDead(_8)
 [ 2] {_1: Top, _2: Top} <- return
 
 bb3
-[ 0] {_1: Span(bb0[2]), _2: Span(bb0[3])} <- _0 = const false
-[ 1] {_1: Span(bb0[2]), _2: Span(bb0[3])} <- goto -> bb5
+[ 0] {_1: Top, _2: Top} <- _0 = const false
+[ 1] {_1: Top, _2: Top} <- goto -> bb5
 
 
 # CFG Before
@@ -152,10 +152,8 @@ return
 bb0
 Retag([fn entry] _1)
 Retag([fn entry] _2)
-_12 = const 7_u32
-(*_1) = _12
-_13 = const 42_u32
-(*_2) = _13
+(*_1) = const 7_u32
+(*_2) = const 42_u32
 StorageLive(_4)
 StorageLive(_5)
 _5 = &(*_1)
@@ -176,7 +174,7 @@ StorageDead(_7)
 StorageDead(_6)
 StorageLive(_8)
 StorageLive(_9)
-_9 = _12
+_9 = (*_1)
 _8 = Eq(move _9, const 7_u32)
 StorageDead(_9)
 switchInt(move _8) -> [false: bb3, otherwise: bb4]
@@ -188,7 +186,7 @@ goto -> bb5
 bb4
 StorageLive(_10)
 StorageLive(_11)
-_11 = _13
+_11 = (*_2)
 _10 = Eq(move _11, const 42_u32)
 StorageDead(_11)
 _0 = move _10

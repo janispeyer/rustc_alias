@@ -12,17 +12,17 @@ bb0
 [ 7] [_2] <- _4 = std::mem::replace::<i32>(move _5, const 42_i32) -> bb1
 
 bb1
-[ 0] [_2] <- StorageDead(_5)
-[ 1] [_2] <- StorageLive(_6)
-[ 2] [_2] <- _6 = _4
-[ 3] [_2] <- _7 = CheckedAdd(_6, const 1_i32)
-[ 4] [_2] <- assert(!move (_7.1: bool), "attempt to compute `{} + {}`, which would overflow", move _6, const 1_i32) -> bb2
+[ 0] [] <- StorageDead(_5)
+[ 1] [] <- StorageLive(_6)
+[ 2] [] <- _6 = _4
+[ 3] [] <- _7 = CheckedAdd(_6, const 1_i32)
+[ 4] [] <- assert(!move (_7.1: bool), "attempt to compute `{} + {}`, which would overflow", move _6, const 1_i32) -> bb2
 
 bb2
-[ 0] [_2] <- (*_2) = move (_7.0: i32)
-[ 1] [_2] <- StorageDead(_6)
-[ 2] [_2] <- _0 = (*_1)
-[ 3] [_2] <- StorageDead(_4)
+[ 0] [] <- (*_2) = move (_7.0: i32)
+[ 1] [] <- StorageDead(_6)
+[ 2] [] <- _0 = (*_1)
+[ 3] [] <- StorageDead(_4)
 [ 4] [] <- return
 
 # FindImmutabilitySpans Analysis
@@ -44,11 +44,11 @@ bb1
 [ 4] {_1: Top} <- assert(!move (_7.1: bool), "attempt to compute `{} + {}`, which would overflow", move _6, const 1_i32) -> bb2
 
 bb2
-[ 0] {_1: Top, _2: Span(bb2[0])} <- (*_2) = move (_7.0: i32)
-[ 1] {_1: Top, _2: Span(bb2[0])} <- StorageDead(_6)
-[ 2] {_1: Top, _2: Span(bb2[0])} <- _0 = (*_1)
-[ 3] {_1: Top, _2: Span(bb2[0])} <- StorageDead(_4)
-[ 4] {_1: Top, _2: Top} <- return
+[ 0] {_1: Top} <- (*_2) = move (_7.0: i32)
+[ 1] {_1: Top} <- StorageDead(_6)
+[ 2] {_1: Top} <- _0 = (*_1)
+[ 3] {_1: Top} <- StorageDead(_4)
+[ 4] {_1: Top} <- return
 
 
 # CFG Before

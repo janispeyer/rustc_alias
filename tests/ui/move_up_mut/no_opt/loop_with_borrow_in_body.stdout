@@ -13,48 +13,48 @@ bb0
 [ 8] [_1] <- _4 = <std::ops::Range<i32> as std::iter::IntoIterator>::into_iter(move _5) -> bb1
 
 bb1
-[ 0] [_1] <- StorageDead(_5)
-[ 1] [_1] <- StorageLive(_6)
-[ 2] [_1] <- _6 = move _4
-[ 3] [_1] <- goto -> bb2
+[ 0] [] <- StorageDead(_5)
+[ 1] [] <- StorageLive(_6)
+[ 2] [] <- _6 = move _4
+[ 3] [] <- goto -> bb2
 
 bb2
-[ 0] [_1] <- StorageLive(_8)
-[ 1] [_1] <- StorageLive(_9)
-[ 2] [_1] <- StorageLive(_10)
-[ 3] [_1] <- StorageLive(_11)
-[ 4] [_1] <- _11 = &mut _6
-[ 5] [_1] <- Retag(_11)
-[ 6] [_1] <- _10 = &mut (*_11)
-[ 7] [_1] <- Retag([2phase] _10)
-[ 8] [_1] <- _9 = <std::ops::Range<i32> as std::iter::Iterator>::next(move _10) -> bb3
+[ 0] [] <- StorageLive(_8)
+[ 1] [] <- StorageLive(_9)
+[ 2] [] <- StorageLive(_10)
+[ 3] [] <- StorageLive(_11)
+[ 4] [] <- _11 = &mut _6
+[ 5] [] <- Retag(_11)
+[ 6] [] <- _10 = &mut (*_11)
+[ 7] [] <- Retag([2phase] _10)
+[ 8] [] <- _9 = <std::ops::Range<i32> as std::iter::Iterator>::next(move _10) -> bb3
 
 bb3
-[ 0] [_1] <- StorageDead(_10)
-[ 1] [_1] <- _12 = discriminant(_9)
-[ 2] [_1] <- switchInt(move _12) -> [0_isize: bb6, 1_isize: bb4, otherwise: bb5]
+[ 0] [] <- StorageDead(_10)
+[ 1] [] <- _12 = discriminant(_9)
+[ 2] [] <- switchInt(move _12) -> [0_isize: bb6, 1_isize: bb4, otherwise: bb5]
 
 bb4
-[ 0] [_1] <- StorageLive(_14)
-[ 1] [_1] <- _14 = some_fn() -> bb7
+[ 0] [] <- StorageLive(_14)
+[ 1] [] <- _14 = some_fn() -> bb7
 
 bb5
-[ 0] [_1] <- unreachable
+[ 0] [] <- unreachable
 
 bb6
-[ 0] [_1] <- _3 = const ()
-[ 1] [_1] <- StorageDead(_11)
-[ 2] [_1] <- StorageDead(_9)
-[ 3] [_1] <- StorageDead(_8)
-[ 4] [_1] <- StorageDead(_6)
-[ 5] [_1] <- StorageDead(_4)
-[ 6] [_1] <- StorageDead(_3)
-[ 7] [_1] <- _0 = (*_1)
+[ 0] [] <- _3 = const ()
+[ 1] [] <- StorageDead(_11)
+[ 2] [] <- StorageDead(_9)
+[ 3] [] <- StorageDead(_8)
+[ 4] [] <- StorageDead(_6)
+[ 5] [] <- StorageDead(_4)
+[ 6] [] <- StorageDead(_3)
+[ 7] [] <- _0 = (*_1)
 [ 8] [] <- return
 
 bb7
-[ 0] [_1] <- StorageDead(_14)
-[ 1] [_1] <- StorageLive(_15)
+[ 0] [] <- StorageDead(_14)
+[ 1] [] <- StorageLive(_15)
 [ 2] [] <- _15 = &mut (*_1)
 [ 3] [] <- Retag(_15)
 [ 4] [] <- (*_15) = const 5_i32
@@ -79,10 +79,10 @@ bb0
 [ 8] {_1: Span(bb0[1])} <- _4 = <std::ops::Range<i32> as std::iter::IntoIterator>::into_iter(move _5) -> bb1
 
 bb1
-[ 0] {_1: Span(bb0[1])} <- StorageDead(_5)
-[ 1] {_1: Span(bb0[1])} <- StorageLive(_6)
-[ 2] {_1: Span(bb0[1])} <- _6 = move _4
-[ 3] {_1: Span(bb0[1])} <- goto -> bb2
+[ 0] {_1: Top} <- StorageDead(_5)
+[ 1] {_1: Top} <- StorageLive(_6)
+[ 2] {_1: Top} <- _6 = move _4
+[ 3] {_1: Top} <- goto -> bb2
 
 bb2
 [ 0] {_1: Top} <- StorageLive(_8)

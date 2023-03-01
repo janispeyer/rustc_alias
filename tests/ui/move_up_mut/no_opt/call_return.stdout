@@ -9,9 +9,9 @@ bb0
 [ 4] [_1] <- _4 = read() -> bb1
 
 bb1
-[ 0] [_1] <- Retag(_4)
-[ 1] [_1] <- _3 = &mut (*_4)
-[ 2] [_1] <- Retag(_3)
+[ 0] [] <- Retag(_4)
+[ 1] [] <- _3 = &mut (*_4)
+[ 2] [] <- Retag(_3)
 [ 3] [] <- _1 = move _3
 [ 4] [] <- Retag(_1)
 [ 5] [] <- StorageDead(_3)
@@ -28,9 +28,9 @@ bb0
 [ 4] {_1: Span(bb0[1])} <- _4 = read() -> bb1
 
 bb1
-[ 0] {_1: Span(bb0[1])} <- Retag(_4)
-[ 1] {_1: Span(bb0[1])} <- _3 = &mut (*_4)
-[ 2] {_1: Span(bb0[1])} <- Retag(_3)
+[ 0] {_1: Top} <- Retag(_4)
+[ 1] {_1: Top} <- _3 = &mut (*_4)
+[ 2] {_1: Top} <- Retag(_3)
 [ 3] {_1: Top} <- _1 = move _3
 [ 4] {_1: Top} <- Retag(_1)
 [ 5] {_1: Top} <- StorageDead(_3)

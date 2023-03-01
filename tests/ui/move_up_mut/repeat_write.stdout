@@ -17,10 +17,10 @@ bb0
 [12] [_1, _2] <- assert(!move (_6.1: bool), "attempt to compute `{} + {}`, which would overflow", move _5, const 1_i32) -> bb1
 
 bb1
-[ 0] [_1, _2] <- (*_1) = move (_6.0: i32)
-[ 1] [_1, _2] <- StorageDead(_5)
-[ 2] [_1, _2] <- (*_2) = const 9_i32
-[ 3] [_1, _2] <- _0 = (*_1)
+[ 0] [] <- (*_1) = move (_6.0: i32)
+[ 1] [] <- StorageDead(_5)
+[ 2] [] <- (*_2) = const 9_i32
+[ 3] [] <- _0 = (*_1)
 [ 4] [] <- return
 
 # FindImmutabilitySpans Analysis
@@ -40,10 +40,10 @@ bb0
 [12] {_1: Span(bb0[6]), _2: Span(bb0[8])} <- assert(!move (_6.1: bool), "attempt to compute `{} + {}`, which would overflow", move _5, const 1_i32) -> bb1
 
 bb1
-[ 0] {_1: Span(bb1[0]), _2: Span(bb0[8])} <- (*_1) = move (_6.0: i32)
-[ 1] {_1: Span(bb1[0]), _2: Span(bb0[8])} <- StorageDead(_5)
-[ 2] {_1: Span(bb1[0]), _2: Span(bb1[2])} <- (*_2) = const 9_i32
-[ 3] {_1: Span(bb1[0]), _2: Span(bb1[2])} <- _0 = (*_1)
+[ 0] {_1: Top, _2: Top} <- (*_1) = move (_6.0: i32)
+[ 1] {_1: Top, _2: Top} <- StorageDead(_5)
+[ 2] {_1: Top, _2: Top} <- (*_2) = const 9_i32
+[ 3] {_1: Top, _2: Top} <- _0 = (*_1)
 [ 4] {_1: Top, _2: Top} <- return
 
 
@@ -89,10 +89,9 @@ _6 = CheckedAdd(_5, const 1_i32)
 assert(!move (_6.1: bool), "attempt to compute `{} + {}`, which would overflow", move _5, const 1_i32) -> bb1
 
 bb1
-_9 = move (_6.0: i32)
-(*_1) = _9
+(*_1) = move (_6.0: i32)
 StorageDead(_5)
 (*_2) = const 9_i32
-_0 = _9
+_0 = (*_1)
 return
 

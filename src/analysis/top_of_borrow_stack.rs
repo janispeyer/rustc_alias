@@ -41,16 +41,16 @@ pub fn print_top_of_borrow_stack(body: &Body, top_of_borrow_stack: &TopOfBorrowS
 
 /// A dataflow analysis that tracks whether a given local is on the top mutable of the borrow stack,
 /// given the local is a reference. Immutable borrows may be above it on the borrow stack.
-pub struct TopOfBorrowStack {
-    retagged: Vec<Local>,
+pub struct TopOfBorrowStack<'a> {
+    retagged: &'a Vec<Local>,
 }
 
-impl TopOfBorrowStack {
-    pub fn new(retagged: Vec<Local>) -> Self {
+impl<'a> TopOfBorrowStack<'a> {
+    pub fn new(retagged: &'a Vec<Local>) -> Self {
         Self { retagged }
     }
 
-    fn transfer_function<'a, T>(&'a self, trans: &'a mut T) -> TransferFunction<'a, T> {
+    fn transfer_function<T>(&'a self, trans: &'a mut T) -> TransferFunction<'a, T> {
         TransferFunction {
             trans,
             retagged: &self.retagged,
@@ -58,22 +58,22 @@ impl TopOfBorrowStack {
     }
 }
 
-impl<'tcx> AnalysisDomain<'tcx> for TopOfBorrowStack {
+impl<'tcx> AnalysisDomain<'tcx> for TopOfBorrowStack<'_> {
     type Domain = BitSet<Local>;
     const NAME: &'static str = "top_of_borrow_stack";
 
     fn bottom_value(&self, body: &Body<'tcx>) -> Self::Domain {
-        BitSet::new_empty(body.local_decls().len())
+        BitSet::new_filled(body.local_decls().len())
     }
 
     fn initialize_start_block(&self, _: &Body<'tcx>, bitset: &mut Self::Domain) {
-        for &local in &self.retagged {
-            bitset.insert(local);
+        for &local in self.retagged {
+            bitset.remove(local);
         }
     }
 }
 
-impl<'tcx> GenKillAnalysis<'tcx> for TopOfBorrowStack {
+impl<'tcx> GenKillAnalysis<'tcx> for TopOfBorrowStack<'_> {
     type Idx = Local;
 
     fn statement_effect(
@@ -122,22 +122,22 @@ where
             StatementKind::StorageDead(local) => {
                 // When we reach a `StorageDead` statement,
                 // we can assume that any pointers to this memory are now invalid.
-                self.trans.kill(local);
+                self.trans.gen(local);
             }
 
             StatementKind::StorageLive(local) => {
                 // We should never reach a `StorageLive` statement for
-                // the locals we visit: to ensure soundness we kill here.
-                self.trans.kill(local);
+                // the locals we visit: to ensure soundness we gen here.
+                self.trans.gen(local);
             }
 
-            // Kill in the following cases, because not all scenarios where
-            // these statements can occur were examined. It might be sound to not kill here,
-            // but it is definitely sound to kill and potentially lose some precision.
+            // gen in the following cases, because not all scenarios where
+            // these statements can occur were examined. It might be sound to not gen here,
+            // but it is definitely sound to gen and potentially lose some precision.
             StatementKind::Deinit(ref place) => {
-                self.trans.kill(place.local);
+                self.trans.gen(place.local);
             }
-            StatementKind::Intrinsic(_) => self.trans.kill_all(self.retagged.clone()),
+            StatementKind::Intrinsic(_) => self.trans.gen_all(self.retagged.clone()),
 
             // The rvalue part of the assignment will be handled by `visit_rvalue`.
             StatementKind::Assign(ref assignment) => {
@@ -147,24 +147,24 @@ where
                     we could (re-)generate on an assignment. As of now this would lead to the analysis
                     claiming x is top-of-stack in cases where this is not true:
                     ```
-                    y = &mut *x; // kill(x) happens here.
+                    y = &mut *x; // gen(x) happens here.
                     *y = 5;
                     for _ in 0..3 {
                         some_fn(); // Here x should not be considered top-of-stack, because it is not true in the first iteration.
-                        *x = 7; // gen(x) happens here.
+                        *x = 7; // kill(x) happens here.
                     }
                     ```
-                // gen(x) for assignments of the form `*x = ...`, because this
+                // kill(x) for assignments of the form `*x = ...`, because this
                 // causes x to be on top of the borrow stack again.
                 if let [ProjectionElem::Deref] = place.projection.as_slice()
                     && self.retagged.contains(&place.local)
                 {
-                    self.trans.gen(place.local);
+                    self.trans.kill(place.local);
                 }
-                // kill(x) for assignments of the form `x = ...`.
+                // gen(x) for assignments of the form `x = ...`.
                 else */
                 if place.projection.len() == 0 {
-                    self.trans.kill(place.local);
+                    self.trans.gen(place.local);
                 }
             }
 
@@ -185,17 +185,17 @@ where
 
         match rvalue {
             Rvalue::AddressOf(_mt, borrowed_place) => {
-                self.trans.kill(borrowed_place.local);
+                self.trans.gen(borrowed_place.local);
             }
 
             Rvalue::Ref(_, BorrowKind::Shared | BorrowKind::Unique, _) => {} // Allow immutable borrows.
             Rvalue::Ref(_, _kind, borrowed_place) => {
-                self.trans.kill(borrowed_place.local);
+                self.trans.gen(borrowed_place.local);
             }
 
             Rvalue::Cast(_, Operand::Copy(place) | Operand::Move(place), _)
             | Rvalue::ShallowInitBox(Operand::Copy(place) | Operand::Move(place), _) => { // performs transmute --> we have to handle this
-                self.trans.kill(place.local);
+                self.trans.gen(place.local);
             }
 
             Rvalue::Cast(..)              // x as y
@@ -234,7 +234,7 @@ where
                 // for now. See discussion on [#61069].
                 //
                 // [#61069]: https://github.com/rust-lang/rust/pull/61069
-                self.trans.kill(dropped_place.local);
+                self.trans.gen(dropped_place.local);
             }
 
             TerminatorKind::InlineAsm { .. }
@@ -243,12 +243,12 @@ where
             | TerminatorKind::Return
             | TerminatorKind::GeneratorDrop
             | TerminatorKind::Yield { .. } => {
-                self.trans.kill_all(self.retagged.clone());
+                self.trans.gen_all(self.retagged.clone());
             }
 
-            // kill(x) for `x = some_fn(...);`
+            // gen(x) for `x = some_fn(...);`
             TerminatorKind::Call { destination, .. } => {
-                self.trans.kill(destination.local);
+                self.trans.gen(destination.local);
             }
 
             TerminatorKind::Assert { .. }
@@ -263,25 +263,35 @@ where
 
 pub type TopOfBorrowStackLocations = HashSet<(Local, Location)>;
 
-pub struct TopOfBorrowStackVisitor {
+pub struct TopOfBorrowStackVisitor<'a> {
+    retagged: &'a Vec<Local>,
     pub top_of_borrow_stack: TopOfBorrowStackLocations,
 }
 
-impl TopOfBorrowStackVisitor {
-    pub fn new() -> Self {
+impl<'a> TopOfBorrowStackVisitor<'a> {
+    pub fn new(retagged: &'a Vec<Local>) -> Self {
         Self {
+            retagged,
             top_of_borrow_stack: HashSet::new(),
         }
     }
 
     fn visit_location(&mut self, state: &<Self as ResultsVisitor>::FlowState, location: Location) {
-        for top in state.iter() {
+        for &top in self
+            .retagged
+            .iter()
+            .filter(|&&local| !state.contains(local))
+        {
             self.top_of_borrow_stack.insert((top, location));
         }
+        // for top in state.iter() {
+        //     self.top_of_borrow_stack.insert((top, location));
+        //     // TODO
+        // }
     }
 }
 
-impl<'mir, 'tcx> ResultsVisitor<'mir, 'tcx> for TopOfBorrowStackVisitor {
+impl<'mir, 'tcx> ResultsVisitor<'mir, 'tcx> for TopOfBorrowStackVisitor<'_> {
     type FlowState = BitSet<Local>;
 
     fn visit_statement_after_primary_effect(

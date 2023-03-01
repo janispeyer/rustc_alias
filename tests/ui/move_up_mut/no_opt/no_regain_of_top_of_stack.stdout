@@ -14,12 +14,12 @@ bb0
 [ 9] [_2] <- _4 = access(move _5) -> bb1
 
 bb1
-[ 0] [_2] <- StorageDead(_5)
-[ 1] [_2] <- StorageDead(_6)
-[ 2] [_2] <- StorageDead(_4)
-[ 3] [_2] <- (*_1) = const 42_i32
-[ 4] [_2] <- (*_2) = const 7_i32
-[ 5] [_2] <- _0 = (*_1)
+[ 0] [] <- StorageDead(_5)
+[ 1] [] <- StorageDead(_6)
+[ 2] [] <- StorageDead(_4)
+[ 3] [] <- (*_1) = const 42_i32
+[ 4] [] <- (*_2) = const 7_i32
+[ 5] [] <- _0 = (*_1)
 [ 6] [] <- return
 
 # FindImmutabilitySpans Analysis
@@ -40,9 +40,9 @@ bb1
 [ 1] {} <- StorageDead(_6)
 [ 2] {} <- StorageDead(_4)
 [ 3] {} <- (*_1) = const 42_i32
-[ 4] {_2: Span(bb1[4])} <- (*_2) = const 7_i32
-[ 5] {_2: Span(bb1[4])} <- _0 = (*_1)
-[ 6] {_2: Top} <- return
+[ 4] {} <- (*_2) = const 7_i32
+[ 5] {} <- _0 = (*_1)
+[ 6] {} <- return
 
 
 # CFG Before
@@ -122,36 +122,36 @@ bb0
 [27] [_1] <- _13 = std::fmt::ArgumentV1::<'_>::new_display::<&mut i32>(move _14) -> bb1
 
 bb1
-[ 0] [_1] <- Retag(_13)
-[ 1] [_1] <- StorageDead(_14)
-[ 2] [_1] <- _12 = [move _13]
-[ 3] [_1] <- Retag(_12)
-[ 4] [_1] <- StorageDead(_13)
-[ 5] [_1] <- _11 = &_12
-[ 6] [_1] <- Retag(_11)
-[ 7] [_1] <- _10 = &(*_11)
-[ 8] [_1] <- Retag(_10)
-[ 9] [_1] <- _9 = move _10 as &[std::fmt::ArgumentV1<'_>] (Pointer(Unsize))
-[10] [_1] <- Retag(_9)
-[11] [_1] <- StorageDead(_10)
-[12] [_1] <- _4 = std::fmt::Arguments::<'_>::new_v1(move _5, move _9) -> bb2
+[ 0] [] <- Retag(_13)
+[ 1] [] <- StorageDead(_14)
+[ 2] [] <- _12 = [move _13]
+[ 3] [] <- Retag(_12)
+[ 4] [] <- StorageDead(_13)
+[ 5] [] <- _11 = &_12
+[ 6] [] <- Retag(_11)
+[ 7] [] <- _10 = &(*_11)
+[ 8] [] <- Retag(_10)
+[ 9] [] <- _9 = move _10 as &[std::fmt::ArgumentV1<'_>] (Pointer(Unsize))
+[10] [] <- Retag(_9)
+[11] [] <- StorageDead(_10)
+[12] [] <- _4 = std::fmt::Arguments::<'_>::new_v1(move _5, move _9) -> bb2
 
 bb2
-[ 0] [_1] <- Retag(_4)
-[ 1] [_1] <- StorageDead(_9)
-[ 2] [_1] <- StorageDead(_5)
-[ 3] [_1] <- _3 = std::io::_print(move _4) -> bb3
+[ 0] [] <- Retag(_4)
+[ 1] [] <- StorageDead(_9)
+[ 2] [] <- StorageDead(_5)
+[ 3] [] <- _3 = std::io::_print(move _4) -> bb3
 
 bb3
-[ 0] [_1] <- StorageDead(_4)
-[ 1] [_1] <- StorageDead(_15)
-[ 2] [_1] <- StorageDead(_12)
-[ 3] [_1] <- StorageDead(_11)
-[ 4] [_1] <- StorageDead(_7)
-[ 5] [_1] <- StorageDead(_3)
-[ 6] [_1] <- _2 = const ()
-[ 7] [_1] <- StorageDead(_2)
-[ 8] [_1] <- _0 = const ()
+[ 0] [] <- StorageDead(_4)
+[ 1] [] <- StorageDead(_15)
+[ 2] [] <- StorageDead(_12)
+[ 3] [] <- StorageDead(_11)
+[ 4] [] <- StorageDead(_7)
+[ 5] [] <- StorageDead(_3)
+[ 6] [] <- _2 = const ()
+[ 7] [] <- StorageDead(_2)
+[ 8] [] <- _0 = const ()
 [ 9] [] <- return
 
 # FindImmutabilitySpans Analysis

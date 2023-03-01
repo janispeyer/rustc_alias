@@ -31,8 +31,8 @@ pub fn compute_immutability_spans<'tcx>(
     if verbose {
         println!("# TopOfBorrowStack Analysis");
     }
-    let mut top_of_stack_visitor = TopOfBorrowStackVisitor::new();
-    TopOfBorrowStack::new(retagged)
+    let mut top_of_stack_visitor = TopOfBorrowStackVisitor::new(&retagged);
+    TopOfBorrowStack::new(&retagged)
         .into_engine(tcx, body)
         .iterate_to_fixpoint()
         .visit_reachable_with(body, &mut top_of_stack_visitor);

@@ -13,9 +13,9 @@ bb0
 [ 8] [_2] <- _4 = access(move _5) -> bb1
 
 bb1
-[ 0] [_2] <- StorageDead(_5)
-[ 1] [_2] <- StorageDead(_4)
-[ 2] [_2] <- _0 = (*_1)
+[ 0] [] <- StorageDead(_5)
+[ 1] [] <- StorageDead(_4)
+[ 2] [] <- _0 = (*_1)
 [ 3] [] <- return
 
 # FindImmutabilitySpans Analysis
@@ -31,9 +31,9 @@ bb0
 [ 8] {_1: Top, _2: Span(bb0[3])} <- _4 = access(move _5) -> bb1
 
 bb1
-[ 0] {_1: Top, _2: Span(bb0[3])} <- StorageDead(_5)
-[ 1] {_1: Top, _2: Span(bb0[3])} <- StorageDead(_4)
-[ 2] {_1: Top, _2: Span(bb0[3])} <- _0 = (*_1)
+[ 0] {_1: Top, _2: Top} <- StorageDead(_5)
+[ 1] {_1: Top, _2: Top} <- StorageDead(_4)
+[ 2] {_1: Top, _2: Top} <- _0 = (*_1)
 [ 3] {_1: Top, _2: Top} <- return
 
 
