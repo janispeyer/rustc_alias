@@ -142,18 +142,6 @@ where
             // The rvalue part of the assignment will be handled by `visit_rvalue`.
             StatementKind::Assign(ref assignment) => {
                 let place = assignment.0;
-                /* TODO:
-                    If we extended the analysis to contain three states (bottom, top-of-stack, top),
-                    we could (re-)generate on an assignment. As of now this would lead to the analysis
-                    claiming x is top-of-stack in cases where this is not true:
-                    ```
-                    y = &mut *x; // kill(x) happens here.
-                    *y = 5;
-                    for _ in 0..3 {
-                        some_fn(); // Here x should not be considered top-of-stack, because it is not true in the first iteration.
-                        *x = 7; // gen(x) happens here.
-                    }
-                    ```
                 // gen(x) for assignments of the form `*x = ...`, because this
                 // causes x to be on top of the borrow stack again.
                 if let [ProjectionElem::Deref] = place.projection.as_slice()
@@ -162,8 +150,7 @@ where
                     self.trans.gen(place.local);
                 }
                 // kill(x) for assignments of the form `x = ...`.
-                else */
-                if place.projection.len() == 0 {
+                else if place.projection.len() == 0 {
                     self.trans.kill(place.local);
                 }
             }

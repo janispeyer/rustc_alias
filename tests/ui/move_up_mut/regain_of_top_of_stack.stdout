@@ -17,9 +17,9 @@ bb1
 [ 0] [_2] <- StorageDead(_5)
 [ 1] [_2] <- StorageDead(_6)
 [ 2] [_2] <- StorageDead(_4)
-[ 3] [_2] <- (*_1) = const 42_i32
-[ 4] [_2] <- (*_2) = const 7_i32
-[ 5] [_2] <- _0 = (*_1)
+[ 3] [_1, _2] <- (*_1) = const 42_i32
+[ 4] [_1, _2] <- (*_2) = const 7_i32
+[ 5] [_1, _2] <- _0 = (*_1)
 [ 6] [] <- return
 
 # FindImmutabilitySpans Analysis
@@ -39,10 +39,10 @@ bb1
 [ 0] {} <- StorageDead(_5)
 [ 1] {} <- StorageDead(_6)
 [ 2] {} <- StorageDead(_4)
-[ 3] {} <- (*_1) = const 42_i32
-[ 4] {_2: Span(bb1[4])} <- (*_2) = const 7_i32
-[ 5] {_2: Span(bb1[4])} <- _0 = (*_1)
-[ 6] {_2: Top} <- return
+[ 3] {_1: Span(bb1[3])} <- (*_1) = const 42_i32
+[ 4] {_1: Span(bb1[3]), _2: Span(bb1[4])} <- (*_2) = const 7_i32
+[ 5] {_1: Span(bb1[3]), _2: Span(bb1[4])} <- _0 = (*_1)
+[ 6] {_1: Top, _2: Top} <- return
 
 
 # CFG Before
@@ -84,9 +84,10 @@ bb1
 StorageDead(_5)
 StorageDead(_6)
 StorageDead(_4)
-(*_1) = const 42_i32
+_7 = const 42_i32
+(*_1) = _7
 (*_2) = const 7_i32
-_0 = (*_1)
+_0 = _7
 return
 
 # Analysing access

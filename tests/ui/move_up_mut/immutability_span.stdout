@@ -130,13 +130,13 @@ bb15
 
 bb16
 [ 0] [_2] <- (*_2) = const 11_i32
-[ 1] [_2] <- (*_1) = const 17_i32
-[ 2] [_2] <- _28 = const ()
-[ 3] [_2] <- StorageDead(_31)
-[ 4] [_2] <- StorageDead(_29)
-[ 5] [_2] <- StorageDead(_28)
-[ 6] [_2] <- _12 = const ()
-[ 7] [_2] <- goto -> bb14
+[ 1] [_1, _2] <- (*_1) = const 17_i32
+[ 2] [_1, _2] <- _28 = const ()
+[ 3] [_1, _2] <- StorageDead(_31)
+[ 4] [_1, _2] <- StorageDead(_29)
+[ 5] [_1, _2] <- StorageDead(_28)
+[ 6] [_1, _2] <- _12 = const ()
+[ 7] [_1, _2] <- goto -> bb14
 
 bb17
 [ 0] [_2] <- unreachable
@@ -302,13 +302,13 @@ bb17
 
 bb16
 [ 0] {_1: Top, _2: Span(bb16[0])} <- (*_2) = const 11_i32
-[ 1] {_1: Top, _2: Span(bb16[0])} <- (*_1) = const 17_i32
-[ 2] {_1: Top, _2: Span(bb16[0])} <- _28 = const ()
-[ 3] {_1: Top, _2: Span(bb16[0])} <- StorageDead(_31)
-[ 4] {_1: Top, _2: Span(bb16[0])} <- StorageDead(_29)
-[ 5] {_1: Top, _2: Span(bb16[0])} <- StorageDead(_28)
-[ 6] {_1: Top, _2: Span(bb16[0])} <- _12 = const ()
-[ 7] {_1: Top, _2: Span(bb16[0])} <- goto -> bb14
+[ 1] {_1: Span(bb16[1]), _2: Span(bb16[0])} <- (*_1) = const 17_i32
+[ 2] {_1: Span(bb16[1]), _2: Span(bb16[0])} <- _28 = const ()
+[ 3] {_1: Span(bb16[1]), _2: Span(bb16[0])} <- StorageDead(_31)
+[ 4] {_1: Span(bb16[1]), _2: Span(bb16[0])} <- StorageDead(_29)
+[ 5] {_1: Span(bb16[1]), _2: Span(bb16[0])} <- StorageDead(_28)
+[ 6] {_1: Span(bb16[1]), _2: Span(bb16[0])} <- _12 = const ()
+[ 7] {_1: Span(bb16[1]), _2: Span(bb16[0])} <- goto -> bb14
 
 bb18
 [ 0] {_1: Top, _2: Top} <- _24 = const ()
