@@ -4,7 +4,7 @@ use rustc_index::bit_set::BitSet;
 use rustc_middle::mir::visit::Visitor;
 use rustc_middle::mir::*;
 use rustc_mir_dataflow::{
-    AnalysisDomain, CallReturnPlaces, GenKill, GenKillAnalysis, ResultsVisitor,
+    lattice, AnalysisDomain, CallReturnPlaces, GenKill, GenKillAnalysis, ResultsVisitor,
 };
 
 pub fn print_top_of_borrow_stack(body: &Body, top_of_borrow_stack: &TopOfBorrowStackLocations) {
@@ -59,18 +59,18 @@ impl TopOfBorrowStack {
 }
 
 impl<'tcx> AnalysisDomain<'tcx> for TopOfBorrowStack {
-    type Domain = BitSet<Local>;
+    type Domain = lattice::Dual<BitSet<Local>>;
     const NAME: &'static str = "top_of_borrow_stack";
 
     fn bottom_value(&self, body: &Body<'tcx>) -> Self::Domain {
-        BitSet::new_empty(body.local_decls().len())
+        let mut domain = BitSet::new_empty(body.local_decls().len());
+        for &local in &self.retagged {
+            domain.insert(local);
+        }
+        lattice::Dual(domain)
     }
 
-    fn initialize_start_block(&self, _: &Body<'tcx>, bitset: &mut Self::Domain) {
-        for &local in &self.retagged {
-            bitset.insert(local);
-        }
-    }
+    fn initialize_start_block(&self, _body: &Body<'tcx>, _domain: &mut Self::Domain) {}
 }
 
 impl<'tcx> GenKillAnalysis<'tcx> for TopOfBorrowStack {
@@ -275,14 +275,14 @@ impl TopOfBorrowStackVisitor {
     }
 
     fn visit_location(&mut self, state: &<Self as ResultsVisitor>::FlowState, location: Location) {
-        for top in state.iter() {
+        for top in state.0.iter() {
             self.top_of_borrow_stack.insert((top, location));
         }
     }
 }
 
 impl<'mir, 'tcx> ResultsVisitor<'mir, 'tcx> for TopOfBorrowStackVisitor {
-    type FlowState = BitSet<Local>;
+    type FlowState = lattice::Dual<BitSet<Local>>;
 
     fn visit_statement_after_primary_effect(
         &mut self,

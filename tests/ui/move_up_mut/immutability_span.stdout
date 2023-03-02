@@ -156,10 +156,10 @@ bb18
 [11] [_2] <- goto -> bb19
 
 bb19
-[ 0] [_1, _2] <- StorageDead(_6)
-[ 1] [_1, _2] <- StorageDead(_5)
-[ 2] [_1, _2] <- (*_2) = const 12_i32
-[ 3] [_1, _2] <- _0 = (*_1)
+[ 0] [_2] <- StorageDead(_6)
+[ 1] [_2] <- StorageDead(_5)
+[ 2] [_2] <- (*_2) = const 12_i32
+[ 3] [_2] <- _0 = (*_1)
 [ 4] [] <- return
 
 # FindImmutabilitySpans Analysis
