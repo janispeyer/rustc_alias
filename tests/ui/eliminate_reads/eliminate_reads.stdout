@@ -1,5 +1,5 @@
 # Analysing main
-# Analysing move_up_mut
+# Analysing eliminate_reads
 # TopOfBorrowStack Analysis
 bb0
 [ 0] [_1, _2] <- Retag([fn entry] _1)

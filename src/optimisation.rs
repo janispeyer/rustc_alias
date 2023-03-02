@@ -7,7 +7,7 @@ use rustc_middle::{
 
 use crate::analysis::{ImmutabilitySpan, ImmutabilitySpans};
 
-pub fn move_up<'tcx>(
+pub fn eliminate_reads<'tcx>(
     tcx: TyCtxt<'tcx>,
     body: &mut Body<'tcx>,
     immutability_spans: ImmutabilitySpans,

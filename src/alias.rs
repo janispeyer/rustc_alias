@@ -30,7 +30,7 @@ impl<'tcx> MirPass<'tcx> for Alias {
         println!("# CFG Before");
         printer.visit_body(body);
 
-        optimisation::move_up(tcx, body, immutability_spans);
+        optimisation::eliminate_reads(tcx, body, immutability_spans);
 
         println!("# CFG After");
         printer.visit_body(body);
