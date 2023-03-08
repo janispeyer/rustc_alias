@@ -12,7 +12,7 @@ pub fn eliminate_reads<'tcx>(
     body: &mut Body<'tcx>,
     immutability_spans: ImmutabilitySpans,
 ) {
-    MoveUpOptimisation {
+    EliminateReadsOptimisation {
         tcx,
         body,
         assignments: Vec::new(),
@@ -20,20 +20,20 @@ pub fn eliminate_reads<'tcx>(
     .run(immutability_spans);
 }
 
-struct MoveUpOptimisation<'tcx, 'a> {
+struct EliminateReadsOptimisation<'tcx, 'a> {
     tcx: TyCtxt<'tcx>,
     body: &'a mut Body<'tcx>,
     assignments: Vec<(Location, Statement<'tcx>)>,
 }
 
-impl<'tcx, 'a> MoveUpOptimisation<'tcx, 'a> {
+impl<'tcx, 'a> EliminateReadsOptimisation<'tcx, 'a> {
     pub fn run(mut self, immutability_spans: ImmutabilitySpans) {
         // Sorting by location ensures deterministic output.
         let mut immutability_spans: Vec<_> = immutability_spans.into_iter().collect();
         immutability_spans.sort_unstable_by(|(a, _), (b, _)| a.cmp(b));
 
         for (location, span) in immutability_spans {
-            self.move_up_span(location, span);
+            self.eliminate_reads_span(location, span);
         }
 
         // Add back assignments that were replaced.
@@ -48,7 +48,7 @@ impl<'tcx, 'a> MoveUpOptimisation<'tcx, 'a> {
     }
 
     // TODO: Check that we only do this optimisations for `Copy`-types.
-    fn move_up_span(&mut self, location: Location, span: ImmutabilitySpan) {
+    fn eliminate_reads_span(&mut self, location: Location, span: ImmutabilitySpan) {
         // Get original assignment.
         let basic_blocks = self.body.basic_blocks.as_mut();
         let statement = &basic_blocks[location.block].statements[location.statement_index];
