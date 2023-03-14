@@ -1,7 +1,7 @@
 use rustc_middle::mir::*;
 
 use rustc_middle::mir::visit::Visitor;
-use rustc_middle::ty::TyCtxt;
+use rustc_middle::ty::{TyCtxt, TyKind};
 
 use crate::analysis::compute_immutability_spans;
 use crate::optimisation;
@@ -24,7 +24,7 @@ impl<'tcx> MirPass<'tcx> for Alias {
             return; // Abort pass early, if there is nothing to do.
         }
 
-        let immutability_spans = compute_immutability_spans(tcx, body, retagged.clone(), true);
+        let immutability_spans = compute_immutability_spans(tcx, body, retagged, true);
 
         let mut printer = PrintBodyVisitor;
         println!("# CFG Before");
@@ -38,19 +38,19 @@ impl<'tcx> MirPass<'tcx> for Alias {
 }
 
 /// Collect places that should be checked by seeing if they are retagged.
+/// Rewritten to not use retags for evaluation, because we canot pass `-Zmir-emit-retag` everywhere.
 fn get_retags<'tcx>(body: &mut Body<'tcx>) -> Vec<Local> {
-    let Some(bb0_index) = body.basic_blocks.indices().nth(0) else {
-        return Vec::new(); // no basic blocks ==> no retags
-    };
-    let bb0 = &body.basic_blocks[bb0_index];
-
-    let mut retagged = Vec::new();
-    for (_stmt_idx, stmt) in bb0.statements.iter().enumerate() {
-        if let StatementKind::Retag(RetagKind::FnEntry, place) = &stmt.kind {
-            retagged.push(place.local);
+    let mut result = Vec::new();
+    for arg in body.args_iter() {
+        let decl = &body.local_decls[arg];
+        if let TyKind::Ref(_, ty, Mutability::Mut) = decl.ty.kind()
+            && ty.is_primitive()
+        {
+            result.push(arg)
         }
     }
-    retagged
+
+    result
 }
 
 struct PrintBodyVisitor;
