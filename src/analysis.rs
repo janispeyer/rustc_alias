@@ -19,11 +19,13 @@ pub fn compute_immutability_spans<'tcx>(
     retagged: Vec<Local>,
     verbose: bool,
 ) -> ImmutabilitySpans {
-    // Only consider mutable references to primitives in this analysis.
+    // Only consider mutable references to Copy types in this analysis.
     let retagged = retagged
         .into_iter()
         .filter(|local| match body.local_decls[*local].ty.kind() {
-            TyKind::Ref(_, ty, Mutability::Mut) => ty.is_primitive(),
+            TyKind::Ref(_, ty, Mutability::Mut) => {
+                ty.is_trivially_pure_clone_copy() // TODO: Also consider non-trivial Copy types
+            }
             _ => false,
         })
         .collect();
