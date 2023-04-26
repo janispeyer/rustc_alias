@@ -1,0 +1,76 @@
+# Analysing main
+# Analysing eliminate_reads
+# TopOfBorrowStack Analysis
+bb0
+[ 0] [_1, _2] <- Retag([fn entry] _1)
+[ 1] [_1, _2] <- Retag([fn entry] _2)
+[ 2] [_1, _2] <- StorageLive(_4)
+[ 3] [_1, _2] <- Deinit(_4)
+[ 4] [_1, _2] <- ((_4 as Some).0: i32) = const 42_i32
+[ 5] [_1, _2] <- discriminant(_4) = 1
+[ 6] [_1, _2] <- (*_1) = move _4
+[ 7] [_1, _2] <- StorageDead(_4)
+[ 8] [_1, _2] <- StorageLive(_5)
+[ 9] [_1, _2] <- Deinit(_5)
+[10] [_1, _2] <- discriminant(_5) = 0
+[11] [_1, _2] <- (*_2) = move _5
+[12] [_1, _2] <- StorageDead(_5)
+[13] [_1, _2] <- _0 = (*_1)
+[14] [] <- return
+
+# FindImmutabilitySpans Analysis
+bb0
+[ 0] {} <- Retag([fn entry] _1)
+[ 1] {} <- Retag([fn entry] _2)
+[ 2] {} <- StorageLive(_4)
+[ 3] {} <- Deinit(_4)
+[ 4] {} <- ((_4 as Some).0: i32) = const 42_i32
+[ 5] {} <- discriminant(_4) = 1
+[ 6] {_1: Span(bb0[6])} <- (*_1) = move _4
+[ 7] {_1: Span(bb0[6])} <- StorageDead(_4)
+[ 8] {_1: Span(bb0[6])} <- StorageLive(_5)
+[ 9] {_1: Span(bb0[6])} <- Deinit(_5)
+[10] {_1: Span(bb0[6])} <- discriminant(_5) = 0
+[11] {_1: Span(bb0[6]), _2: Span(bb0[11])} <- (*_2) = move _5
+[12] {_1: Span(bb0[6]), _2: Span(bb0[11])} <- StorageDead(_5)
+[13] {_1: Span(bb0[6]), _2: Span(bb0[11])} <- _0 = (*_1)
+[14] {_1: Top, _2: Top} <- return
+
+
+# CFG Before
+bb0
+Retag([fn entry] _1)
+Retag([fn entry] _2)
+StorageLive(_4)
+Deinit(_4)
+((_4 as Some).0: i32) = const 42_i32
+discriminant(_4) = 1
+(*_1) = move _4
+StorageDead(_4)
+StorageLive(_5)
+Deinit(_5)
+discriminant(_5) = 0
+(*_2) = move _5
+StorageDead(_5)
+_0 = (*_1)
+return
+
+# CFG After
+bb0
+Retag([fn entry] _1)
+Retag([fn entry] _2)
+StorageLive(_4)
+Deinit(_4)
+((_4 as Some).0: i32) = const 42_i32
+discriminant(_4) = 1
+_6 = move _4
+(*_1) = _6
+StorageDead(_4)
+StorageLive(_5)
+Deinit(_5)
+discriminant(_5) = 0
+(*_2) = move _5
+StorageDead(_5)
+_0 = _6
+return
+

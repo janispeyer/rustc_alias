@@ -1,0 +1,96 @@
+# Analysing main
+# Analysing eliminate_reads
+# TopOfBorrowStack Analysis
+bb0
+[ 0] [_1, _2, _3] <- Retag([fn entry] _1)
+[ 1] [_1, _2, _3] <- Retag([fn entry] _2)
+[ 2] [_1, _2, _3] <- Retag([fn entry] _3)
+[ 3] [_1, _2, _3] <- StorageLive(_5)
+[ 4] [_1, _2, _3] <- _5 = (*_1)
+[ 5] [_1, _2, _3] <- Retag(_5)
+[ 6] [_1, _2, _3] <- StorageLive(_6)
+[ 7] [_1, _2, _3] <- _6 = (*_3)
+[ 8] [_1, _2, _3] <- Retag(_6)
+[ 9] [_1, _2, _3] <- (*_1) = move _6
+[10] [_1, _2, _3] <- StorageDead(_6)
+[11] [_1, _2, _3] <- StorageLive(_7)
+[12] [_1, _2, _3] <- _7 = &(*_5)
+[13] [_1, _2, _3] <- Retag(_7)
+[14] [_1, _2, _3] <- (*_2) = move _7
+[15] [_1, _2, _3] <- StorageDead(_7)
+[16] [_1, _2, _3] <- _0 = (*_1)
+[17] [_1, _2, _3] <- Retag(_0)
+[18] [_1, _2, _3] <- StorageDead(_5)
+[19] [] <- return
+
+# FindImmutabilitySpans Analysis
+bb0
+[ 0] {} <- Retag([fn entry] _1)
+[ 1] {} <- Retag([fn entry] _2)
+[ 2] {} <- Retag([fn entry] _3)
+[ 3] {} <- StorageLive(_5)
+[ 4] {} <- _5 = (*_1)
+[ 5] {} <- Retag(_5)
+[ 6] {} <- StorageLive(_6)
+[ 7] {} <- _6 = (*_3)
+[ 8] {} <- Retag(_6)
+[ 9] {_1: Span(bb0[9])} <- (*_1) = move _6
+[10] {_1: Span(bb0[9])} <- StorageDead(_6)
+[11] {_1: Span(bb0[9])} <- StorageLive(_7)
+[12] {_1: Span(bb0[9])} <- _7 = &(*_5)
+[13] {_1: Span(bb0[9])} <- Retag(_7)
+[14] {_1: Span(bb0[9]), _2: Span(bb0[14])} <- (*_2) = move _7
+[15] {_1: Span(bb0[9]), _2: Span(bb0[14])} <- StorageDead(_7)
+[16] {_1: Span(bb0[9]), _2: Span(bb0[14])} <- _0 = (*_1)
+[17] {_1: Span(bb0[9]), _2: Span(bb0[14])} <- Retag(_0)
+[18] {_1: Span(bb0[9]), _2: Span(bb0[14])} <- StorageDead(_5)
+[19] {_1: Top, _2: Top} <- return
+
+
+# CFG Before
+bb0
+Retag([fn entry] _1)
+Retag([fn entry] _2)
+Retag([fn entry] _3)
+StorageLive(_5)
+_5 = (*_1)
+Retag(_5)
+StorageLive(_6)
+_6 = (*_3)
+Retag(_6)
+(*_1) = move _6
+StorageDead(_6)
+StorageLive(_7)
+_7 = &(*_5)
+Retag(_7)
+(*_2) = move _7
+StorageDead(_7)
+_0 = (*_1)
+Retag(_0)
+StorageDead(_5)
+return
+
+# CFG After
+bb0
+Retag([fn entry] _1)
+Retag([fn entry] _2)
+Retag([fn entry] _3)
+StorageLive(_5)
+_5 = (*_1)
+Retag(_5)
+StorageLive(_6)
+_6 = (*_3)
+Retag(_6)
+_8 = move _6
+(*_1) = _8
+StorageDead(_6)
+StorageLive(_7)
+_7 = &(*_5)
+Retag(_7)
+(*_2) = move _7
+StorageDead(_7)
+_0 = _8
+Retag(_0)
+StorageDead(_5)
+return
+

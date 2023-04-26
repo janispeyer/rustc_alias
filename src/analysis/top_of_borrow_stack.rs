@@ -134,8 +134,9 @@ where
             // Kill in the following cases, because not all scenarios where
             // these statements can occur were examined. It might be sound to not kill here,
             // but it is definitely sound to kill and potentially lose some precision.
-            StatementKind::Deinit(ref place) => {
-                self.trans.kill(place.local);
+            StatementKind::Deinit(ref _place) => {
+                // self.trans.kill(place.local);
+                // TODO: Because it is a write access to the entire place, we could potentially gen here: self.trans.gen(place.local);
             }
             StatementKind::Intrinsic(_) => self.trans.kill_all(self.retagged.clone()),
 

@@ -69,7 +69,6 @@ impl<'tcx, 'a> EliminateReadsOptimisation<'tcx, 'a> {
         let mut rvalue_used = false;
 
         // Search for reads of `*x` and replace them with `internal_rvalue`.
-        // TODO: Handle more statement kinds than just assignments.
         for span_location in span.1 {
             let statement = self.body.stmt_at(span_location);
             let Some(StatementKind::Assign(assignment)) = statement.left().map(|s| &s.kind) else {

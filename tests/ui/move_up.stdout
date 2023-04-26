@@ -272,9 +272,9 @@ resume
 # Analysing main::{closure#0}
 # TopOfBorrowStack Analysis
 bb0
-[ 0] [] <- Retag([fn entry] _1)
-[ 1] [] <- Retag([fn entry] _2)
-[ 2] [] <- _0 = const ()
+[ 0] [_1] <- Retag([fn entry] _1)
+[ 1] [_1] <- Retag([fn entry] _2)
+[ 2] [_1] <- _0 = const ()
 [ 3] [] <- return
 
 # FindImmutabilitySpans Analysis

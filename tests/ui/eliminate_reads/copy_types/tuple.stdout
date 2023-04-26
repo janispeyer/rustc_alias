@@ -1,0 +1,55 @@
+# Analysing main
+# Analysing eliminate_reads
+# TopOfBorrowStack Analysis
+bb0
+[ 0] [_1, _2] <- Retag([fn entry] _1)
+[ 1] [_1, _2] <- Retag([fn entry] _2)
+[ 2] [_1, _2] <- Deinit((*_1))
+[ 3] [_1, _2] <- ((*_1).0: i32) = const 42_i32
+[ 4] [_1, _2] <- ((*_1).1: i32) = const 1337_i32
+[ 5] [_1, _2] <- Deinit((*_2))
+[ 6] [_1, _2] <- ((*_2).0: i32) = const 7_i32
+[ 7] [_1, _2] <- ((*_2).1: i32) = const 13_i32
+[ 8] [_1, _2] <- _0 = (*_1)
+[ 9] [] <- return
+
+# FindImmutabilitySpans Analysis
+bb0
+[ 0] {} <- Retag([fn entry] _1)
+[ 1] {} <- Retag([fn entry] _2)
+[ 2] {} <- Deinit((*_1))
+[ 3] {} <- ((*_1).0: i32) = const 42_i32
+[ 4] {} <- ((*_1).1: i32) = const 1337_i32
+[ 5] {} <- Deinit((*_2))
+[ 6] {} <- ((*_2).0: i32) = const 7_i32
+[ 7] {} <- ((*_2).1: i32) = const 13_i32
+[ 8] {} <- _0 = (*_1)
+[ 9] {} <- return
+
+
+# CFG Before
+bb0
+Retag([fn entry] _1)
+Retag([fn entry] _2)
+Deinit((*_1))
+((*_1).0: i32) = const 42_i32
+((*_1).1: i32) = const 1337_i32
+Deinit((*_2))
+((*_2).0: i32) = const 7_i32
+((*_2).1: i32) = const 13_i32
+_0 = (*_1)
+return
+
+# CFG After
+bb0
+Retag([fn entry] _1)
+Retag([fn entry] _2)
+Deinit((*_1))
+((*_1).0: i32) = const 42_i32
+((*_1).1: i32) = const 1337_i32
+Deinit((*_2))
+((*_2).0: i32) = const 7_i32
+((*_2).1: i32) = const 13_i32
+_0 = (*_1)
+return
+

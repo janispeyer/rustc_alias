@@ -19,12 +19,15 @@ pub fn compute_immutability_spans<'tcx>(
     retagged: Vec<Local>,
     verbose: bool,
 ) -> ImmutabilitySpans {
+    let param_env = tcx.param_env(body.source.def_id());
+
     // Only consider mutable references to Copy types in this analysis.
     let retagged = retagged
         .into_iter()
         .filter(|local| match body.local_decls[*local].ty.kind() {
             TyKind::Ref(_, ty, Mutability::Mut) => {
-                ty.is_trivially_pure_clone_copy() // TODO: Also consider non-trivial Copy types
+                // ty.is_trivially_pure_clone_copy() // TODO: Also consider non-trivial Copy types
+                ty.is_copy_modulo_regions(tcx.at(body.span), param_env) // NOTE: Might not work correctly with some lifetime parameters, see `is_copy_modulo_regions`.
             }
             _ => false,
         })
