@@ -59,14 +59,15 @@ Retag([fn entry] _2)
 StorageLive(_4)
 Deinit(_4)
 (_4.0: i32) = const 42_i32
-(*_1) = move _4
+_6 = move _4
+(*_1) = _6
 StorageDead(_4)
 StorageLive(_5)
 Deinit(_5)
 (_5.0: i32) = const 7_i32
 (*_2) = move _5
 StorageDead(_5)
-_0 = ((*_1).0: i32)
+_0 = (_6.0: i32)
 return
 
 # Analysing eliminate_reads_struct
@@ -136,7 +137,8 @@ StorageLive(_4)
 Deinit(_4)
 (_4.0: i32) = const 42_i32
 (_4.1: i32) = const 24_i32
-(*_1) = move _4
+_6 = move _4
+(*_1) = _6
 StorageDead(_4)
 StorageLive(_5)
 Deinit(_5)
@@ -144,6 +146,6 @@ Deinit(_5)
 (_5.1: i32) = const 7_i32
 (*_2) = move _5
 StorageDead(_5)
-_0 = ((*_1).0: i32)
+_0 = (_6.0: i32)
 return
 

@@ -17,7 +17,7 @@ pub fn eliminate_reads<'tcx>(
         body,
         assignments: Vec::new(),
     }
-    .run(immutability_spans);
+    .run(tcx, immutability_spans);
 }
 
 struct EliminateReadsOptimisation<'tcx, 'a> {
@@ -27,13 +27,13 @@ struct EliminateReadsOptimisation<'tcx, 'a> {
 }
 
 impl<'tcx, 'a> EliminateReadsOptimisation<'tcx, 'a> {
-    pub fn run(mut self, immutability_spans: ImmutabilitySpans) {
+    pub fn run(mut self, tcx: TyCtxt<'tcx>, immutability_spans: ImmutabilitySpans) {
         // Sorting by location ensures deterministic output.
         let mut immutability_spans: Vec<_> = immutability_spans.into_iter().collect();
         immutability_spans.sort_unstable_by(|(a, _), (b, _)| a.cmp(b));
 
         for (location, span) in immutability_spans {
-            self.eliminate_reads_span(location, span);
+            self.eliminate_reads_span(tcx, location, span);
         }
 
         // Add back assignments that were replaced.
@@ -47,8 +47,12 @@ impl<'tcx, 'a> EliminateReadsOptimisation<'tcx, 'a> {
         }
     }
 
-    // TODO: Check that we only do this optimisations for `Copy`-types.
-    fn eliminate_reads_span(&mut self, location: Location, span: ImmutabilitySpan) {
+    fn eliminate_reads_span(
+        &mut self,
+        tcx: TyCtxt<'tcx>,
+        location: Location,
+        span: ImmutabilitySpan,
+    ) {
         // Get original assignment.
         let basic_blocks = self.body.basic_blocks.as_mut();
         let statement = &basic_blocks[location.block].statements[location.statement_index];
@@ -61,11 +65,6 @@ impl<'tcx, 'a> EliminateReadsOptimisation<'tcx, 'a> {
             .body
             .local_decls
             .push(LocalDecl::new(assignment_ty, self.body.span));
-        let internal_place = Place {
-            local: internal_local,
-            projection: List::empty(),
-        };
-        let internal_rvalue = Rvalue::Use(Operand::Copy(internal_place));
         let mut rvalue_used = false;
 
         // Search for reads of `*x` and replace them with `internal_rvalue`.
@@ -83,17 +82,25 @@ impl<'tcx, 'a> EliminateReadsOptimisation<'tcx, 'a> {
                 continue;
             }
 
-            let [ProjectionElem::Deref] = place.projection.as_slice() else {
+            let [ProjectionElem::Deref, projection @ ..] = place.projection.as_slice() else {
                 continue;
             };
 
             // At this point we know that the statement is an assignment of the form `? = (*x)`
             // and we can replace `(*x)` with `internal`.
+            // Also allows assignment of the form `? = (*x).0` or any rhs expression starting with `*x`.
             let statements = &mut self.body[span_location.block].statements;
             let statement = &mut statements[span_location.statement_index];
             let StatementKind::Assign(assignment) = &mut statement.kind else {
                 unreachable!();
             };
+
+            let internal_place = Place {
+                local: internal_local,
+                projection: List::empty(),
+            }
+            .project_deeper(projection, tcx);
+            let internal_rvalue = Rvalue::Use(Operand::Copy(internal_place));
             assignment.1 = internal_rvalue.clone();
             rvalue_used = true;
         }
@@ -111,6 +118,11 @@ impl<'tcx, 'a> EliminateReadsOptimisation<'tcx, 'a> {
                 unreachable!()
             };
 
+            let internal_place = Place {
+                local: internal_local,
+                projection: List::empty(),
+            };
+            let internal_rvalue = Rvalue::Use(Operand::Copy(internal_place));
             let rvalue = std::mem::replace(&mut assignment.1, internal_rvalue.clone());
             statement.kind = StatementKind::Assign(Box::new((internal_place, rvalue)));
             original_statement.kind = StatementKind::Assign(assignment);
