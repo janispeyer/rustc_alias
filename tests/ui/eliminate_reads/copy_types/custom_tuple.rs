@@ -1,8 +1,4 @@
 // compile-flags: -Zmir-emit-retag
-// Tuples are not yet affected by eliminate-read optimisations.
-// That's because tuple assignments create MIR that is hard to handle.
-// We're showing that tuples work conceptially by implementing eliminate-reads
-// for custom types of the form `struct CustomType { f1: Type1, f2: Type2, ..., fN: TypeN }`.
 
 #[derive(Copy, Clone)]
 struct CustomTuple(i32, i32);

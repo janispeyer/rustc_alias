@@ -131,13 +131,14 @@ where
                 self.trans.kill(local);
             }
 
-            // Kill in the following cases, because not all scenarios where
-            // these statements can occur were examined. It might be sound to not kill here,
-            // but it is definitely sound to kill and potentially lose some precision.
-            StatementKind::Deinit(ref _place) => {
-                // self.trans.kill(place.local);
-                // TODO: Because it is a write access to the entire place, we could potentially gen here: self.trans.gen(place.local);
-            }
+            // Deinit is a write of uninit bytes to the given location.
+            // If it affects the entire place, we could potentially gen here because
+            // it's a write to the entire locatopm: self.trans.gen(place.local);
+            // To be conservative for now we just don't kill here so far but do not gen.
+            // It should be fine to gen here, but not having a gen and potentially losing
+            // some precision is safer.
+            StatementKind::Deinit(ref _place) => {}
+
             StatementKind::Intrinsic(_) => self.trans.kill_all(self.retagged.clone()),
 
             // The rvalue part of the assignment will be handled by `visit_rvalue`.
